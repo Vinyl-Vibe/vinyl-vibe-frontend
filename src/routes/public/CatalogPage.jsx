@@ -7,7 +7,7 @@ import ProductCardSkeleton from "../../components/products/ProductCardSkeleton";
 import { useProductStore } from "../../store/products";
 import { Alert } from "../../components/ui/alert";
 import { useLocation } from "react-router-dom";
-import Pagination from "../../components/ui/Pagination";
+import Pagination from "../../components/ui/pagination";
 
 /* 
     CatalogPage: Product listing page
