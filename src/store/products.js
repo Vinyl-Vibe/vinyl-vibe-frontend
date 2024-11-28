@@ -18,10 +18,13 @@ export const SORT_OPTIONS = {
 
 export const useProductStore = create((set, get) => ({
   products: [],
+  currentProduct: null,
   isLoading: false,
   error: null,
   activeCategory: CATEGORIES.ALL,
   sortBy: SORT_OPTIONS.NEWEST,
+  scrollPosition: 0,
+  hasLoaded: false,
 
   setCategory: (category) => {
     set({ activeCategory: category })
@@ -29,6 +32,10 @@ export const useProductStore = create((set, get) => ({
 
   setSortBy: (sortOption) => {
     set({ sortBy: sortOption })
+  },
+
+  saveScrollPosition: (position) => {
+    set({ scrollPosition: position })
   },
 
   // Get filtered and sorted products
@@ -60,12 +67,15 @@ export const useProductStore = create((set, get) => ({
   },
 
   // Fetch products (currently mock data)
-  fetchProducts: async () => {
+  fetchProducts: async (forceRefresh = false) => {
+    if (get().hasLoaded && !forceRefresh) {
+      return
+    }
+
     set({ isLoading: true, error: null })
     try {
-      // Simulate API call
       const products = await getMockProducts()
-      set({ products, isLoading: false })
+      set({ products, isLoading: false, hasLoaded: true })
     } catch (error) {
       set({ 
         error: 'Failed to fetch products',
@@ -78,6 +88,27 @@ export const useProductStore = create((set, get) => ({
   getProduct: (id) => {
     const { products } = useProductStore.getState()
     return products.find(product => product.id === id)
+  },
+
+  // Fetch single product
+  fetchProduct: async (id) => {
+    set({ isLoading: true, error: null, currentProduct: null })
+    try {
+      // In development, get from cached products
+      const product = get().products.find(p => p.id === id) || 
+        await getMockProduct(id) // Fallback to API call
+      set({ currentProduct: product, isLoading: false })
+    } catch (error) {
+      set({ 
+        error: 'Failed to fetch product',
+        isLoading: false 
+      })
+    }
+  },
+
+  // Add method to force refresh products
+  refreshProducts: async () => {
+    return get().fetchProducts(true)
   }
 }))
 
@@ -132,5 +163,19 @@ const getMockProducts = () => new Promise((resolve) => {
         inStock: true
       }
     ])
+  }, 500)
+})
+
+// Mock single product fetch
+const getMockProduct = (id) => new Promise((resolve, reject) => {
+  setTimeout(() => {
+    const product = getMockProducts().then(products => 
+      products.find(p => p.id === id)
+    )
+    if (product) {
+      resolve(product)
+    } else {
+      reject(new Error('Product not found'))
+    }
   }, 500)
 }) 

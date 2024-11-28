@@ -7,6 +7,7 @@ import AdminRoute from './components/auth/AdminRoute'
 import HomePage from './routes/public/HomePage'
 import AuthPage from './routes/public/AuthPage'
 import CatalogPage from './routes/public/CatalogPage'
+import ProductPage from './routes/public/ProductPage'
 
 // Protected routes
 import CheckoutPage from './routes/protected/CheckoutPage'
@@ -28,6 +29,7 @@ function App() {
 						<Route path="/" element={<HomePage />} />
 						<Route path="/auth" element={<AuthPage />} />
 						<Route path="/catalog" element={<CatalogPage />} />
+						<Route path="/products/:id" element={<ProductPage />} />
 						
 						{/* Protected routes */}
 						<Route 

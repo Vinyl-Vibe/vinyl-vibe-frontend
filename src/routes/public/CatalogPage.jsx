@@ -6,6 +6,7 @@ import SortSelect from "../../components/products/SortSelect";
 import ProductCardSkeleton from "../../components/products/ProductCardSkeleton";
 import { useProductStore } from "../../store/products";
 import { Alert } from "../../components/ui/alert";
+import { useLocation } from 'react-router-dom'
 
 /* 
   CatalogPage: Product listing page
@@ -14,17 +15,49 @@ import { Alert } from "../../components/ui/alert";
   - Will add filtering/sorting later
 */
 function CatalogPage() {
-	const { isLoading, error, fetchProducts, getFilteredProducts } =
-		useProductStore();
+	const { 
+		isLoading, 
+		error, 
+		fetchProducts, 
+		refreshProducts, 
+		getFilteredProducts, 
+		scrollPosition, 
+		saveScrollPosition,
+		products,
+		hasLoaded
+	} = useProductStore();
+	const location = useLocation()
 
 	useEffect(() => {
-		fetchProducts();
-	}, [fetchProducts]);
+		if (location.key === 'default') {
+			refreshProducts()
+		} else {
+			fetchProducts()
+		}
+	}, [fetchProducts, refreshProducts, location])
+
+	useEffect(() => {
+		if (scrollPosition > 0) {
+			window.scrollTo(0, scrollPosition);
+		}
+	}, [scrollPosition]);
+
+	useEffect(() => {
+		const handleScroll = () => {
+			saveScrollPosition(window.scrollY);
+		};
+
+		window.addEventListener('scroll', handleScroll);
+		return () => window.removeEventListener('scroll', handleScroll);
+	}, [saveScrollPosition]);
 
 	const filteredProducts = getFilteredProducts();
 
 	// Number of skeleton cards to show during loading
 	const SKELETON_COUNT = 8;
+
+	// Only show skeleton if we're loading AND we don't have any products cached
+	const showSkeleton = isLoading && !hasLoaded && products.length === 0;
 
 	return (
 		<div>
@@ -49,7 +82,7 @@ function CatalogPage() {
 
 					<div className="mt-6 transition-all duration-500">
 						<div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
-							{isLoading
+							{showSkeleton
 								? Array(SKELETON_COUNT)
 										.fill(null)
 										.map((_, index) => (

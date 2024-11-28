@@ -20,7 +20,9 @@ describe('CatalogPage', () => {
       products: [],
       isLoading: false,
       error: null,
-      fetchProducts: vi.fn()
+      hasLoaded: false,
+      fetchProducts: vi.fn(),
+      refreshProducts: vi.fn()
     })
   })
 
@@ -85,5 +87,54 @@ describe('CatalogPage', () => {
     // Should show 8 skeletons
     const skeletons = screen.getAllByTestId('skeleton')
     expect(skeletons).toHaveLength(8)
+  })
+
+  it('should fetch products when not loaded', () => {
+    const fetchProducts = vi.fn()
+    useProductStore.setState({ fetchProducts, hasLoaded: false })
+
+    render(
+      <MemoryRouter>
+        <CatalogPage />
+      </MemoryRouter>
+    )
+
+    expect(fetchProducts).toHaveBeenCalled()
+  })
+
+  it('should not fetch products when already loaded', () => {
+    const fetchProducts = vi.fn()
+    useProductStore.setState({ 
+      fetchProducts, 
+      hasLoaded: true,
+      products: [{ id: '1', title: 'Test Product' }]
+    })
+
+    render(
+      <MemoryRouter>
+        <CatalogPage />
+      </MemoryRouter>
+    )
+
+    expect(fetchProducts).not.toHaveBeenCalled()
+  })
+
+  it('should force refresh products on direct navigation', () => {
+    const refreshProducts = vi.fn()
+    useProductStore.setState({ refreshProducts })
+    
+    // Mock direct navigation
+    vi.mock('react-router-dom', async () => ({
+      ...await vi.importActual('react-router-dom'),
+      useLocation: () => ({ key: 'default' })
+    }))
+
+    render(
+      <MemoryRouter>
+        <CatalogPage />
+      </MemoryRouter>
+    )
+
+    expect(refreshProducts).toHaveBeenCalled()
   })
 }) 
