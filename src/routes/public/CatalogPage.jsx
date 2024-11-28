@@ -7,6 +7,7 @@ import ProductCardSkeleton from "../../components/products/ProductCardSkeleton";
 import { useProductStore } from "../../store/products";
 import { Alert } from "../../components/ui/alert";
 import { useLocation } from 'react-router-dom'
+import Pagination from "../../components/ui/Pagination";
 
 /* 
   CatalogPage: Product listing page
@@ -24,7 +25,9 @@ function CatalogPage() {
 		scrollPosition, 
 		saveScrollPosition,
 		products,
-		hasLoaded
+		hasLoaded,
+		page,
+		setPage
 	} = useProductStore();
 	const location = useLocation()
 
@@ -32,13 +35,13 @@ function CatalogPage() {
 		if (location.key === 'default') {
 			refreshProducts()
 		} else {
-			fetchProducts()
+			 fetchProducts()
 		}
 	}, [fetchProducts, refreshProducts, location])
 
 	useEffect(() => {
 		if (scrollPosition > 0) {
-			window.scrollTo(0, scrollPosition);
+			 window.scrollTo(0, scrollPosition);
 		}
 	}, [scrollPosition]);
 
@@ -51,7 +54,17 @@ function CatalogPage() {
 		return () => window.removeEventListener('scroll', handleScroll);
 	}, [saveScrollPosition]);
 
-	const filteredProducts = getFilteredProducts();
+	const { items: filteredProducts, totalItems, totalPages } = getFilteredProducts();
+
+	console.log({
+		isLoading,
+		hasLoaded,
+		products: products.length,
+		filteredProducts: filteredProducts.length,
+		totalItems,
+		totalPages,
+		page
+	})
 
 	// Number of skeleton cards to show during loading
 	const SKELETON_COUNT = 8;
@@ -74,11 +87,16 @@ function CatalogPage() {
 						<SortSelect />
 					</div>
 
+					{/* Product count */}
+					<p className="mt-4 text-sm text-gray-500">
+						Showing {filteredProducts.length} of {totalItems} products
+					</p>
+
 					{error && (
 						<Alert variant="destructive" className="mt-6">
 							{error}
 						</Alert>
-					)}
+						)}
 
 					<div className="mt-6 transition-all duration-500">
 						<div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
@@ -97,6 +115,15 @@ function CatalogPage() {
 										</div>
 								  ))}
 						</div>
+
+						{/* Pagination */}
+						{totalPages > 1 && (
+							<Pagination
+								currentPage={page}
+								totalPages={totalPages}
+								onPageChange={setPage}
+							/>
+						)}
 					</div>
 				</div>
 			</main>

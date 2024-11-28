@@ -5,6 +5,7 @@ import { useProductStore } from '../../store/products'
 import { Alert } from '../../components/ui/alert'
 import { Button } from '../../components/ui/button'
 import { ArrowLeft } from 'lucide-react'
+import ProductDetailsSkeleton from '../../components/products/ProductDetailsSkeleton'
 
 function ProductPage() {
   const { id } = useParams()
@@ -25,8 +26,17 @@ function ProductPage() {
         <MainNav />
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="py-24">
-            {/* Add skeleton loading state here */}
-            Loading...
+            <Button
+              variant="ghost"
+              className="mb-8 flex items-center gap-2 opacity-50"
+              disabled
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Catalog
+            </Button>
+            <div className="animate-in fade-in duration-300">
+              <ProductDetailsSkeleton />
+            </div>
           </div>
         </main>
       </div>
@@ -65,7 +75,7 @@ function ProductPage() {
     <div>
       <MainNav />
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="py-24">
+        <div className="py-24 animate-in fade-in duration-500">
           <Button
             variant="ghost"
             className="mb-8 flex items-center gap-2"

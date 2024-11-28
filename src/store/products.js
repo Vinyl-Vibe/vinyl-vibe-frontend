@@ -25,22 +25,36 @@ export const useProductStore = create((set, get) => ({
   sortBy: SORT_OPTIONS.NEWEST,
   scrollPosition: 0,
   hasLoaded: false,
+  page: 1,
+  pageSize: 12,
+  totalPages: 1,
+  totalProducts: 0,
 
   setCategory: (category) => {
-    set({ activeCategory: category })
+    set({ 
+      activeCategory: category,
+      page: 1  // Reset to first page when changing category
+    })
   },
 
   setSortBy: (sortOption) => {
-    set({ sortBy: sortOption })
+    set({ 
+      sortBy: sortOption,
+      page: 1  // Reset to first page when changing sort order
+    })
   },
 
   saveScrollPosition: (position) => {
     set({ scrollPosition: position })
   },
 
+  setPage: (page) => {
+    set({ page })
+  },
+
   // Get filtered and sorted products
   getFilteredProducts: () => {
-    const { products, activeCategory, sortBy } = get()
+    const { products, activeCategory, sortBy, page, pageSize } = get()
     
     // First filter by category
     const filtered = activeCategory === CATEGORIES.ALL
@@ -48,7 +62,7 @@ export const useProductStore = create((set, get) => ({
       : products.filter(product => product.category === activeCategory)
 
     // Then sort
-    return [...filtered].sort((a, b) => {
+    const sorted = [...filtered].sort((a, b) => {
       switch (sortBy) {
         case SORT_OPTIONS.PRICE_LOW:
           return a.price - b.price
@@ -64,6 +78,15 @@ export const useProductStore = create((set, get) => ({
           return 0
       }
     })
+
+    // Then paginate
+    const start = (page - 1) * pageSize
+    const end = start + pageSize
+    return {
+      items: sorted.slice(start, end),
+      totalItems: sorted.length,
+      totalPages: Math.ceil(sorted.length / pageSize)
+    }
   },
 
   // Fetch products (currently mock data)
@@ -112,70 +135,125 @@ export const useProductStore = create((set, get) => ({
   }
 }))
 
-// Updated mock data with categories and createdAt dates
+// Helper function to generate mock products
+const generateMockProducts = () => {
+  const vinylRecords = [
+    { title: 'Dark Side of the Moon', artist: 'Pink Floyd', price: 29.99, genre: 'Rock', year: 1973 },
+    { title: 'Thriller', artist: 'Michael Jackson', price: 27.99, genre: 'Pop', year: 1982 },
+    { title: 'Back in Black', artist: 'AC/DC', price: 24.99, genre: 'Rock', year: 1980 },
+    { title: 'Rumours', artist: 'Fleetwood Mac', price: 29.99, genre: 'Rock', year: 1977 },
+    { title: 'Abbey Road', artist: 'The Beatles', price: 32.99, genre: 'Rock', year: 1969 },
+    { title: 'Kind of Blue', artist: 'Miles Davis', price: 34.99, genre: 'Jazz', year: 1959 },
+    { title: 'Purple Rain', artist: 'Prince', price: 28.99, genre: 'Pop', year: 1984 },
+    { title: 'Blue Train', artist: 'John Coltrane', price: 31.99, genre: 'Jazz', year: 1957 },
+    { title: 'Nevermind', artist: 'Nirvana', price: 26.99, genre: 'Rock', year: 1991 },
+    { title: 'Legend', artist: 'Bob Marley', price: 25.99, genre: 'Reggae', year: 1984 },
+    { title: 'Random Access Memories', artist: 'Daft Punk', price: 35.99, genre: 'Electronic', year: 2013 },
+    { title: 'The Chronic', artist: 'Dr. Dre', price: 27.99, genre: 'Hip Hop', year: 1992 },
+    { title: 'Blue Lines', artist: 'Massive Attack', price: 29.99, genre: 'Electronic', year: 1991 },
+    { title: 'The Rise and Fall of Ziggy Stardust', artist: 'David Bowie', price: 28.99, genre: 'Rock', year: 1972 },
+    { title: 'Ready to Die', artist: 'The Notorious B.I.G.', price: 29.99, genre: 'Hip Hop', year: 1994 },
+    // ... add more vinyl records
+  ].map((record, index) => ({
+    id: `vinyl-${index + 1}`,
+    ...record,
+    category: CATEGORIES.VINYL,
+    imageUrl: '/images/placeholder.jpg',
+    condition: ['New', 'Mint', 'Very Good'][Math.floor(Math.random() * 3)],
+    inStock: true,
+    createdAt: new Date(Date.now() - index * 86400000).toISOString() // Stagger dates
+  }))
+
+  const turntables = [
+    { title: 'Pro-Ject Debut Carbon EVO', price: 599.99 },
+    { title: 'Audio-Technica AT-LP120XUSB', price: 299.99 },
+    { title: 'Rega Planar 1', price: 475.00 },
+    { title: 'Fluance RT85', price: 499.99 },
+    { title: 'U-Turn Audio Orbit Plus', price: 309.00 },
+    { title: 'Sony PS-LX310BT', price: 199.99 },
+    { title: 'Pro-Ject T1', price: 329.00 },
+    { title: 'Denon DP-300F', price: 329.99 },
+    { title: 'Pioneer PLX-1000', price: 699.99 },
+    { title: 'Technics SL-1200MK7', price: 999.99 },
+  ].map((turntable, index) => ({
+    id: `turntable-${index + 1}`,
+    ...turntable,
+    category: CATEGORIES.TURNTABLES,
+    imageUrl: '/images/placeholder.jpg',
+    condition: 'New',
+    inStock: true,
+    createdAt: new Date(Date.now() - index * 86400000).toISOString()
+  }))
+
+  const accessories = [
+    { title: 'Vinyl Cleaning Kit', price: 24.99 },
+    { title: 'Anti-Static Brush', price: 14.99 },
+    { title: 'Record Weight', price: 39.99 },
+    { title: 'Stylus Cleaner', price: 19.99 },
+    { title: 'Record Inner Sleeves (50pk)', price: 19.99 },
+    { title: 'Record Outer Sleeves (50pk)', price: 24.99 },
+    { title: 'Cartridge Alignment Protractor', price: 29.99 },
+    { title: 'Vinyl Storage Box', price: 34.99 },
+    { title: 'Record Display Stand', price: 15.99 },
+    { title: 'Turntable Belt', price: 12.99 },
+    { title: 'Phono Preamp', price: 89.99 },
+    { title: 'RCA Cables', price: 19.99 },
+    { title: 'Record Level', price: 24.99 },
+    { title: 'Dust Cover', price: 29.99 },
+    { title: 'Cleaning Solution', price: 14.99 },
+  ].map((accessory, index) => ({
+    id: `accessory-${index + 1}`,
+    ...accessory,
+    category: CATEGORIES.ACCESSORIES,
+    imageUrl: '/images/placeholder.jpg',
+    condition: 'New',
+    inStock: true,
+    createdAt: new Date(Date.now() - index * 86400000).toISOString()
+  }))
+
+  const merch = [
+    { title: 'Pink Floyd T-Shirt', artist: 'Pink Floyd', price: 24.99 },
+    { title: 'Led Zeppelin Poster', artist: 'Led Zeppelin', price: 19.99 },
+    { title: 'Beatles Coffee Mug', artist: 'The Beatles', price: 14.99 },
+    { title: 'Rolling Stones Hat', artist: 'Rolling Stones', price: 22.99 },
+    { title: 'Queen Hoodie', artist: 'Queen', price: 44.99 },
+    { title: 'Nirvana Backpack', artist: 'Nirvana', price: 39.99 },
+    { title: 'Metallica Phone Case', artist: 'Metallica', price: 19.99 },
+    { title: 'AC/DC Wall Flag', artist: 'AC/DC', price: 29.99 },
+    { title: 'David Bowie Tote Bag', artist: 'David Bowie', price: 18.99 },
+    { title: 'The Doors Keychain', artist: 'The Doors', price: 9.99 },
+  ].map((item, index) => ({
+    id: `merch-${index + 1}`,
+    ...item,
+    category: CATEGORIES.MERCH,
+    imageUrl: '/images/placeholder.jpg',
+    condition: 'New',
+    inStock: true,
+    createdAt: new Date(Date.now() - index * 86400000).toISOString()
+  }))
+
+  const allProducts = [...vinylRecords, ...turntables, ...accessories, ...merch];
+  console.log('Generated products:', allProducts.length);
+  return allProducts;
+}
+
+// Update getMockProducts to use the generator
 const getMockProducts = () => new Promise((resolve) => {
   setTimeout(() => {
-    resolve([
-      {
-        id: '1',
-        title: 'Dark Side of the Moon',
-        artist: 'Pink Floyd',
-        price: 29.99,
-        imageUrl: '/images/placeholder.jpg',
-        category: CATEGORIES.VINYL,
-        createdAt: '2024-03-15T10:00:00Z',
-        genre: 'Rock',
-        year: 1973,
-        condition: 'New',
-        inStock: true
-      },
-      {
-        id: '2',
-        title: 'Pro-Ject Debut Carbon EVO',
-        artist: null,
-        price: 599.99,
-        imageUrl: '/images/placeholder.jpg',
-        category: CATEGORIES.TURNTABLES,
-        createdAt: '2024-03-14T10:00:00Z',
-        condition: 'New',
-        inStock: true
-      },
-      {
-        id: '3',
-        title: 'Vinyl Cleaning Kit',
-        artist: null,
-        price: 24.99,
-        imageUrl: '/images/placeholder.jpg',
-        category: CATEGORIES.ACCESSORIES,
-        createdAt: '2024-03-13T10:00:00Z',
-        condition: 'New',
-        inStock: true
-      },
-      {
-        id: '4',
-        title: 'Band T-Shirt',
-        artist: 'Various',
-        price: 19.99,
-        imageUrl: '/images/placeholder.jpg',
-        category: CATEGORIES.MERCH,
-        createdAt: '2024-03-12T10:00:00Z',
-        condition: 'New',
-        inStock: true
-      }
-    ])
+    resolve(generateMockProducts())
   }, 500)
 })
 
 // Mock single product fetch
 const getMockProduct = (id) => new Promise((resolve, reject) => {
   setTimeout(() => {
-    const product = getMockProducts().then(products => 
-      products.find(p => p.id === id)
-    )
-    if (product) {
-      resolve(product)
-    } else {
-      reject(new Error('Product not found'))
-    }
+    getMockProducts().then(products => {
+      const product = products.find(p => p.id === id)
+      if (product) {
+        resolve(product)
+      } else {
+        reject(new Error('Product not found'))
+      }
+    })
   }, 500)
 }) 
