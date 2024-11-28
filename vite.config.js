@@ -9,4 +9,19 @@ export default defineConfig({
 			"@": path.resolve(__dirname, "./src"),
 		},
 	},
+	test: {
+		globals: true,
+		environment: 'jsdom',
+		setupFiles: './src/test/setup.js',
+		include: ['src/**/__tests__/*.{test,spec}.{js,jsx}'],
+		coverage: {
+			reporter: ['text', 'json', 'html'],
+			include: ['src/**/*.{js,jsx}'],
+			exclude: [
+				'src/**/*.{test,spec}.{js,jsx}',
+				'src/test/**/*',
+				'src/**/__tests__/**/*'
+			]
+		}
+	}
 });
