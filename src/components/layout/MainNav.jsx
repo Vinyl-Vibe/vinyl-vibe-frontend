@@ -1,8 +1,15 @@
 import { Link } from 'react-router-dom'
 import { useAuthStore } from '../../store/auth'
+import { useProductStore } from '../../store/products'
 
 function MainNav() {
   const { isAuthenticated, isAdmin } = useAuthStore()
+  const { resetFilters, refreshProducts } = useProductStore()
+
+  const handleCatalogClick = () => {
+    resetFilters()
+    refreshProducts()
+  }
 
   return (
     <nav className="border-b">
@@ -12,6 +19,15 @@ function MainNav() {
             <Link to="/" className="flex items-center">
               <span className="text-xl font-bold">Vinyl Vibe</span>
             </Link>
+            <div className="ml-10 flex items-center space-x-4">
+              <Link 
+                to="/catalog" 
+                className="text-sm font-medium"
+                onClick={handleCatalogClick}
+              >
+                Catalog
+              </Link>
+            </div>
           </div>
           <div className="flex items-center space-x-4">
             {isAdmin && (
