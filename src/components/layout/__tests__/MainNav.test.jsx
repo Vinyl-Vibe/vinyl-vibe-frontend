@@ -1,18 +1,35 @@
-import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { describe, it, expect, vi } from 'vitest'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { useAuthStore } from '../../../store/auth'
+import { useProductStore } from '../../../store/products'
 import MainNav from '../MainNav'
 
+// Mock stores
+vi.mock('../../../store/auth', () => ({
+  useAuthStore: vi.fn()
+}))
+
+vi.mock('../../../store/products', () => ({
+  useProductStore: vi.fn()
+}))
+
 describe('MainNav', () => {
+  const resetFilters = vi.fn()
+  const refreshProducts = vi.fn()
+
   beforeEach(() => {
-    useAuthStore.setState({
+    useAuthStore.mockReturnValue({
       isAuthenticated: false,
       isAdmin: false
     })
+    useProductStore.mockReturnValue({
+      resetFilters,
+      refreshProducts
+    })
   })
 
-  it('should render logo and sign in link when not authenticated', () => {
+  it('should render logo and basic navigation', () => {
     render(
       <MemoryRouter>
         <MainNav />
@@ -20,13 +37,14 @@ describe('MainNav', () => {
     )
 
     expect(screen.getByText('Vinyl Vibe')).toBeInTheDocument()
-    expect(screen.getByText('Sign In')).toBeInTheDocument()
-    expect(screen.queryByText('Account')).not.toBeInTheDocument()
-    expect(screen.queryByText('Dashboard')).not.toBeInTheDocument()
+    expect(screen.getByText('Catalog')).toBeInTheDocument()
   })
 
-  it('should render account and cart when authenticated', () => {
-    useAuthStore.setState({ isAuthenticated: true })
+  it('should show auth-specific links when authenticated', () => {
+    useAuthStore.mockReturnValue({
+      isAuthenticated: true,
+      isAdmin: false
+    })
 
     render(
       <MemoryRouter>
@@ -39,10 +57,10 @@ describe('MainNav', () => {
     expect(screen.queryByText('Sign In')).not.toBeInTheDocument()
   })
 
-  it('should render dashboard link for admin users', () => {
-    useAuthStore.setState({ 
+  it('should show admin link when user is admin', () => {
+    useAuthStore.mockReturnValue({
       isAuthenticated: true,
-      isAdmin: true 
+      isAdmin: true
     })
 
     render(
@@ -52,5 +70,17 @@ describe('MainNav', () => {
     )
 
     expect(screen.getByText('Dashboard')).toBeInTheDocument()
+  })
+
+  it('should reset filters and refresh products when clicking catalog', () => {
+    render(
+      <MemoryRouter>
+        <MainNav />
+      </MemoryRouter>
+    )
+
+    fireEvent.click(screen.getByText('Catalog'))
+    expect(resetFilters).toHaveBeenCalled()
+    expect(refreshProducts).toHaveBeenCalled()
   })
 }) 

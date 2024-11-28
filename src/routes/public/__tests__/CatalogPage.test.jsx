@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, fireEvent, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { useProductStore } from '../../../store/products'
+import { useProductStore, CATEGORIES } from '../../../store/products'
 import CatalogPage from '../CatalogPage'
 
 // Mock MainNav component
@@ -136,5 +136,61 @@ describe('CatalogPage', () => {
     )
 
     expect(refreshProducts).toHaveBeenCalled()
+  })
+
+  it('should handle category changes', async () => {
+    const mockProducts = [
+      { id: '1', category: CATEGORIES.VINYL },
+      { id: '2', category: CATEGORIES.TURNTABLES }
+    ]
+    
+    useProductStore.setState({ 
+      products: mockProducts,
+      hasLoaded: true
+    })
+    
+    render(
+      <MemoryRouter>
+        <CatalogPage />
+      </MemoryRouter>
+    )
+    
+    // Test category filter updates
+    const { setCategory } = useProductStore.getState()
+    act(() => {
+      setCategory(CATEGORIES.VINYL)
+    })
+    
+    await waitFor(() => {
+      expect(screen.getAllByTestId('product-card')).toHaveLength(1)
+    })
+  })
+
+  it('should handle pagination', async () => {
+    const mockProducts = Array.from({ length: 15 }, (_, i) => ({
+      id: String(i + 1),
+      category: CATEGORIES.VINYL
+    }))
+    
+    useProductStore.setState({ 
+      products: mockProducts,
+      hasLoaded: true,
+      pageSize: 6
+    })
+    
+    render(
+      <MemoryRouter>
+        <CatalogPage />
+      </MemoryRouter>
+    )
+    
+    expect(screen.getAllByTestId('product-card')).toHaveLength(6)
+    
+    // Test page change
+    fireEvent.click(screen.getByText('2'))
+    
+    await waitFor(() => {
+      expect(screen.getAllByTestId('product-card')).toHaveLength(6)
+    })
   })
 }) 
