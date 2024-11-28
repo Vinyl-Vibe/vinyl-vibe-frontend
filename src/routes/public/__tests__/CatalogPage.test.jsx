@@ -9,6 +9,11 @@ vi.mock('../../../components/layout/MainNav', () => ({
   default: () => <div data-testid="main-nav">Main Nav</div>
 }))
 
+// Mock skeleton component
+vi.mock('../../components/products/ProductCardSkeleton', () => ({
+  default: () => <div data-testid="skeleton">Loading Skeleton</div>
+}))
+
 describe('CatalogPage', () => {
   beforeEach(() => {
     useProductStore.setState({
@@ -66,5 +71,19 @@ describe('CatalogPage', () => {
     )
 
     expect(screen.getByText('Failed to fetch products')).toBeInTheDocument()
+  })
+
+  it('should render skeletons while loading', () => {
+    useProductStore.setState({ isLoading: true })
+
+    render(
+      <MemoryRouter>
+        <CatalogPage />
+      </MemoryRouter>
+    )
+
+    // Should show 8 skeletons
+    const skeletons = screen.getAllByTestId('skeleton')
+    expect(skeletons).toHaveLength(8)
   })
 }) 

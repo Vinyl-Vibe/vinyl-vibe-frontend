@@ -10,7 +10,7 @@ function ProductCard({ product }) {
   const { id, title, artist, price, imageUrl } = product
 
   return (
-    <div className="group relative">
+    <div className="group relative h-full w-full">
       <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-200">
         <img
           src={imageUrl}

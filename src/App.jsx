@@ -22,7 +22,7 @@ function App() {
 	return (
 		<BrowserRouter>
 			<AuthProvider>
-				<div className="min-h-screen bg-background">
+				<div className="w-dvw min-h-screen bg-background">
 					<Routes>
 						{/* Public routes */}
 						<Route path="/" element={<HomePage />} />

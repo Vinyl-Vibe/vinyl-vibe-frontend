@@ -3,6 +3,7 @@ import MainNav from '../../components/layout/MainNav'
 import ProductCard from '../../components/products/ProductCard'
 import CategoryFilter from '../../components/products/CategoryFilter'
 import SortSelect from '../../components/products/SortSelect'
+import ProductCardSkeleton from '../../components/products/ProductCardSkeleton'
 import { useProductStore } from '../../store/products'
 import { Alert } from '../../components/ui/alert'
 
@@ -20,6 +21,9 @@ function CatalogPage() {
   }, [fetchProducts])
 
   const filteredProducts = getFilteredProducts()
+
+  // Number of skeleton cards to show during loading
+  const SKELETON_COUNT = 8
 
   return (
     <div>
@@ -40,18 +44,21 @@ function CatalogPage() {
             </Alert>
           )}
 
-          {isLoading ? (
-            <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
-              {/* Add skeleton loading cards here */}
-              Loading...
+          <div className="mt-6 transition-all duration-500">
+            <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+              {isLoading ? (
+                Array(SKELETON_COUNT)
+                  .fill(null)
+                  .map((_, index) => <ProductCardSkeleton key={index} />)
+              ) : (
+                filteredProducts.map((product) => (
+                  <div key={product.id} className="animate-in fade-in duration-500">
+                    <ProductCard product={product} />
+                  </div>
+                ))
+              )}
             </div>
-          ) : (
-            <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          )}
+          </div>
         </div>
       </main>
     </div>
