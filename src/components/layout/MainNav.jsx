@@ -18,7 +18,7 @@ function MainNav({ children }) {
 	return (
 		<>
 			<nav className="fixed top-0 w-full z-50 px-10">
-				<div className="max-w-7xl border mx-auto px-6 backdrop-blur-xl h-20 bg-background/50 z-51">
+				<div className="max-w-7xl border mx-auto px-6 backdrop-blur-[8px] h-20 bg-background/70 z-51">
 					<div className="flex justify-between h-full">
 						<div className="flex">
 							<Link
