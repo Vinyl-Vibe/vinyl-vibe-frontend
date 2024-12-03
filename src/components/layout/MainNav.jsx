@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../../store/auth";
 import { useProductStore } from "../../store/products";
+import VinylVibeLogo from "@/assets/icons/vinyl_vibe-logo";
 
 function MainNav() {
 	const { isAuthenticated, isAdmin } = useAuthStore();
@@ -17,9 +18,7 @@ function MainNav() {
 				<div className="flex justify-between h-16">
 					<div className="flex">
 						<Link to="/" className="flex items-center">
-							<span className="text-xl font-bold">
-								Vinyl Vibe
-							</span>
+							<VinylVibeLogo fill="#09090B" secondaryfill="#DEDEDE" />
 						</Link>
 						<div className="ml-10 flex items-center space-x-4">
 							<Link

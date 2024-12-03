@@ -74,7 +74,8 @@ function CatalogPage() {
 	const SKELETON_COUNT = 8;
 
 	// Only show skeleton if we're loading AND we don't have any products cached
-	const showSkeleton = isLoading && !hasLoaded && (!products || products.length === 0);
+	const showSkeleton =
+		isLoading && !hasLoaded && (!products || products.length === 0);
 
 	return (
 		<div>
@@ -93,7 +94,8 @@ function CatalogPage() {
 
 					{/* Product count */}
 					<p className="mt-4 text-sm text-gray-500">
-						Showing {filteredProducts.length} of {totalItems} products
+						Showing {filteredProducts.length} of {totalItems}{" "}
+						products
 					</p>
 
 					{error && (
