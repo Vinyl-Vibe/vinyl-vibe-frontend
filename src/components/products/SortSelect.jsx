@@ -1,29 +1,43 @@
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select'
-import { SORT_OPTIONS, useProductStore } from '../../store/products'
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "../ui/select";
+import { SORT_OPTIONS, useProductStore } from "../../store/products";
 
 function SortSelect() {
-  const { sortBy, setSortBy } = useProductStore()
+	const { sortBy, setSortBy } = useProductStore();
 
-  return (
-    <Select value={sortBy} onValueChange={setSortBy}>
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Sort by..." />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value={SORT_OPTIONS.NEWEST}>Newest First</SelectItem>
-        <SelectItem value={SORT_OPTIONS.PRICE_LOW}>Price: Low to High</SelectItem>
-        <SelectItem value={SORT_OPTIONS.PRICE_HIGH}>Price: High to Low</SelectItem>
-        <SelectItem value={SORT_OPTIONS.TITLE_AZ}>Title: A to Z</SelectItem>
-        <SelectItem value={SORT_OPTIONS.TITLE_ZA}>Title: Z to A</SelectItem>
-      </SelectContent>
-    </Select>
-  )
+	return (
+		<Select
+			value={sortBy}
+			onValueChange={setSortBy}
+			data-testid="sort-select"
+		>
+			<SelectTrigger className="w-[180px]">
+				<SelectValue placeholder="Sort by..." />
+			</SelectTrigger>
+			<SelectContent>
+				{Object.entries(SORT_OPTIONS).map(([key, value]) => (
+					<SelectItem
+						key={value}
+						value={value}
+						data-testid={`sort-option-${value}`}
+					>
+						{key
+							.split("_")
+							.map(
+								(word) =>
+									word.charAt(0) + word.slice(1).toLowerCase()
+							)
+							.join(" ")}
+					</SelectItem>
+				))}
+			</SelectContent>
+		</Select>
+	);
 }
 
-export default SortSelect 
+export default SortSelect;

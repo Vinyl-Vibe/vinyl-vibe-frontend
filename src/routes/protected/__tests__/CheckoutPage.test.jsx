@@ -12,7 +12,15 @@ vi.mock('../../../components/layout/MainNav', () => ({
 // Mock fetch for Stripe checkout
 const mockFetch = vi.fn()
 global.fetch = mockFetch
-global.window.location.href = vi.fn()
+
+// Mock window.location
+const mockLocation = {
+  href: ''
+}
+Object.defineProperty(window, 'location', {
+  value: mockLocation,
+  writable: true
+})
 
 describe('CheckoutPage', () => {
   beforeEach(() => {
@@ -66,7 +74,7 @@ describe('CheckoutPage', () => {
       })
 
       // Verify redirect
-      expect(window.location.href).toBe(checkoutUrl)
+      expect(mockLocation.href).toBe(checkoutUrl)
     })
   })
 

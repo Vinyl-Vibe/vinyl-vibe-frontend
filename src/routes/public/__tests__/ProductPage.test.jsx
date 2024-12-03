@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { MemoryRouter, useNavigate } from 'react-router-dom'
+import { MemoryRouter } from 'react-router-dom'
 import { useProductStore } from '../../../store/products'
 import ProductPage from '../ProductPage'
 
@@ -10,7 +10,7 @@ vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom')
   return {
     ...actual,
-    useNavigate: () => mockNavigate,
+    useNavigate: () => (...args) => mockNavigate(...args),
     useParams: () => ({ id: '1' })
   }
 })
@@ -30,13 +30,13 @@ describe('ProductPage', () => {
   })
 
   it('should navigate back when back button is clicked', () => {
-    render(
+    const { getByText } = render(
       <MemoryRouter>
         <ProductPage />
       </MemoryRouter>
     )
 
-    fireEvent.click(screen.getByText('Back to Catalog'))
+    fireEvent.click(getByText('Back to Catalog'))
     expect(mockNavigate).toHaveBeenCalledWith(-1)
   })
 }) 

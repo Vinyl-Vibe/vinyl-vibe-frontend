@@ -9,6 +9,7 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
 				size="icon"
 				onClick={() => onPageChange(currentPage - 1)}
 				disabled={currentPage <= 1}
+				aria-label="Go to previous page"
 			>
 				<ChevronLeft className="h-4 w-4" />
 			</Button>
@@ -24,6 +25,7 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
 							}
 							size="sm"
 							onClick={() => onPageChange(pageNum)}
+							aria-label={`Go to page ${pageNum}`}
 						>
 							{pageNum}
 						</Button>
@@ -36,6 +38,7 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
 				size="icon"
 				onClick={() => onPageChange(currentPage + 1)}
 				disabled={currentPage >= totalPages}
+				aria-label="Go to next page"
 			>
 				<ChevronRight className="h-4 w-4" />
 			</Button>

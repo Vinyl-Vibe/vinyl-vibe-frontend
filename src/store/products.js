@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { productsApi } from "../api/products";
+import { handleApiError } from "../lib/api-errors";
 
 export const CATEGORIES = {
 	ALL: "all",
@@ -103,20 +105,20 @@ export const useProductStore = create((set, get) => ({
 	},
 
 	// Fetch products (currently mock data)
-	fetchProducts: async (forceRefresh = false) => {
-		if (get().hasLoaded && !forceRefresh) {
-			return;
-		}
-
+	fetchProducts: async (params) => {
 		set({ isLoading: true, error: null });
 		try {
-			const products = await getMockProducts();
-			set({ products, isLoading: false, hasLoaded: true });
-		} catch (error) {
+			const data = await productsApi.getProducts(params);
 			set({
-				error: "Failed to fetch products",
+				products: data.items,
+				totalPages: data.totalPages,
+				totalItems: data.totalItems,
+				hasLoaded: true,
 				isLoading: false,
 			});
+		} catch (err) {
+			const apiError = handleApiError(err);
+			set({ error: apiError.message, isLoading: false });
 		}
 	},
 

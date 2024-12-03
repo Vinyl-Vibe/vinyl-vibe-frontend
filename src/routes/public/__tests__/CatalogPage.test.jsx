@@ -26,6 +26,14 @@ describe('CatalogPage', () => {
     })
   })
 
+  beforeAll(() => {
+    vi.useFakeTimers()
+  })
+
+  afterAll(() => {
+    vi.useRealTimers()
+  })
+
   it('should render loading state', () => {
     useProductStore.setState({ isLoading: true })
 
@@ -35,7 +43,8 @@ describe('CatalogPage', () => {
       </MemoryRouter>
     )
 
-    expect(screen.getByText('Loading...')).toBeInTheDocument()
+    const skeletons = screen.getAllByTestId('product-skeleton')
+    expect(skeletons).toHaveLength(8)
   })
 
   it('should render products when loaded', async () => {
@@ -84,14 +93,18 @@ describe('CatalogPage', () => {
       </MemoryRouter>
     )
 
-    // Should show 8 skeletons
-    const skeletons = screen.getAllByTestId('skeleton')
+    // Look for product-skeleton instead of skeleton
+    const skeletons = screen.getAllByTestId('product-skeleton')
     expect(skeletons).toHaveLength(8)
   })
 
-  it('should fetch products when not loaded', () => {
+  it('should fetch products when not loaded', async () => {
     const fetchProducts = vi.fn()
-    useProductStore.setState({ fetchProducts, hasLoaded: false })
+    useProductStore.setState({ 
+      fetchProducts, 
+      hasLoaded: false,
+      products: []
+    })
 
     render(
       <MemoryRouter>
@@ -99,7 +112,12 @@ describe('CatalogPage', () => {
       </MemoryRouter>
     )
 
-    expect(fetchProducts).toHaveBeenCalled()
+    // Advance timers to trigger useEffect
+    vi.runAllTimers()
+
+    await waitFor(() => {
+      expect(fetchProducts).toHaveBeenCalled()
+    })
   })
 
   it('should not fetch products when already loaded', () => {
@@ -124,10 +142,13 @@ describe('CatalogPage', () => {
     useProductStore.setState({ refreshProducts })
     
     // Mock direct navigation
-    vi.mock('react-router-dom', async () => ({
-      ...await vi.importActual('react-router-dom'),
-      useLocation: () => ({ key: 'default' })
-    }))
+    vi.mock('react-router-dom', async () => {
+      const actual = await vi.importActual('react-router-dom')
+      return {
+        ...actual,
+        useLocation: () => ({ key: 'default' })
+      }
+    })
 
     render(
       <MemoryRouter>
