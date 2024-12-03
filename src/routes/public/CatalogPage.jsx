@@ -55,15 +55,15 @@ function CatalogPage() {
 	}, [saveScrollPosition]);
 
 	const {
-		items: filteredProducts,
-		totalItems,
-		totalPages,
-	} = getFilteredProducts();
+		items: filteredProducts = [],
+		totalItems = 0,
+		totalPages = 0,
+	} = getFilteredProducts() || {};
 
 	console.log({
 		isLoading,
 		hasLoaded,
-		products: products.length,
+		products: products?.length || 0,
 		filteredProducts: filteredProducts.length,
 		totalItems,
 		totalPages,
@@ -74,7 +74,7 @@ function CatalogPage() {
 	const SKELETON_COUNT = 8;
 
 	// Only show skeleton if we're loading AND we don't have any products cached
-	const showSkeleton = isLoading && !hasLoaded && products.length === 0;
+	const showSkeleton = isLoading && !hasLoaded && (!products || products.length === 0);
 
 	return (
 		<div>
@@ -93,8 +93,7 @@ function CatalogPage() {
 
 					{/* Product count */}
 					<p className="mt-4 text-sm text-gray-500">
-						Showing {filteredProducts.length} of {totalItems}{" "}
-						products
+						Showing {filteredProducts.length} of {totalItems} products
 					</p>
 
 					{error && (

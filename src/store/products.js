@@ -66,7 +66,7 @@ export const useProductStore = create((set, get) => ({
 
 	// Get filtered and sorted products
 	getFilteredProducts: () => {
-		const { products, activeCategory, sortBy, page, pageSize } = get();
+		const { products = [], activeCategory, sortBy, page, pageSize } = get();
 
 		// First filter by category
 		const filtered =
@@ -77,7 +77,7 @@ export const useProductStore = create((set, get) => ({
 				  );
 
 		// Then sort
-		const sorted = [...filtered].sort((a, b) => {
+		const sorted = [...(filtered || [])].sort((a, b) => {
 			switch (sortBy) {
 				case SORT_OPTIONS.PRICE_LOW:
 					return a.price - b.price;
@@ -108,7 +108,13 @@ export const useProductStore = create((set, get) => ({
 	fetchProducts: async (params) => {
 		set({ isLoading: true, error: null });
 		try {
-			const data = await productsApi.getProducts(params);
+			// Temporarily use mock data until API is ready
+			const mockProducts = generateMockProducts();
+			const data = {
+				items: mockProducts,
+				totalPages: 1,
+				totalItems: mockProducts.length
+			};
 			set({
 				products: data.items,
 				totalPages: data.totalPages,
@@ -147,7 +153,8 @@ export const useProductStore = create((set, get) => ({
 
 	// Add method to force refresh products
 	refreshProducts: async () => {
-		return get().fetchProducts(true);
+		// Use the same mock data for now
+		return get().fetchProducts();
 	},
 }));
 
