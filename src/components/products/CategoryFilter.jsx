@@ -9,7 +9,7 @@ function CategoryFilter() {
 			{Object.entries(CATEGORIES).map(([key, value]) => (
 				<Button
 					key={value}
-					variant={activeCategory === value ? "default" : "outline"}
+					variant={activeCategory === value ? "default" : "secondary"}
 					onClick={() => setCategory(value)}
 					data-testid={`category-${value}`}
 				>

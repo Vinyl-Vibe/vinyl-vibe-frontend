@@ -2,8 +2,11 @@ import { Link } from "react-router-dom";
 import { useAuthStore } from "../../store/auth";
 import { useProductStore } from "../../store/products";
 import VinylVibeLogo from "@/assets/icons/vinyl_vibe-logo";
+import { Button } from "../ui/button";
+import { LibraryIcon, SearchIcon, ShoppingCart, User } from "lucide-react";
+import { Input } from "../ui/input";
 
-function MainNav() {
+function MainNav({ children }) {
 	const { isAuthenticated, isAdmin } = useAuthStore();
 	const { resetFilters, refreshProducts } = useProductStore();
 
@@ -13,50 +16,63 @@ function MainNav() {
 	};
 
 	return (
-		<nav className="border-b">
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div className="flex justify-between h-16">
-					<div className="flex">
-						<Link to="/" className="flex items-center">
-							<VinylVibeLogo fill="#09090B" secondaryfill="#DEDEDE" />
-						</Link>
-						<div className="ml-10 flex items-center space-x-4">
+		<>
+			<nav className="fixed top-0 w-full z-50 px-10">
+				<div className="max-w-7xl border mx-auto px-6 backdrop-blur-xl h-20 bg-background/50 z-51">
+					<div className="flex justify-between h-full">
+						<div className="flex">
 							<Link
-								to="/catalog"
-								className="text-sm font-medium"
-								onClick={handleCatalogClick}
+								to="/"
+								className="flex items-center pr-6 border-r"
 							>
-								Catalog
+								<VinylVibeLogo
+									fill="hsl(var(--foreground))"
+									secondaryfill="hsl(var(--border))"
+								/>
 							</Link>
 						</div>
-					</div>
-					<div className="flex items-center space-x-4">
-						{isAdmin && (
-							<Link to="/admin" className="text-sm font-medium">
-								Dashboard
-							</Link>
-						)}
-						{isAuthenticated ? (
-							<>
+						<div className="flex items-center space-x-3">
+							<div className="border-l pl-6 h-full flex items-center space-x-3">
+								<Input type="search" placeholder="Search" />
+							</div>
+							<div className="border-l pl-6 h-full flex items-center space-x-3">
 								<Link
-									to="/account"
+									to="/catalog"
 									className="text-sm font-medium"
+									onClick={handleCatalogClick}
 								>
-									Account
+									<Button size="icon" variant="secondary">
+										<LibraryIcon />
+									</Button>
 								</Link>
-								<button className="text-sm font-medium">
-									Cart (0)
-								</button>
-							</>
-						) : (
-							<Link to="/auth" className="text-sm font-medium">
-								Sign In
-							</Link>
-						)}
+								<Button size="icon" variant="secondary">
+									<ShoppingCart />
+								</Button>
+								{isAuthenticated ? (
+									<>
+										<Button size="icon" variant="secondary">
+											<User />
+										</Button>
+									</>
+								) : (
+									<Link
+										to="/auth"
+										className="text-sm font-medium"
+									>
+										<Button size="icon" variant="secondary">
+											<User />
+										</Button>
+									</Link>
+								)}
+							</div>
+						</div>
 					</div>
 				</div>
+			</nav>
+			<div className="">
+				{children}
 			</div>
-		</nav>
+		</>
 	);
 }
 

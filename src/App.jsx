@@ -18,24 +18,25 @@ import DashboardPage from './routes/admin/DashboardPage'
 // Error pages
 import ForbiddenPage from './routes/error/ForbiddenPage'
 import NotFoundPage from './routes/error/NotFoundPage'
+import MainNav from './components/layout/MainNav'
 
 function App() {
 	return (
 		<AuthProvider>
 			<div className="w-dvw min-h-screen bg-background">
 				<Routes>
-					{/* Public routes */}
-					<Route path="/" element={<HomePage />} />
-					<Route path="/auth" element={<AuthPage />} />
-					<Route path="/catalog" element={<CatalogPage />} />
-					<Route path="/products/:id" element={<ProductPage />} />
-					
+					{/* Public routes - wrapped in MainNav */}
+					<Route path="/" element={<MainNav><HomePage /></MainNav>} />
+					<Route path="/auth" element={<MainNav><AuthPage /></MainNav>} />
+					<Route path="/catalog" element={<MainNav><CatalogPage /></MainNav>} />
+					<Route path="/products/:id" element={<MainNav><ProductPage /></MainNav>} />
+
 					{/* Protected routes */}
-					<Route 
+					<Route
 						path="/checkout" 
 						element={
 							<AuthRoute>
-								<CheckoutPage />
+								<MainNav><CheckoutPage /></MainNav>
 							</AuthRoute>
 						} 
 					/>
