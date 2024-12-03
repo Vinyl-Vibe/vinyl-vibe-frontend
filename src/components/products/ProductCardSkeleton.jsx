@@ -7,7 +7,7 @@
 function ProductCardSkeleton() {
 	return (
 		<div
-			className="group relative h-full w-full"
+			className="group border-[0.5px] relative h-full w-full p-6"
 			data-testid="product-skeleton"
 		>
 			{/* Image skeleton - maintain aspect ratio and full width */}

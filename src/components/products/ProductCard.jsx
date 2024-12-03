@@ -11,7 +11,7 @@ function ProductCard({ product }) {
 
 	return (
 		<div
-			className="group relative h-full w-full"
+			className="group border-[0.5px] relative h-full w-full p-6"
 			data-testid="product-card"
 		>
 			<div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-200">

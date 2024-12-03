@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 function Pagination({ currentPage, totalPages, onPageChange }) {
 	return (
-		<div className="flex items-center justify-center space-x-2 mt-8">
+		<div className="flex items-center justify-center space-x-2 border p-6 mt-[-1px]">
 			<Button
 				variant="outline"
 				size="icon"
@@ -46,4 +46,3 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
 	);
 }
 export default Pagination;
-

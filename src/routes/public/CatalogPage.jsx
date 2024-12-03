@@ -78,60 +78,58 @@ function CatalogPage() {
 		isLoading && !hasLoaded && (!products || products.length === 0);
 
 	return (
-		<div>
-			<main className="mx-auto max-w-7xl pt-[calc(5rem-1px)]">
-				<div className="px-6 pb-6 pt-40 border">
-					<h1 className="text-5xl font-medium tracking-tight">
-						Products
-					</h1>
-				</div>
+		<main className="mx-auto max-w-7xl pt-[calc(5rem-1px)] pb-6">
+			<div className="px-6 pb-6 pt-40 border">
+				<h1 className="text-5xl font-medium tracking-tight">
+					Products
+				</h1>
+			</div>
 
-				{/* Filters and Sort */}
-				<div className="p-6 border mt-[-1px] flex flex-col sm:flex-row justify-between gap-4">
-					<CategoryFilter />
-					<SortSelect />
-				</div>
+			{/* Filters and Sort */}
+			<div className="p-6 border mt-[-1px] flex flex-col sm:flex-row justify-between gap-4">
+				<CategoryFilter />
+				<SortSelect />
+			</div>
 
-				{/* Product count */}
-				{/* <p className="mt-4 text-sm text-gray-500">
+			{/* Product count */}
+			{/* <p className="mt-4 text-sm text-gray-500">
 					Showing {filteredProducts.length} of {totalItems} products
 				</p> */}
 
-				{error && (
-					<Alert variant="destructive" className="mt-6">
-						{error}
-					</Alert>
-				)}
+			{error && (
+				<Alert variant="destructive" className="mt-6">
+					{error}
+				</Alert>
+			)}
 
-				<div className="p-6 border mt-[-1px] transition-all duration-500">
-					<div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
-						{showSkeleton
-							? Array(SKELETON_COUNT)
-									.fill(null)
-									.map((_, index) => (
-										<ProductCardSkeleton key={index} />
-									))
-							: filteredProducts.map((product) => (
-									<div
-										key={product.id}
-										className="animate-in fade-in duration-500"
-									>
-										<ProductCard product={product} />
-									</div>
-							  ))}
-					</div>
-
-					{/* Pagination */}
-					{totalPages > 1 && (
-						<Pagination
-							currentPage={page}
-							totalPages={totalPages}
-							onPageChange={setPage}
-						/>
-					)}
+			<div className="mt-[-1px] transition-all duration-500">
+				<div className="grid border-[0.5px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+					{showSkeleton
+						? Array(SKELETON_COUNT)
+								.fill(null)
+								.map((_, index) => (
+									<ProductCardSkeleton key={index} />
+								))
+						: filteredProducts.map((product) => (
+								<div
+									key={product.id}
+									className="animate-in fade-in duration-500"
+								>
+									<ProductCard product={product} />
+								</div>
+						  ))}
 				</div>
-			</main>
-		</div>
+
+				{/* Pagination */}
+				{totalPages > 1 && (
+					<Pagination
+						currentPage={page}
+						totalPages={totalPages}
+						onPageChange={setPage}
+					/>
+				)}
+			</div>
+		</main>
 	);
 }
 
