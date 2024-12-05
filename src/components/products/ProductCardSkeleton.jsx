@@ -1,8 +1,8 @@
 /* 
-  ProductCardSkeleton: Loading placeholder for ProductCard
-  - Uses responsive sizing to match ProductCard
-  - Maintains aspect ratio across screen sizes
-  - Uses Tailwind's pulse animation
+    ProductCardSkeleton: Loading placeholder for ProductCard
+    - Uses responsive sizing to match ProductCard
+    - Maintains aspect ratio across screen sizes
+    - Uses Tailwind's pulse animation
 */
 function ProductCardSkeleton() {
 	return (

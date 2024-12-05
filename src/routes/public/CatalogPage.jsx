@@ -105,7 +105,7 @@ function CatalogPage() {
 				)}
 
 				<div className="mt-[-1px] transition-all duration-500">
-					<div className="grid border-[0.5px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+					<div className="grid border-[0.5px] grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
 						{showSkeleton
 							? Array(SKELETON_COUNT)
 									.fill(null)
