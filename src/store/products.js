@@ -113,7 +113,7 @@ export const useProductStore = create((set, get) => ({
 			const data = {
 				items: mockProducts,
 				totalPages: 1,
-				totalItems: mockProducts.length
+				totalItems: mockProducts.length,
 			};
 			set({
 				products: data.items,
@@ -162,39 +162,22 @@ export const useProductStore = create((set, get) => ({
 const generateMockProducts = () => {
 	const vinylRecords = [
 		{
-			title: "Dark Side of the Moon",
-			artist: "Pink Floyd",
-			price: 29.99,
-			genre: "Rock",
-			year: 1973,
-		},
-		{
-			title: "Thriller",
-			artist: "Michael Jackson",
-			price: 27.99,
-			genre: "Pop",
-			year: 1982,
-		},
-		{
-			title: "Back in Black",
-			artist: "AC/DC",
-			price: 24.99,
-			genre: "Rock",
-			year: 1980,
-		},
-		{
-			title: "Rumours",
-			artist: "Fleetwood Mac",
-			price: 29.99,
-			genre: "Rock",
-			year: 1977,
-		},
-		{
 			title: "Abbey Road",
 			artist: "The Beatles",
 			price: 32.99,
 			genre: "Rock",
 			year: 1969,
+			thumb_image:
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--Wi0iPJLE--/f_auto,q_auto/v1/product_images/bvvpza1w0or6b7wuzfg0",
+			product_images: [
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--hdwQ9x-m--/f_auto,q_auto/sehnbn3r4eudtibs4d8f",
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--73CAS09g--/f_auto,q_auto/x7pfatacyirshzoizxyc",
+			],
+			category: CATEGORIES.VINYL,
+			condition: "Mint",
+			inStock: true,
+			createdAt: new Date(Date.now() - 4 * 86400000).toISOString(),
+			id: "vinyl-5",
 		},
 		{
 			title: "Kind of Blue",
@@ -202,6 +185,17 @@ const generateMockProducts = () => {
 			price: 34.99,
 			genre: "Jazz",
 			year: 1959,
+			thumb_image:
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--Wi0iPJLE--/f_auto,q_auto/v1/product_images/bvvpza1w0or6b7wuzfg0",
+			product_images: [
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--hdwQ9x-m--/f_auto,q_auto/sehnbn3r4eudtibs4d8f",
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--73CAS09g--/f_auto,q_auto/x7pfatacyirshzoizxyc",
+			],
+			category: CATEGORIES.VINYL,
+			condition: "Mint",
+			inStock: true,
+			createdAt: new Date(Date.now() - 5 * 86400000).toISOString(),
+			id: "vinyl-6",
 		},
 		{
 			title: "Purple Rain",
@@ -209,6 +203,17 @@ const generateMockProducts = () => {
 			price: 28.99,
 			genre: "Pop",
 			year: 1984,
+			thumb_image:
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--Wi0iPJLE--/f_auto,q_auto/v1/product_images/bvvpza1w0or6b7wuzfg0",
+			product_images: [
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--hdwQ9x-m--/f_auto,q_auto/sehnbn3r4eudtibs4d8f",
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--73CAS09g--/f_auto,q_auto/x7pfatacyirshzoizxyc",
+			],
+			category: CATEGORIES.VINYL,
+			condition: "Mint",
+			inStock: true,
+			createdAt: new Date(Date.now() - 6 * 86400000).toISOString(),
+			id: "vinyl-7",
 		},
 		{
 			title: "Blue Train",
@@ -216,6 +221,17 @@ const generateMockProducts = () => {
 			price: 31.99,
 			genre: "Jazz",
 			year: 1957,
+			thumb_image:
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--Wi0iPJLE--/f_auto,q_auto/v1/product_images/bvvpza1w0or6b7wuzfg0",
+			product_images: [
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--hdwQ9x-m--/f_auto,q_auto/sehnbn3r4eudtibs4d8f",
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--73CAS09g--/f_auto,q_auto/x7pfatacyirshzoizxyc",
+			],
+			category: CATEGORIES.VINYL,
+			condition: "Mint",
+			inStock: true,
+			createdAt: new Date(Date.now() - 7 * 86400000).toISOString(),
+			id: "vinyl-8",
 		},
 		{
 			title: "Nevermind",
@@ -223,6 +239,17 @@ const generateMockProducts = () => {
 			price: 26.99,
 			genre: "Rock",
 			year: 1991,
+			thumb_image:
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--Wi0iPJLE--/f_auto,q_auto/v1/product_images/bvvpza1w0or6b7wuzfg0",
+			product_images: [
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--hdwQ9x-m--/f_auto,q_auto/sehnbn3r4eudtibs4d8f",
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--73CAS09g--/f_auto,q_auto/x7pfatacyirshzoizxyc",
+			],
+			category: CATEGORIES.VINYL,
+			condition: "Mint",
+			inStock: true,
+			createdAt: new Date(Date.now() - 8 * 86400000).toISOString(),
+			id: "vinyl-9",
 		},
 		{
 			title: "Legend",
@@ -230,6 +257,17 @@ const generateMockProducts = () => {
 			price: 25.99,
 			genre: "Reggae",
 			year: 1984,
+			thumb_image:
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--Wi0iPJLE--/f_auto,q_auto/v1/product_images/bvvpza1w0or6b7wuzfg0",
+			product_images: [
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--hdwQ9x-m--/f_auto,q_auto/sehnbn3r4eudtibs4d8f",
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--73CAS09g--/f_auto,q_auto/x7pfatacyirshzoizxyc",
+			],
+			category: CATEGORIES.VINYL,
+			condition: "Mint",
+			inStock: true,
+			createdAt: new Date(Date.now() - 9 * 86400000).toISOString(),
+			id: "vinyl-10",
 		},
 		{
 			title: "Random Access Memories",
@@ -237,6 +275,17 @@ const generateMockProducts = () => {
 			price: 35.99,
 			genre: "Electronic",
 			year: 2013,
+			thumb_image:
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--Wi0iPJLE--/f_auto,q_auto/v1/product_images/bvvpza1w0or6b7wuzfg0",
+			product_images: [
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--hdwQ9x-m--/f_auto,q_auto/sehnbn3r4eudtibs4d8f",
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--73CAS09g--/f_auto,q_auto/x7pfatacyirshzoizxyc",
+			],
+			category: CATEGORIES.VINYL,
+			condition: "Mint",
+			inStock: true,
+			createdAt: new Date(Date.now() - 10 * 86400000).toISOString(),
+			id: "vinyl-11",
 		},
 		{
 			title: "The Chronic",
@@ -244,6 +293,17 @@ const generateMockProducts = () => {
 			price: 27.99,
 			genre: "Hip Hop",
 			year: 1992,
+			thumb_image:
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--Wi0iPJLE--/f_auto,q_auto/v1/product_images/bvvpza1w0or6b7wuzfg0",
+			product_images: [
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--hdwQ9x-m--/f_auto,q_auto/sehnbn3r4eudtibs4d8f",
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--73CAS09g--/f_auto,q_auto/x7pfatacyirshzoizxyc",
+			],
+			category: CATEGORIES.VINYL,
+			condition: "Mint",
+			inStock: true,
+			createdAt: new Date(Date.now() - 11 * 86400000).toISOString(),
+			id: "vinyl-12",
 		},
 		{
 			title: "Blue Lines",
@@ -251,6 +311,17 @@ const generateMockProducts = () => {
 			price: 29.99,
 			genre: "Electronic",
 			year: 1991,
+			thumb_image:
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--Wi0iPJLE--/f_auto,q_auto/v1/product_images/bvvpza1w0or6b7wuzfg0",
+			product_images: [
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--hdwQ9x-m--/f_auto,q_auto/sehnbn3r4eudtibs4d8f",
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--73CAS09g--/f_auto,q_auto/x7pfatacyirshzoizxyc",
+			],
+			category: CATEGORIES.VINYL,
+			condition: "Mint",
+			inStock: true,
+			createdAt: new Date(Date.now() - 12 * 86400000).toISOString(),
+			id: "vinyl-13",
 		},
 		{
 			title: "The Rise and Fall of Ziggy Stardust",
@@ -258,6 +329,17 @@ const generateMockProducts = () => {
 			price: 28.99,
 			genre: "Rock",
 			year: 1972,
+			thumb_image:
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--Wi0iPJLE--/f_auto,q_auto/v1/product_images/bvvpza1w0or6b7wuzfg0",
+			product_images: [
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--hdwQ9x-m--/f_auto,q_auto/sehnbn3r4eudtibs4d8f",
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--73CAS09g--/f_auto,q_auto/x7pfatacyirshzoizxyc",
+			],
+			category: CATEGORIES.VINYL,
+			condition: "Mint",
+			inStock: true,
+			createdAt: new Date(Date.now() - 13 * 86400000).toISOString(),
+			id: "vinyl-14",
 		},
 		{
 			title: "Ready to Die",
@@ -265,17 +347,20 @@ const generateMockProducts = () => {
 			price: 29.99,
 			genre: "Hip Hop",
 			year: 1994,
+			thumb_image:
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--Wi0iPJLE--/f_auto,q_auto/v1/product_images/bvvpza1w0or6b7wuzfg0",
+			product_images: [
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--hdwQ9x-m--/f_auto,q_auto/sehnbn3r4eudtibs4d8f",
+				"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--73CAS09g--/f_auto,q_auto/x7pfatacyirshzoizxyc",
+			],
+			category: CATEGORIES.VINYL,
+			condition: "Mint",
+			inStock: true,
+			createdAt: new Date(Date.now() - 14 * 86400000).toISOString(),
+			id: "vinyl-15",
 		},
 		// ... add more vinyl records
-	].map((record, index) => ({
-		id: `vinyl-${index + 1}`,
-		...record,
-		category: CATEGORIES.VINYL,
-		imageUrl: "/images/placeholder.jpg",
-		condition: ["New", "Mint", "Very Good"][Math.floor(Math.random() * 3)],
-		inStock: true,
-		createdAt: new Date(Date.now() - index * 86400000).toISOString(), // Stagger dates
-	}));
+	];
 
 	const turntables = [
 		{ title: "Pro-Ject Debut Carbon EVO", price: 599.99 },
@@ -292,9 +377,12 @@ const generateMockProducts = () => {
 		id: `turntable-${index + 1}`,
 		...turntable,
 		category: CATEGORIES.TURNTABLES,
-		imageUrl: "/images/placeholder.jpg",
 		condition: "New",
 		inStock: true,
+        product_images: [
+            "https://res.cloudinary.com/dmvgqayll/image/authenticated/s--hdwQ9x-m--/f_auto,q_auto/sehnbn3r4eudtibs4d8f",
+            "https://res.cloudinary.com/dmvgqayll/image/authenticated/s--73CAS09g--/f_auto,q_auto/x7pfatacyirshzoizxyc"
+        ],
 		createdAt: new Date(Date.now() - index * 86400000).toISOString(),
 	}));
 
@@ -318,9 +406,12 @@ const generateMockProducts = () => {
 		id: `accessory-${index + 1}`,
 		...accessory,
 		category: CATEGORIES.ACCESSORIES,
-		imageUrl: "/images/placeholder.jpg",
 		condition: "New",
 		inStock: true,
+		product_images: [
+			"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--hdwQ9x-m--/f_auto,q_auto/sehnbn3r4eudtibs4d8f",
+			"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--73CAS09g--/f_auto,q_auto/x7pfatacyirshzoizxyc",
+		],
 		createdAt: new Date(Date.now() - index * 86400000).toISOString(),
 	}));
 
@@ -339,9 +430,12 @@ const generateMockProducts = () => {
 		id: `merch-${index + 1}`,
 		...item,
 		category: CATEGORIES.MERCH,
-		imageUrl: "/images/placeholder.jpg",
 		condition: "New",
 		inStock: true,
+		product_images: [
+			"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--hdwQ9x-m--/f_auto,q_auto/sehnbn3r4eudtibs4d8f",
+			"https://res.cloudinary.com/dmvgqayll/image/authenticated/s--73CAS09g--/f_auto,q_auto/x7pfatacyirshzoizxyc",
+		],
 		createdAt: new Date(Date.now() - index * 86400000).toISOString(),
 	}));
 

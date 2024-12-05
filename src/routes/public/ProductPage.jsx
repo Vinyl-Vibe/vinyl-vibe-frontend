@@ -76,7 +76,7 @@ function ProductPage() {
 		);
 	}
 
-	const { title, artist, price, imageUrl, genre, year, condition } =
+	const { title, artist, price, product_images, genre, year, condition } =
 		currentProduct;
 
 	return (
@@ -97,7 +97,7 @@ function ProductPage() {
 						{/* Product Image */}
 						<div className="aspect-square overflow-hidden rounded-lg bg-gray-100">
 							<img
-								src={imageUrl}
+								src={product_images[0] || "/missing_image.png"}
 								alt={title}
 								className="h-full w-full object-cover object-center"
 							/>

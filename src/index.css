@@ -21,9 +21,6 @@ a {
 	text-decoration: inherit;
 	transition: opacity 0.2s ease-in-out;
 }
-a:hover {
-	opacity: 0.6;
-}
 
 body {
 	margin: 0;
