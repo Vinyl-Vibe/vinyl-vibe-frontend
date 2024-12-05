@@ -16,63 +16,58 @@ function MainNav({ children }) {
 	};
 
 	return (
-		<>
-			<nav className="fixed top-0 w-full z-50 px-10">
-				<div className="max-w-7xl border mx-auto px-6 backdrop-blur-[8px] h-20 bg-background/70 z-51">
-					<div className="flex justify-between h-full">
-						<div className="flex">
-							<Link
-								to="/"
-								className="flex items-center pr-6 border-r"
-							>
-								<VinylVibeLogo
-									fill="hsl(var(--foreground))"
-									secondaryfill="hsl(var(--border))"
-								/>
-							</Link>
+		<nav className="flex justify-center fixed top-0 left-0 right-0 z-50 px-10">
+			<div className="w-full max-w-7xl border px-6 backdrop-blur-[8px] h-20 bg-background/70 z-51">
+				<div className="flex justify-between h-full">
+					<div className="flex">
+						<Link
+							to="/"
+							className="flex items-center pr-6 border-r"
+						>
+							<VinylVibeLogo
+								fill="hsl(var(--foreground))"
+								secondaryfill="hsl(var(--border))"
+							/>
+						</Link>
+					</div>
+					<div className="flex items-center space-x-3">
+						<div className="border-l pl-6 h-full flex items-center space-x-3">
+							<Input type="search" placeholder="Search" />
 						</div>
-						<div className="flex items-center space-x-3">
-							<div className="border-l pl-6 h-full flex items-center space-x-3">
-								<Input type="search" placeholder="Search" />
-							</div>
-							<div className="border-l pl-6 h-full flex items-center space-x-3">
+						<div className="border-l pl-6 h-full flex items-center space-x-3">
+							<Link
+								to="/catalog"
+								className="text-sm font-medium"
+								onClick={handleCatalogClick}
+							>
+								<Button size="icon" variant="secondary">
+									<LibraryIcon />
+								</Button>
+							</Link>
+							<Button size="icon" variant="secondary">
+								<ShoppingCart />
+							</Button>
+							{isAuthenticated ? (
+								<>
+									<Button size="icon" variant="secondary">
+										<User />
+									</Button>
+								</>
+							) : (
 								<Link
-									to="/catalog"
+									to="/auth"
 									className="text-sm font-medium"
-									onClick={handleCatalogClick}
 								>
 									<Button size="icon" variant="secondary">
-										<LibraryIcon />
+										<User />
 									</Button>
 								</Link>
-								<Button size="icon" variant="secondary">
-									<ShoppingCart />
-								</Button>
-								{isAuthenticated ? (
-									<>
-										<Button size="icon" variant="secondary">
-											<User />
-										</Button>
-									</>
-								) : (
-									<Link
-										to="/auth"
-										className="text-sm font-medium"
-									>
-										<Button size="icon" variant="secondary">
-											<User />
-										</Button>
-									</Link>
-								)}
-							</div>
+							)}
 						</div>
 					</div>
 				</div>
-			</nav>
-			<div className="">
-				{children}
 			</div>
-		</>
+		</nav>
 	);
 }
 

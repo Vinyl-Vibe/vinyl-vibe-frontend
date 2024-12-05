@@ -80,7 +80,7 @@ function ProductPage() {
 		currentProduct;
 
 	return (
-		<div>
+		<>
 			<MainNav />
 			<main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 				<div className="py-24 animate-in fade-in duration-500">
@@ -163,7 +163,7 @@ function ProductPage() {
 					</div>
 				</div>
 			</main>
-		</div>
+		</>
 	);
 }
 
