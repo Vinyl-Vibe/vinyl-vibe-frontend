@@ -30,13 +30,13 @@ export const useAuthStore = create((set, get) => ({
 			const data = await authApi.login(credentials);
 
 			// Store token for future API calls
-			localStorage.setItem("token", data.token);
+			localStorage.setItem("token", data.accessToken);
 
 			// Update store with user data and auth status
 			set({
 				user: data.user,
 				isAuthenticated: true,
-				isAdmin: data.user.isAdmin,
+				isAdmin: data.user.role === 'admin',
 				isLoading: false,
 			});
 		} catch (error) {
@@ -73,11 +73,11 @@ export const useAuthStore = create((set, get) => ({
 
 		set({ isLoading: true });
 		try {
-			const user = await authApi.getCurrentUser();
+			const data = await authApi.getCurrentUser();
 			set({
-				user,
+				user: data.user,
 				isAuthenticated: true,
-				isAdmin: user.isAdmin,
+				isAdmin: data.user.role === 'admin',
 				isLoading: false,
 			});
 		} catch (error) {
@@ -96,11 +96,11 @@ export const useAuthStore = create((set, get) => ({
 		set({ isLoading: true, error: null })
 		try {
 			const data = await authApi.register(userData)
-			localStorage.setItem('token', data.token)
+			localStorage.setItem('token', data.accessToken)
 			set({ 
 				user: data.user,
 				isAuthenticated: true,
-				isAdmin: data.user.isAdmin,
+				isAdmin: data.user.role === 'admin',
 				isLoading: false 
 			})
 		} catch (error) {
