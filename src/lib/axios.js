@@ -42,11 +42,13 @@ api.interceptors.response.use(
 			// Try to refresh the token
 			try {
 				const { data } = await api.get("/auth/refresh");
-				localStorage.setItem("token", data.accessToken);
-
+				if (data.token) {
+					localStorage.setItem("token", data.token);
+				}
+				
 				// Retry the original request with new token
 				const config = error.config;
-				config.headers.Authorization = `Bearer ${data.accessToken}`;
+				config.headers.Authorization = `Bearer ${data.token}`;
 				return api(config);
 			} catch (refreshError) {
 				localStorage.removeItem("token");

@@ -28,9 +28,12 @@ export const useAuthStore = create((set, get) => ({
 		set({ isLoading: true, error: null });
 		try {
 			const data = await authApi.login(credentials);
-
+			
 			// Store token for future API calls
-			localStorage.setItem("token", data.accessToken);
+			if (!data.token) {
+				throw new Error('No token received from server');
+			}
+			localStorage.setItem("token", data.token);
 
 			// Update store with user data and auth status
 			set({
@@ -40,12 +43,11 @@ export const useAuthStore = create((set, get) => ({
 				isLoading: false,
 			});
 		} catch (error) {
-			// Handle login failure
 			set({
 				error: error.response?.data?.message || "Login failed",
 				isLoading: false,
 			});
-			throw error; // Re-throw for component-level handling
+			throw error;
 		}
 	},
 
@@ -95,15 +97,22 @@ export const useAuthStore = create((set, get) => ({
 	register: async userData => {
 		set({ isLoading: true, error: null })
 		try {
-			const data = await authApi.register(userData)
-			localStorage.setItem('token', data.accessToken)
-			set({ 
-				user: data.user,
-				isAuthenticated: true,
-				isAdmin: data.user.role === 'admin',
-				isLoading: false 
+			console.log('Register request:', userData);
+			const data = await authApi.register({
+				email: userData.email,
+				password: userData.password,
+				role: userData.isAdmin ? "admin" : "user"
 			})
+			console.log('Register response:', data);
+
+			set({ 
+				isLoading: false,
+				error: null
+			})
+			return { success: true }
+
 		} catch (error) {
+			console.error('Register error:', error);
 			set({ 
 				error: error.response?.data?.message || 'Registration failed',
 				isLoading: false 

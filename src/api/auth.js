@@ -13,7 +13,7 @@ export const authApi = {
 	login: async (credentials) => {
 		const { data } = await api.post("/auth/login", {
 			email: credentials.email,
-			password: credentials.password
+			password: credentials.password,
 		});
 		return data;
 	},
@@ -23,17 +23,13 @@ export const authApi = {
 		const { data } = await api.post("/auth/register", {
 			email: userData.email,
 			password: userData.password,
-			firstName: userData.firstName,
-			lastName: userData.lastName,
-			phoneNumber: userData.phoneNumber,
-			address: {
-				street: userData.street,
-				city: userData.city,
-				state: userData.state,
-				postalCode: userData.postalCode,
-				country: userData.country
+			role: userData.role,
+			onRequest: (config) => {
+				console.log('Registration payload:', config.data);
+				return config;
 			}
 		});
+		console.log('Registration response:', data);
 		return data;
 	},
 
@@ -48,13 +44,29 @@ export const authApi = {
 	// Used to restore auth state on page refresh
 	getCurrentUser: async () => {
 		const { data } = await api.get("/auth/refresh");
-		localStorage.setItem("token", data.accessToken);
+		if (data.token) {
+			localStorage.setItem("token", data.token);
+		}
 		return data;
 	},
 
 	// Add refresh token endpoint
 	refreshToken: async () => {
 		const { data } = await api.get("/auth/refresh");
+		if (data.token) {
+			localStorage.setItem("token", data.token);
+		}
 		return data;
-	}
+	},
+
+	// Add method to update user profile
+	updateProfile: async (profileData) => {
+		const { data } = await api.put(`/users/${profileData.userId}`, {
+			profile: {
+				firstName: profileData.firstName,
+				lastName: profileData.lastName,
+			},
+		});
+		return data;
+	},
 };
