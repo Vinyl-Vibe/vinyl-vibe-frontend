@@ -114,8 +114,20 @@ function AuthForm() {
         setFormState((prev) => ({ ...prev, isLoading: true, error: null }));
 
         const formData = new FormData(e.target);
+        const email = formData.get("email").trim();
+
+        // Basic email validation
+        if (!email || !email.includes('@')) {
+            setFormState((prev) => ({
+                ...prev,
+                isLoading: false,
+                error: "Please enter a valid email address",
+            }));
+            return;
+        }
+
         try {
-            await requestPasswordReset(formData.get("email"));
+            await requestPasswordReset(email);
             setFormState((prev) => ({
                 ...prev,
                 isLoading: false,
@@ -128,18 +140,18 @@ function AuthForm() {
             
             // Handle specific error cases
             if (err.response?.status === 500) {
-                errorMessage = "Server error. Please try again later.";
-            } else if (err.message.includes('Too many attempts')) {
-                errorMessage = err.message; // Use the specific wait time message
+                errorMessage = "Unable to process request. Please try again later or contact support if the problem persists.";
             } else if (err.response?.status === 400) {
                 errorMessage = err.response.data?.message || "Invalid email address";
+            } else if (err.message === "Error updating user") {
+                errorMessage = "Unable to process reset request. Please try again later.";
             }
             
             setFormState((prev) => ({
                 ...prev,
                 isLoading: false,
                 error: errorMessage,
-                resetEmailSent: false // Reset this in case of error
+                resetEmailSent: false
             }));
         }
     }

@@ -86,13 +86,9 @@ export const authApi = {
                 headers: error.response?.headers
             });
 
-            // Handle rate limiting specifically
-            if (error.response?.headers['x-ratelimit-remaining'] === '0') {
-                const resetTime = error.response?.headers['x-ratelimit-reset'];
-                const waitMinutes = Math.ceil((resetTime - Date.now() / 1000) / 60);
-                throw new Error(
-                    `Too many attempts. Please wait ${waitMinutes} minutes before trying again.`
-                );
+            // If we get a specific error message from the server, use it
+            if (error.response?.data?.message) {
+                throw new Error(error.response.data.message);
             }
 
             throw error;
