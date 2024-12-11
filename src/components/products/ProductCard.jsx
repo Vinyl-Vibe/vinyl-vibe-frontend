@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
     - Will add "Add to Cart" functionality later
 */
 function ProductCard({ product }) {
-    const { _id, name, artist, price, thumb_image } = product;
+    const { _id, name, artist, price, thumb_image, brand } = product;
 
     return (
         <div
@@ -15,8 +15,8 @@ function ProductCard({ product }) {
             data-testid="product-card"
         >
             <div className="mb-2 flex justify-between">
-                <p className="text-xs font-medium uppercase">{artist}</p>
-                <p className="text-sm font-medium">${price}</p>
+                <p className="text-xs font-medium uppercase">{artist || brand}</p>
+                {/* <p className="text-sm font-medium">${price}</p> */}
             </div>
 
             <div className="aspect-square w-full overflow-hidden rounded-lg">
