@@ -8,16 +8,16 @@ import { useAuthStore } from "../../store/auth";
     - Renders children once auth check is complete
 */
 function AuthProvider({ children }) {
-	const { loadUser, isLoading } = useAuthStore();
+    const { loadUser, isLoading } = useAuthStore();
 
-	useEffect(() => {
-		const token = localStorage.getItem('token')
-		if (token) {
-			loadUser();
-		}
-	}, [loadUser]);
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            loadUser();
+        }
+    }, [loadUser]);
 
-	return children;
+    return children;
 }
 
 export default AuthProvider;

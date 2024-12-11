@@ -21,45 +21,45 @@ import ForbiddenPage from "./routes/error/ForbiddenPage";
 import NotFoundPage from "./routes/error/NotFoundPage";
 
 function App() {
-	return (
-		<AuthProvider>
-			<UserProvider>
-				<div className="w-dvw min-h-screen px-10 bg-background">
-					<Routes>
-						{/* Public routes - wrapped in MainNav */}
-						<Route path="/" element={<HomePage />} />
-						<Route path="/auth" element={<AuthPage />} />
-						<Route path="/catalog" element={<CatalogPage />} />
-						<Route path="/products/:id" element={<ProductPage />} />
+    return (
+        <AuthProvider>
+            <UserProvider>
+                <div className="min-h-screen w-dvw bg-background px-10">
+                    <Routes>
+                        {/* Public routes - wrapped in MainNav */}
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/auth" element={<AuthPage />} />
+                        <Route path="/catalog" element={<CatalogPage />} />
+                        <Route path="/products/:id" element={<ProductPage />} />
 
-						{/* Protected routes */}
-						<Route
-							path="/checkout"
-							element={
-								<AuthRoute>
-									<CheckoutPage />
-								</AuthRoute>
-							}
-						/>
+                        {/* Protected routes */}
+                        <Route
+                            path="/checkout"
+                            element={
+                                <AuthRoute>
+                                    <CheckoutPage />
+                                </AuthRoute>
+                            }
+                        />
 
-						{/* Admin routes */}
-						<Route
-							path="/admin/*"
-							element={
-								<AdminRoute>
-									<DashboardPage />
-								</AdminRoute>
-							}
-						/>
+                        {/* Admin routes */}
+                        <Route
+                            path="/admin/*"
+                            element={
+                                <AdminRoute>
+                                    <DashboardPage />
+                                </AdminRoute>
+                            }
+                        />
 
-						{/* Error pages */}
-						<Route path="/403" element={<ForbiddenPage />} />
-						<Route path="*" element={<NotFoundPage />} />
-					</Routes>
-				</div>
-			</UserProvider>
-		</AuthProvider>
-	);
+                        {/* Error pages */}
+                        <Route path="/403" element={<ForbiddenPage />} />
+                        <Route path="*" element={<NotFoundPage />} />
+                    </Routes>
+                </div>
+            </UserProvider>
+        </AuthProvider>
+    );
 }
 
 export default App;

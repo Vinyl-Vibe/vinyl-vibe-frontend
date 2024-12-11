@@ -10,7 +10,7 @@ import { Input } from "../ui/input";
 function MainNav({ children }) {
 	const { isAuthenticated, isAdmin } = useAuthStore();
 	const { profile } = useUserStore();
-	console.log('MainNav profile:', profile);
+	console.log("MainNav profile:", profile);
 	const { resetFilters, refreshProducts } = useProductStore();
 	const location = useLocation();
 
@@ -19,7 +19,7 @@ function MainNav({ children }) {
 		refreshProducts();
 	};
 
-	const isCatalogPage = location.pathname === '/catalog';
+	const isCatalogPage = location.pathname === "/catalog";
 
 	return (
 		<nav className="flex justify-center fixed top-0 left-0 right-0 z-50 px-10">
@@ -46,7 +46,12 @@ function MainNav({ children }) {
 								className="text-sm font-medium"
 								onClick={handleCatalogClick}
 							>
-								<Button size="icon" variant={isCatalogPage ? "default" : "secondary"}>
+								<Button
+									size="icon"
+									variant={
+										isCatalogPage ? "default" : "secondary"
+									}
+								>
 									<LibraryIcon />
 								</Button>
 							</Link>
@@ -57,9 +62,9 @@ function MainNav({ children }) {
 								<>
 									<Button variant="secondary">
 										<User />
-										{profile?.email 
-											? `${profile.email}` 
-											: 'My Account'}
+										{profile?.email
+											? `${profile.email}`
+											: "My Account"}
 									</Button>
 								</>
 							) : (

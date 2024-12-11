@@ -9,23 +9,23 @@ import PropTypes from "prop-types";
     - Renders protected content if admin
 */
 function AdminRoute({ children }) {
-	const { isAuthenticated, isAdmin } = useAuthStore();
+    const { isAuthenticated, isAdmin } = useAuthStore();
 
-	// Redirect to login if not authenticated
-	if (!isAuthenticated) {
-		return <Navigate to="/auth" replace />;
-	}
+    // Redirect to login if not authenticated
+    if (!isAuthenticated) {
+        return <Navigate to="/auth" replace />;
+    }
 
-	// Show forbidden error if authenticated but not admin
-	if (!isAdmin) {
-		return <Navigate to="/403" replace />;
-	}
+    // Show forbidden error if authenticated but not admin
+    if (!isAdmin) {
+        return <Navigate to="/403" replace />;
+    }
 
-	return children;
+    return children;
 }
 
 AdminRoute.propTypes = {
-	children: PropTypes.node.isRequired,
+    children: PropTypes.node.isRequired,
 };
 
 export default AdminRoute;
