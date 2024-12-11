@@ -73,17 +73,17 @@ export const authApi = {
     // Request password reset email
     requestPasswordReset: async (email) => {
         try {
-            const { data } = await api.post("/auth/forgot-password", { 
-                email: email.trim()
+            const { data } = await api.post("/auth/forgot-password", {
+                email: email.trim(),
             });
             return data;
         } catch (error) {
             // Log the error for debugging
-            console.error('Password reset request error:', {
+            console.error("Password reset request error:", {
                 status: error.response?.status,
                 message: error.response?.data?.message || error.message,
                 data: error.response?.data,
-                headers: error.response?.headers
+                headers: error.response?.headers,
             });
 
             // If we get a specific error message from the server, use it
@@ -99,7 +99,7 @@ export const authApi = {
     resetPassword: async (token, newPassword) => {
         const { data } = await api.post("/auth/reset-password", {
             token,
-            password: newPassword
+            password: newPassword,
         });
         if (data.token) {
             localStorage.setItem("token", data.token);
