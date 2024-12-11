@@ -72,8 +72,31 @@ export const authApi = {
 
     // Request password reset email
     requestPasswordReset: async (email) => {
-        const { data } = await api.post("/auth/forgot-password", { email });
-        return data;
+        try {
+            const { data } = await api.post("/auth/forgot-password", { 
+                email: email.trim()
+            });
+            return data;
+        } catch (error) {
+            // Log the error for debugging
+            console.error('Password reset request error:', {
+                status: error.response?.status,
+                message: error.response?.data?.message || error.message,
+                data: error.response?.data,
+                headers: error.response?.headers
+            });
+
+            // Handle rate limiting specifically
+            if (error.response?.headers['x-ratelimit-remaining'] === '0') {
+                const resetTime = error.response?.headers['x-ratelimit-reset'];
+                const waitMinutes = Math.ceil((resetTime - Date.now() / 1000) / 60);
+                throw new Error(
+                    `Too many attempts. Please wait ${waitMinutes} minutes before trying again.`
+                );
+            }
+
+            throw error;
+        }
     },
 
     // Reset password with token

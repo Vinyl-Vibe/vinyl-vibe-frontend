@@ -123,10 +123,23 @@ function AuthForm() {
                 error: null,
             }));
         } catch (err) {
+            console.error('Forgot password error:', err);
+            let errorMessage = "Failed to send reset email";
+            
+            // Handle specific error cases
+            if (err.response?.status === 500) {
+                errorMessage = "Server error. Please try again later.";
+            } else if (err.message.includes('Too many attempts')) {
+                errorMessage = err.message; // Use the specific wait time message
+            } else if (err.response?.status === 400) {
+                errorMessage = err.response.data?.message || "Invalid email address";
+            }
+            
             setFormState((prev) => ({
                 ...prev,
                 isLoading: false,
-                error: err.message || "Failed to send reset email",
+                error: errorMessage,
+                resetEmailSent: false // Reset this in case of error
             }));
         }
     }
