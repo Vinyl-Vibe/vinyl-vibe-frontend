@@ -29,6 +29,7 @@ function App() {
                         {/* Public routes - wrapped in MainNav */}
                         <Route path="/" element={<HomePage />} />
                         <Route path="/auth" element={<AuthPage />} />
+                        <Route path="/reset-password" element={<AuthPage />} />
                         <Route path="/catalog" element={<CatalogPage />} />
                         <Route path="/products/:id" element={<ProductPage />} />
 

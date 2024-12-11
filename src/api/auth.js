@@ -82,6 +82,9 @@ export const authApi = {
             token,
             password: newPassword
         });
+        if (data.token) {
+            localStorage.setItem("token", data.token);
+        }
         return data;
     },
 };

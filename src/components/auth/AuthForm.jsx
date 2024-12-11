@@ -137,19 +137,30 @@ function AuthForm() {
 
         const formData = new FormData(e.target);
         try {
-            await resetPassword(resetToken, formData.get("password"));
-            setFormState((prev) => ({
-                ...prev,
-                isLoading: false,
-                resetSuccess: true,
-                error: null,
-                activeTab: "login"
-            }));
+            const data = await resetPassword(resetToken, formData.get("password"));
+            // If we got a new auth token, we're logged in
+            if (data.token) {
+                navigate(from, { replace: true });
+            } else {
+                setFormState((prev) => ({
+                    ...prev,
+                    isLoading: false,
+                    resetSuccess: true,
+                    error: null,
+                    activeTab: "login"
+                }));
+            }
         } catch (err) {
+            let errorMessage = "Failed to reset password";
+            if (err.response?.status === 401) {
+                errorMessage = "Reset link has expired. Please request a new one.";
+            } else if (err.response?.status === 400) {
+                errorMessage = "Password must be at least 8 characters long";
+            }
             setFormState((prev) => ({
                 ...prev,
                 isLoading: false,
-                error: err.message || "Failed to reset password",
+                error: errorMessage,
             }));
         }
     }
