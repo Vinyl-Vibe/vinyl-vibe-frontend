@@ -94,29 +94,29 @@ export const useAuthStore = create((set, get) => ({
     },
 
     // Add register function
-    register: async (userData) => {
-        set({ isLoading: true, error: null });
+    register: async userData => {
+        set({ isLoading: true, error: null })
         try {
-            console.log("Register request:", userData);
+            console.log('Register request:', userData)
             const data = await authApi.register({
                 email: userData.email,
                 password: userData.password,
-                role: userData.isAdmin ? "admin" : "user",
-            });
-            console.log("Register response:", data);
+                role: "user"  // All new registrations are regular users
+            })
+            console.log('Register response:', data)
 
-            set({
+            set({ 
                 isLoading: false,
-                error: null,
-            });
-            return { success: true };
+                error: null
+            })
+            return { success: true }
         } catch (error) {
-            console.error("Register error:", error);
+            console.error("Register error:", error)
             set({
                 error: error.response?.data?.message || "Registration failed",
                 isLoading: false,
-            });
-            throw error;
+            })
+            throw error
         }
     },
 }));

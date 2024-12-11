@@ -9,6 +9,7 @@ import ProductDetailsSkeleton from "../../components/products/ProductDetailsSkel
 
 function ProductPage() {
     const { id } = useParams();
+    console.log('Product ID from URL:', id);
     const navigate = useNavigate();
     const {
         getProduct,
@@ -20,6 +21,10 @@ function ProductPage() {
     } = useProductStore();
 
     useEffect(() => {
+        if (!id) {
+            console.error('No product ID provided');
+            return;
+        }
         fetchProduct(id);
     }, [id, fetchProduct]);
 
@@ -76,7 +81,7 @@ function ProductPage() {
         );
     }
 
-    const { title, artist, price, product_images, genre, year, condition } =
+    const { name, artist, price, product_images, genre, year, condition } =
         currentProduct;
 
     return (
@@ -97,8 +102,8 @@ function ProductPage() {
                         {/* Product Image */}
                         <div className="aspect-square overflow-hidden rounded-lg bg-gray-100">
                             <img
-                                src={product_images[0] || "/missing_image.png"}
-                                alt={title}
+                                src={(product_images && product_images[0]) || "/missing_image.png"}
+                                alt={name}
                                 className="h-full w-full object-cover object-center"
                             />
                         </div>
@@ -106,7 +111,7 @@ function ProductPage() {
                         {/* Product Info */}
                         <div className="flex flex-col">
                             <h1 className="text-3xl font-bold tracking-tight">
-                                {title}
+                                {name}
                             </h1>
                             {artist && (
                                 <p className="mt-2 text-lg text-gray-500">

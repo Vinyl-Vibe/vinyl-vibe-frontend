@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
     - Will add "Add to Cart" functionality later
 */
 function ProductCard({ product }) {
-    const { id, title, artist, price, thumb_image } = product;
+    const { _id, name, artist, price, thumb_image } = product;
 
     return (
         <div
@@ -22,16 +22,16 @@ function ProductCard({ product }) {
             <div className="aspect-square w-full overflow-hidden rounded-lg">
                 <img
                     src={thumb_image || "/missing_image.png"}
-                    alt={title}
+                    alt={name}
                     className={`h-full w-full scale-90 object-cover object-center ${thumb_image ? "" : "opacity-50"}`}
                 />
             </div>
 
             <div className="mt-4 flex justify-between">
                 <h3 className="text-base font-semibold tracking-[-0.02rem]">
-                    <Link to={`/products/${id}`}>
+                    <Link to={`/products/${_id}`}>
                         <span aria-hidden="true" className="absolute inset-0" />
-                        {title}
+                        {name}
                     </Link>
                 </h3>
                 <p className="text-base tracking-[-0.02rem]">${price}</p>

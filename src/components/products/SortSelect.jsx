@@ -10,6 +10,15 @@ import { SORT_OPTIONS, useProductStore } from "../../store/products";
 function SortSelect() {
     const { sortBy, setSortBy } = useProductStore();
 
+    // Create a human-readable label map for sort options
+    const sortLabels = {
+        PRICE_LOW: "Price: Low to High",
+        PRICE_HIGH: "Price: High to Low",
+        NEWEST: "Newest First",
+        NAME_AZ: "Name: A to Z",
+        NAME_ZA: "Name: Z to A"
+    };
+
     return (
         <Select
             value={sortBy}
@@ -20,20 +29,13 @@ function SortSelect() {
                 <SelectValue placeholder="Sort by..." />
             </SelectTrigger>
             <SelectContent>
-                {Object.entries(SORT_OPTIONS).map(([key, value]) => (
+                {Object.keys(SORT_OPTIONS).map((key) => (
                     <SelectItem
-                        key={value}
-                        value={value}
-                        data-testid={`sort-option-${value}`}
+                        key={key}
+                        value={key}
+                        data-testid={`sort-option-${key}`}
                     >
-                        {key
-                            .split("_")
-                            .map(
-                                (word) =>
-                                    word.charAt(0) +
-                                    word.slice(1).toLowerCase(),
-                            )
-                            .join(" ")}
+                        {sortLabels[key]}
                     </SelectItem>
                 ))}
             </SelectContent>

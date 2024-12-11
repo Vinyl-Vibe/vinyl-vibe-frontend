@@ -62,7 +62,6 @@ function AuthForm() {
             await register({
                 email: formData.get("email"),
                 password: formData.get("password"),
-                role: formData.get("isAdmin") === "on" ? "admin" : "user",
             });
 
             // Immediately switch to login tab and show success message
@@ -212,21 +211,6 @@ function AuthForm() {
                                         required
                                         disabled={formState.isLoading}
                                     />
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <input
-                                        type="checkbox"
-                                        id="isAdmin"
-                                        name="isAdmin"
-                                        className="h-5 w-5 rounded-full accent-accent"
-                                        disabled={formState.isLoading}
-                                    />
-                                    <Label
-                                        htmlFor="isAdmin"
-                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                    >
-                                        Admin Account
-                                    </Label>
                                 </div>
                                 <Button
                                     type="submit"
