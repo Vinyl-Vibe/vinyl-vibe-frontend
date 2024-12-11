@@ -119,4 +119,36 @@ export const useAuthStore = create((set, get) => ({
             throw error
         }
     },
+
+    // Request password reset
+    requestPasswordReset: async (email) => {
+        set({ isLoading: true, error: null });
+        try {
+            await authApi.requestPasswordReset(email);
+            set({ isLoading: false });
+            return { success: true };
+        } catch (error) {
+            set({
+                error: error.response?.data?.message || "Failed to send reset email",
+                isLoading: false,
+            });
+            throw error;
+        }
+    },
+
+    // Reset password with token
+    resetPassword: async (token, newPassword) => {
+        set({ isLoading: true, error: null });
+        try {
+            await authApi.resetPassword(token, newPassword);
+            set({ isLoading: false });
+            return { success: true };
+        } catch (error) {
+            set({
+                error: error.response?.data?.message || "Failed to reset password",
+                isLoading: false,
+            });
+            throw error;
+        }
+    },
 }));

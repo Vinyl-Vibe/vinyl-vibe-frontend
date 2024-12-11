@@ -24,7 +24,7 @@ function App() {
     return (
         <AuthProvider>
             <UserProvider>
-                <div className="min-h-screen w-dvw bg-background px-10">
+                <div className="flex h-screen w-dvw flex-col bg-background px-10">
                     <Routes>
                         {/* Public routes - wrapped in MainNav */}
                         <Route path="/" element={<HomePage />} />

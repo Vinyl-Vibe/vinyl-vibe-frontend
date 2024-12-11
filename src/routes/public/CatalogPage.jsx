@@ -80,7 +80,7 @@ function CatalogPage() {
     return (
         <>
             <MainNav />
-            <main className="mx-auto max-w-7xl pb-6 pt-[calc(5rem-1px)]">
+            <main className="mx-auto w-full max-w-7xl pb-6 pt-[calc(5rem-1px)]">
                 <div className="border px-6 pb-6 pt-40">
                     <h1 className="text-5xl font-medium tracking-tight">
                         Products
@@ -110,11 +110,11 @@ function CatalogPage() {
                             ? Array(SKELETON_COUNT)
                                   .fill(null)
                                   .map((_, index) => (
-                                      <ProductCardSkeleton key={index} />
+                                      <ProductCardSkeleton key={`skeleton-${index}`} />
                                   ))
                             : filteredProducts.map((product) => (
                                   <div
-                                      key={product.id}
+                                      key={product._id}
                                       className="duration-500 animate-in fade-in"
                                   >
                                       <ProductCard product={product} />
