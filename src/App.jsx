@@ -20,6 +20,13 @@ import DashboardPage from "./routes/admin/DashboardPage";
 import ForbiddenPage from "./routes/error/ForbiddenPage";
 import NotFoundPage from "./routes/error/NotFoundPage";
 
+import AuthCallback from "./components/auth/AuthCallback";
+import { setupAxiosInterceptors } from "./lib/axios";
+import { tokenStorage } from "./lib/token";
+
+// Initialize axios interceptors with tokenStorage
+setupAxiosInterceptors(tokenStorage);
+
 function App() {
     return (
         <AuthProvider>
@@ -56,6 +63,12 @@ function App() {
                         {/* Error pages */}
                         <Route path="/403" element={<ForbiddenPage />} />
                         <Route path="*" element={<NotFoundPage />} />
+
+                        {/* Add auth callback route */}
+                        <Route
+                            path="/auth/callback"
+                            element={<AuthCallback />}
+                        />
                     </Routes>
                 </div>
             </UserProvider>
