@@ -261,7 +261,7 @@ function AuthForm() {
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    className="font-regular h-12 w-full bg-white text-[.9rem] [&_svg]:size-6"
+                                    className="font-regular h-12 w-full rounded-xl bg-white text-[.9rem] shadow-none hover:bg-white/30 [&_svg]:size-6"
                                     onClick={handleAppleLogin}
                                     disabled={formState.isLoading}
                                 >
