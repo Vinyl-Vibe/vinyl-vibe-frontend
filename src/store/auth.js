@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { authApi } from "../api/auth";
+import { tokenStorage } from "../lib/token";
 
 /* 
     Auth Store using Zustand
@@ -33,7 +34,9 @@ export const useAuthStore = create((set, get) => ({
             if (!data.token) {
                 throw new Error("No token received from server");
             }
-            localStorage.setItem("token", data.token);
+            if (!tokenStorage.set(data.token)) {
+                throw new Error("Invalid token format");
+            }
 
             // Update store with user data and auth status
             set({
@@ -58,6 +61,7 @@ export const useAuthStore = create((set, get) => ({
             await authApi.logout();
         } finally {
             // Always clear auth state, even if API call fails
+            tokenStorage.remove();
             set({
                 user: null,
                 isAuthenticated: false,
@@ -68,28 +72,57 @@ export const useAuthStore = create((set, get) => ({
     },
 
     // Load user data using stored token
-    // Called on app startup to restore auth state
+    // Called on app startup and after social login
     loadUser: async () => {
-        // Skip if no token exists
-        if (!localStorage.getItem("token")) return;
-
-        set({ isLoading: true });
-        try {
-            const data = await authApi.getCurrentUser();
-            set({
-                user: data.user,
-                isAuthenticated: true,
-                isAdmin: data.user.role === "admin",
-                isLoading: false,
-            });
-        } catch (error) {
-            // Clear auth state if token is invalid
+        if (!tokenStorage.isValid()) {
+            console.log('loadUser: No valid token found');
             set({
                 user: null,
                 isAuthenticated: false,
                 isAdmin: false,
                 isLoading: false,
+                error: null
             });
+            return;
+        }
+
+        set({ isLoading: true, error: null });
+        try {
+            console.log('loadUser: Fetching user data...');
+            const { user } = await authApi.getCurrentUser();
+            
+            if (!user) {
+                throw new Error('Invalid user data');
+            }
+
+            console.log('loadUser: User data received:', user);
+
+            // Update all state in one set call
+            set(state => ({
+                ...state,
+                user,
+                isAuthenticated: true,
+                isAdmin: user.role === "admin",
+                isLoading: false,
+                error: null
+            }));
+
+            return user;
+        } catch (error) {
+            console.error('loadUser error:', error);
+            tokenStorage.remove();
+            
+            // Update all state in one set call
+            set(state => ({
+                ...state,
+                user: null,
+                isAuthenticated: false,
+                isAdmin: false,
+                isLoading: false,
+                error: error.message || "Failed to load user data"
+            }));
+            
+            throw error;
         }
     },
 

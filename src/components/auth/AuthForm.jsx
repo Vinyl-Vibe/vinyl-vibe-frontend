@@ -15,6 +15,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Loader2, CheckCircle2, TriangleAlert } from "lucide-react";
 import { Separator } from "../ui/separator";
+import { FcGoogle } from "react-icons/fc";
+import { FaApple } from "react-icons/fa";
 
 /* 
     AuthForm: Combined login/register form with tab navigation
@@ -26,7 +28,8 @@ import { Separator } from "../ui/separator";
 function AuthForm() {
     const navigate = useNavigate();
     const location = useLocation();
-    const { login, register, requestPasswordReset, resetPassword, error } = useAuthStore();
+    const { login, register, requestPasswordReset, resetPassword, error } =
+        useAuthStore();
     const [formState, setFormState] = useState({
         isLoading: false,
         activeTab: "login",
@@ -38,12 +41,12 @@ function AuthForm() {
 
     // Get reset token from URL if present
     const searchParams = new URLSearchParams(location.search);
-    const resetToken = searchParams.get('token');
+    const resetToken = searchParams.get("token");
 
     // If reset token is present, show reset password tab
     useEffect(() => {
         if (resetToken) {
-            handleTabChange('reset-password');
+            handleTabChange("reset-password");
         }
     }, [resetToken]);
 
@@ -117,7 +120,7 @@ function AuthForm() {
         const email = formData.get("email").trim();
 
         // Basic email validation
-        if (!email || !email.includes('@')) {
+        if (!email || !email.includes("@")) {
             setFormState((prev) => ({
                 ...prev,
                 isLoading: false,
@@ -135,23 +138,26 @@ function AuthForm() {
                 error: null,
             }));
         } catch (err) {
-            console.error('Forgot password error:', err);
+            console.error("Forgot password error:", err);
             let errorMessage = "Failed to send reset email";
-            
+
             // Handle specific error cases
             if (err.response?.status === 500) {
-                errorMessage = "Unable to process request. Please try again later or contact support if the problem persists.";
+                errorMessage =
+                    "Unable to process request. Please try again later or contact support if the problem persists.";
             } else if (err.response?.status === 400) {
-                errorMessage = err.response.data?.message || "Invalid email address";
+                errorMessage =
+                    err.response.data?.message || "Invalid email address";
             } else if (err.message === "Error updating user") {
-                errorMessage = "Unable to process reset request. Please try again later.";
+                errorMessage =
+                    "Unable to process reset request. Please try again later.";
             }
-            
+
             setFormState((prev) => ({
                 ...prev,
                 isLoading: false,
                 error: errorMessage,
-                resetEmailSent: false
+                resetEmailSent: false,
             }));
         }
     }
@@ -162,7 +168,10 @@ function AuthForm() {
 
         const formData = new FormData(e.target);
         try {
-            const data = await resetPassword(resetToken, formData.get("password"));
+            const data = await resetPassword(
+                resetToken,
+                formData.get("password"),
+            );
             // If we got a new auth token, we're logged in
             if (data.token) {
                 navigate(from, { replace: true });
@@ -172,13 +181,14 @@ function AuthForm() {
                     isLoading: false,
                     resetSuccess: true,
                     error: null,
-                    activeTab: "login"
+                    activeTab: "login",
                 }));
             }
         } catch (err) {
             let errorMessage = "Failed to reset password";
             if (err.response?.status === 401) {
-                errorMessage = "Reset link has expired. Please request a new one.";
+                errorMessage =
+                    "Reset link has expired. Please request a new one.";
             } else if (err.response?.status === 400) {
                 errorMessage = "Password must be at least 8 characters long";
             }
@@ -199,27 +209,79 @@ function AuthForm() {
         }));
     };
 
+    // Add social login handlers
+    const handleGoogleLogin = () => {
+        window.location.href =
+            process.env.NODE_ENV === "production"
+                ? "https://api.vinylvibe.live/auth/google"
+                : "http://localhost:8080/auth/google";
+    };
+
+    const handleAppleLogin = () => {
+        window.location.href = "https://api.vinylvibe.live/auth/apple";
+    };
+
     return (
         <Card className="w-[400px] border-0 bg-transparent shadow-none">
-            <CardHeader className="pb-8">
+            <CardHeader className="pb-5">
                 <CardTitle className="text-3xl font-medium">
                     {formState.activeTab === "login"
                         ? "Welcome back"
                         : formState.activeTab === "register"
-                        ? "Create an account"
-                        : formState.activeTab === "forgot-password"
-                        ? "Forgotten password"
-                        : "Set new password"}
+                          ? "Create an account"
+                          : formState.activeTab === "forgot-password"
+                            ? "Forgotten password"
+                            : "Set new password"}
                 </CardTitle>
                 <CardDescription className="text-base">
                     {formState.activeTab === "login"
                         ? "Login to your account to continue."
                         : formState.activeTab === "register"
-                        ? "Sign up for an account to get started."
-                        : formState.activeTab === "forgot-password"
-                        ? "Request a password reset link below."
-                        : "Enter your new password below."}
+                          ? "Sign up for an account to get started."
+                          : formState.activeTab === "forgot-password"
+                            ? "Request a password reset link below."
+                            : "Enter your new password below."}
                 </CardDescription>
+                {(formState.activeTab === "login" ||
+                    formState.activeTab === "register") && (
+                    <div className="mt-6">
+                        <div className="mt-8 flex flex-row gap-4">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="font-regular h-12 w-full rounded-xl bg-white text-[.9rem] shadow-none hover:bg-white/30 [&_svg]:size-6"
+                                onClick={handleGoogleLogin}
+                                disabled={formState.isLoading}
+                            >
+                                <FcGoogle className="mr-1" />
+                                Google
+                            </Button>
+
+                            {process.env.NODE_ENV === "production" && (
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="font-regular h-12 w-full bg-white text-[.9rem] [&_svg]:size-6"
+                                    onClick={handleAppleLogin}
+                                    disabled={formState.isLoading}
+                                >
+                                    <FaApple className="mr-2 h-5 w-5" />
+                                    Apple
+                                </Button>
+                            )}
+                        </div>
+                        <div className="relative mt-6">
+                            <div className="absolute inset-0 flex items-center">
+                                <Separator />
+                            </div>
+                            <div className="relative flex justify-center text-sm">
+                                <span className="bg-background px-4 text-muted-foreground">
+                                    or
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </CardHeader>
             <CardContent>
                 <Tabs
@@ -265,7 +327,9 @@ function AuthForm() {
                                         <button
                                             type="button"
                                             onClick={() => {
-                                                handleTabChange('forgot-password')
+                                                handleTabChange(
+                                                    "forgot-password",
+                                                );
                                             }}
                                             className="text-sm text-muted-foreground hover:text-primary hover:underline"
                                             disabled={formState.isLoading}
@@ -385,7 +449,9 @@ function AuthForm() {
                                             Check your email
                                         </AlertTitle>
                                         <AlertDescription className="text-green-700">
-                                            If an account exists with this email, you will receive password reset instructions.
+                                            If an account exists with this
+                                            email, you will receive password
+                                            reset instructions.
                                         </AlertDescription>
                                     </Alert>
                                 ) : (
@@ -418,7 +484,10 @@ function AuthForm() {
                                 )}
 
                                 {formState.error && (
-                                    <Alert variant="destructive" className="mt-2">
+                                    <Alert
+                                        variant="destructive"
+                                        className="mt-2"
+                                    >
                                         <TriangleAlert className="h-4 w-4" />
                                         <AlertDescription>
                                             {formState.error}
@@ -443,13 +512,17 @@ function AuthForm() {
                                             Password Reset Successful
                                         </AlertTitle>
                                         <AlertDescription className="text-green-700">
-                                            Your password has been reset. You can now log in with your new password.
+                                            Your password has been reset. You
+                                            can now log in with your new
+                                            password.
                                         </AlertDescription>
                                     </Alert>
                                 ) : (
                                     <>
                                         <div className="mb-2 grid gap-2">
-                                            <Label htmlFor="password">New Password</Label>
+                                            <Label htmlFor="password">
+                                                New Password
+                                            </Label>
                                             <Input
                                                 className="h-12 rounded-xl"
                                                 id="password"
@@ -475,7 +548,10 @@ function AuthForm() {
                                 )}
 
                                 {formState.error && (
-                                    <Alert variant="destructive" className="mt-2">
+                                    <Alert
+                                        variant="destructive"
+                                        className="mt-2"
+                                    >
                                         <TriangleAlert className="h-4 w-4" />
                                         <AlertDescription>
                                             {formState.error}

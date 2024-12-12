@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useAuthStore } from "../../store/auth";
+import { tokenStorage } from "../../lib/token";
 
 /* 
     AuthProvider: Manages authentication state on app load
@@ -11,8 +12,7 @@ function AuthProvider({ children }) {
     const { loadUser, isLoading } = useAuthStore();
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
+        if (tokenStorage.isValid()) {
             loadUser();
         }
     }, [loadUser]);

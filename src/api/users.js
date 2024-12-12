@@ -3,22 +3,14 @@ import api from "../lib/axios";
 export const usersApi = {
     // Get current user's profile
     getCurrentUserProfile: async () => {
-        // First get the current user's ID from the token
-        const { data: authData } = await api.get("/auth/refresh");
-        // Then get the full user profile using the ID
-        const { data: userData } = await api.get(`/users/${authData.user.id}`);
-        return userData;
+        const { data } = await api.get("/auth/me");
+        return data.user;
     },
 
     // Update user's profile
     updateProfile: async (profileData) => {
         const { data } = await api.put(`/users/${profileData.userId}`, {
-            profile: {
-                firstName: profileData.firstName,
-                lastName: profileData.lastName,
-                phoneNumber: profileData.phoneNumber,
-                address: profileData.address,
-            },
+            profile: profileData
         });
         return data;
     },

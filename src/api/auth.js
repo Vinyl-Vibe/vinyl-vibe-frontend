@@ -1,4 +1,5 @@
 import api from "../lib/axios";
+import { tokenStorage } from "../lib/token";
 
 /* 
     Auth API Module
@@ -37,27 +38,31 @@ export const authApi = {
     // Even if API call fails, we still clear local token
     logout: async () => {
         await api.post("/auth/logout");
-        localStorage.removeItem("token");
+        tokenStorage.remove();
     },
 
     // Get current user data using stored token
     // Used to restore auth state on page refresh
     getCurrentUser: async () => {
-        const { data } = await api.get("/auth/refresh");
-        if (data.token) {
-            localStorage.setItem("token", data.token);
+        console.log("getCurrentUser - Token:", tokenStorage.get());
+        try {
+            const { data } = await api.get("/auth/me");
+            console.log("getCurrentUser Response:", data);
+            return data;
+        } catch (error) {
+            console.error("getCurrentUser Error:", error.response?.data);
+            throw error;
         }
-        return data;
     },
 
-    // Add refresh token endpoint
-    refreshToken: async () => {
-        const { data } = await api.get("/auth/refresh");
-        if (data.token) {
-            localStorage.setItem("token", data.token);
-        }
-        return data;
-    },
+    // Remove or comment out refreshToken if not needed yet
+    // refreshToken: async () => {
+    //     const { data } = await api.get("/auth/refresh");
+    //     if (data.token) {
+    //         localStorage.setItem("token", data.token);
+    //     }
+    //     return data;
+    // },
 
     // Add method to update user profile
     updateProfile: async (profileData) => {
@@ -102,7 +107,7 @@ export const authApi = {
             password: newPassword,
         });
         if (data.token) {
-            localStorage.setItem("token", data.token);
+            tokenStorage.set(data.token);
         }
         return data;
     },

@@ -10,22 +10,19 @@ export const useUserStore = create((set) => ({
     loadProfile: async () => {
         set({ isLoading: true, error: null });
         try {
-            const data = await usersApi.getCurrentUserProfile();
-            console.log("UserStore loadProfile data:", data);
+            const userData = await usersApi.getCurrentUserProfile();
             set({
-                profile: data,
+                profile: userData,
                 isLoading: false,
+                error: null
             });
-            // Store new token if provided
-            if (data.token) {
-                localStorage.setItem("token", data.token);
-            }
         } catch (error) {
             console.error("UserStore loadProfile error:", error);
+            // Don't throw, just update state
             set({
-                error:
-                    error.response?.data?.message || "Failed to load profile",
-                isLoading: false,
+                profile: null,
+                error: error.response?.data?.message || "Failed to load profile",
+                isLoading: false
             });
         }
     },
@@ -41,8 +38,7 @@ export const useUserStore = create((set) => ({
             });
         } catch (error) {
             set({
-                error:
-                    error.response?.data?.message || "Failed to update profile",
+                error: error.response?.data?.message || "Failed to update profile",
                 isLoading: false,
             });
             throw error;
