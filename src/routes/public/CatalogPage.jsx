@@ -59,9 +59,9 @@ function CatalogPage() {
                 <div className="mt-[-1px] transition-all duration-500">
                     <div className="grid grid-cols-1 gap-[1px] border sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
                         {isLoading ? (
-                            <>
+                            <div className="ring-1 ring-offset-0 ring-border duration-500 animate-in fade-in">
                                 <ProductCardSkeleton count={12} />
-                            </>
+                            </div>
                         ) : products.length > 0 ? (
                             products.map((product) => (
                                 <div

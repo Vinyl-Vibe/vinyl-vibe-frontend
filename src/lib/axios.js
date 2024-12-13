@@ -1,9 +1,10 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: process.env.NODE_ENV === 'development' 
-        ? "http://localhost:8080"
-        : "https://api.vinylvibe.live",
+    baseURL:
+        process.env.NODE_ENV === "development"
+            ? "http://localhost:8080"
+            : "https://api.vinylvibe.live",
     headers: {
         "Content-Type": "application/json",
     },
@@ -15,7 +16,7 @@ export const setupAxiosInterceptors = (tokenStorage) => {
             config.headers.Authorization = `Bearer ${tokenStorage.get()}`;
             console.log("API Request:", {
                 fullUrl: `${config.baseURL}${config.url}`,
-                method: config.method
+                method: config.method,
             });
         }
         return config;
@@ -27,7 +28,9 @@ export const setupAxiosInterceptors = (tokenStorage) => {
             console.log("Response Error:", {
                 url: error.config?.url,
                 status: error.response?.status,
-                message: error.response?.data?.error || error.response?.data?.message,
+                message:
+                    error.response?.data?.error ||
+                    error.response?.data?.message,
             });
 
             if (error.response?.status === 401) {
