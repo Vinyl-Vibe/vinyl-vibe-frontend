@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuthStore } from "../../store/auth";
 import { useUserStore } from "../../store/user";
@@ -6,20 +7,25 @@ import VinylVibeLogo from "@/assets/icons/vinyl_vibe-logo";
 import { Button } from "../ui/button";
 import { LibraryIcon, SearchIcon, ShoppingCart, User } from "lucide-react";
 import { Input } from "../ui/input";
+import CartSheet from "../cart/CartSheet";
 
-function MainNav({ children }) {
+function MainNav() {
 	const { isAuthenticated, isAdmin } = useAuthStore();
 	const { profile } = useUserStore();
-	console.log("MainNav profile:", profile);
-	const { resetFilters, refreshProducts } = useProductStore();
+	const { resetFilters, refreshProducts } = useProductStore() || {};
 	const location = useLocation();
 
-	const handleCatalogClick = () => {
-		resetFilters();
-		refreshProducts();
-	};
+	// Memoize the navigation items to prevent unnecessary re-renders
+	const isActive = (path) => location.pathname === path;
 
-	const isCatalogPage = location.pathname === "/catalog";
+	const handleCatalogClick = () => {
+		if (typeof resetFilters === 'function') {
+			resetFilters();
+		}
+		if (typeof refreshProducts === 'function') {
+			refreshProducts();
+		}
+	};
 
 	return (
 		<nav className="flex justify-center fixed top-0 left-0 right-0 z-50 px-10">
@@ -49,15 +55,13 @@ function MainNav({ children }) {
 								<Button
 									size="icon"
 									variant={
-										isCatalogPage ? "secondary" : ""
+										isActive("/catalog") ? "secondary" : ""
 									}
 								>
 									<LibraryIcon />
 								</Button>
 							</Link>
-							<Button size="icon" variant="">
-								<ShoppingCart />
-							</Button>
+							<CartSheet />
 							{isAuthenticated ? (
 								<>
 									<Button variant="">
@@ -85,4 +89,5 @@ function MainNav({ children }) {
 	);
 }
 
-export default MainNav;
+// Memoize the entire component
+export default memo(MainNav);

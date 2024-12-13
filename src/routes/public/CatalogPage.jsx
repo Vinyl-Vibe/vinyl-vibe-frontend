@@ -28,12 +28,18 @@ function CatalogPage() {
         totalPages,
         totalProducts,
         activeCategory,
+        resetFilters,
     } = useProductStore();
     const location = useLocation();
 
     useEffect(() => {
         fetchProducts();
     }, [fetchProducts]);
+
+    // Reset filters when unmounting catalog page
+    useEffect(() => {
+        return () => resetFilters();
+    }, [resetFilters]);
 
     return (
         <>
