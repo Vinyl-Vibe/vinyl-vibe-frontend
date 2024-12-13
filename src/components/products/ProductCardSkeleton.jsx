@@ -4,31 +4,36 @@
     - Maintains aspect ratio across screen sizes
     - Uses Tailwind's pulse animation
 */
-function ProductCardSkeleton() {
-    return (
-        <div
-            className="group relative h-full w-full border-[0.5px] p-6"
-            data-testid="product-skeleton"
-        >
-            {/* Image skeleton - maintain aspect ratio and full width */}
-            <div className="aspect-square w-full animate-pulse overflow-hidden rounded-lg bg-gray-200">
-                {/* Maintain aspect ratio */}
-                <div className="h-full w-full" />
-            </div>
-
-            {/* Content skeleton - match exact spacing and dimensions of ProductCard */}
-            <div className="mt-4 flex justify-between">
-                <div>
-                    {/* Title skeleton - match text-sm font-medium dimensions */}
-                    <div className="h-5 w-32 animate-pulse rounded bg-gray-200" />
-                    {/* Artist skeleton - match text-sm text-gray-500 dimensions */}
-                    <div className="mt-1 h-5 w-24 animate-pulse rounded bg-gray-200 opacity-75" />
+function ProductCardSkeleton({ count = 12 }) {
+    return Array(count)
+        .fill(null)
+        .map((_, index) => (
+            <div
+                key={`skeleton-${index}`}
+                className="group relative flex h-full w-full flex-col p-6"
+                data-testid="product-skeleton"
+            >
+                {/* Top row */}
+                <div className="mb-4 flex w-full justify-between">
+                    <div className="h-4 w-24 animate-pulse rounded bg-gray-200/50" />
+                    <div className="h-4 w-24 animate-pulse rounded bg-gray-200/50" />
                 </div>
-                {/* Price skeleton - match text-sm font-medium dimensions */}
-                <div className="h-5 w-12 animate-pulse rounded bg-gray-200" />
+
+                {/* Center image container */}
+                <div className="relative aspect-square w-full">
+                    {/* Centered scaled image */}
+                    <div className="absolute left-1/2 top-1/2 aspect-square w-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse overflow-hidden rounded-lg bg-gray-200/50">
+                        <div className="h-full w-full" />
+                    </div>
+                </div>
+
+                {/* Bottom row */}
+                <div className="mt-4 flex w-full justify-between">
+                    <div className="h-4 w-24 animate-pulse rounded bg-gray-200/50" />
+                    <div className="h-4 w-24 animate-pulse rounded bg-gray-200/50" />
+                </div>
             </div>
-        </div>
-    );
+        ));
 }
 
 export default ProductCardSkeleton;

@@ -26,7 +26,7 @@ function CatalogPage() {
         setPage,
         totalPages,
         totalProducts,
-        activeCategory
+        activeCategory,
     } = useProductStore();
     const location = useLocation();
 
@@ -50,13 +50,6 @@ function CatalogPage() {
                     <SortSelect />
                 </div>
 
-                {/* Product count */}
-                {!isLoading && (
-                    <p className="mt-4 text-sm text-gray-500">
-                        Showing {products.length} of {totalProducts} products
-                    </p>
-                )}
-
                 {error && (
                     <Alert variant="destructive" className="mt-6">
                         {error}
@@ -64,18 +57,56 @@ function CatalogPage() {
                 )}
 
                 <div className="mt-[-1px] transition-all duration-500">
-                    <div className="grid grid-cols-1 border-[0.5px] sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-[1px] border sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
                         {isLoading ? (
-                            <ProductCardSkeleton count={12} />
-                        ) : (
+                            <>
+                                <ProductCardSkeleton count={12} />
+                            </>
+                        ) : products.length > 0 ? (
                             products.map((product) => (
                                 <div
                                     key={product._id}
-                                    className="duration-500 animate-in fade-in"
+                                    className="ring-1 ring-offset-0 ring-border duration-500 animate-in fade-in"
                                 >
                                     <ProductCard product={product} />
                                 </div>
                             ))
+                        ) : (
+                            <div className="col-span-full flex min-h-[400px] flex-col items-center justify-center gap-4 border-[0.5px] p-6 text-center">
+                                <div className="rounded-full bg-muted p-3">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="24"
+                                        height="24"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="h-6 w-6"
+                                    >
+                                        <circle cx="12" cy="12" r="10" />
+                                        <line x1="12" x2="12" y1="8" y2="12" />
+                                        <line
+                                            x1="12"
+                                            x2="12.01"
+                                            y1="16"
+                                            y2="16"
+                                        />
+                                    </svg>
+                                </div>
+                                <div className="space-y-2">
+                                    <h3 className="text-xl font-semibold">
+                                        No products found
+                                    </h3>
+                                    <p className="text-muted-foreground">
+                                        {activeCategory
+                                            ? `No products found in the ${activeCategory} category.`
+                                            : "No products found. Please try a different search or check back later."}
+                                    </p>
+                                </div>
+                            </div>
                         )}
                     </div>
 
