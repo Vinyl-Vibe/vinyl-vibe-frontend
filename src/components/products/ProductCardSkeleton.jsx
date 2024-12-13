@@ -10,7 +10,7 @@ function ProductCardSkeleton({ count = 12 }) {
         .map((_, index) => (
             <div
                 key={`skeleton-${index}`}
-                className="group relative flex h-full w-full flex-col p-6"
+                className="group relative flex h-full w-full flex-col p-6 ring-1 ring-border/50 ring-offset-0"
                 data-testid="product-skeleton"
             >
                 {/* Top row */}

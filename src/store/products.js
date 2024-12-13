@@ -83,8 +83,15 @@ export const useProductStore = create((set, get) => ({
             });
         } catch (err) {
             console.error('Product fetch error:', err);
-            const apiError = handleApiError(err);
-            set({ error: apiError.message, isLoading: false });
+            set({ 
+                error: {
+                    message: err.message || 'Failed to load products',
+                    response: err.response,
+                    status: err.response?.status,
+                    data: err.response?.data
+                }, 
+                isLoading: false 
+            });
         }
     },
 

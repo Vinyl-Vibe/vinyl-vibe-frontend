@@ -5,7 +5,8 @@ import CategoryFilter from "../../components/products/CategoryFilter";
 import SortSelect from "../../components/products/SortSelect";
 import ProductCardSkeleton from "../../components/products/ProductCardSkeleton";
 import { useProductStore, CATEGORIES } from "../../store/products";
-import { Alert } from "../../components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
+import { AlertCircle } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import Pagination from "../../components/ui/pagination";
 
@@ -50,29 +51,23 @@ function CatalogPage() {
                     <SortSelect />
                 </div>
 
-                {error && (
-                    <Alert variant="destructive" className="mt-6">
-                        {error}
-                    </Alert>
-                )}
-
                 <div className="mt-[-1px] transition-all duration-500">
                     <div className="grid grid-cols-1 gap-[1px] border sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
                         {isLoading ? (
-                            <div className="ring-1 ring-offset-0 ring-border duration-500 animate-in fade-in">
+                            <>
                                 <ProductCardSkeleton count={12} />
-                            </div>
+                            </>
                         ) : products.length > 0 ? (
                             products.map((product) => (
                                 <div
                                     key={product._id}
-                                    className="ring-1 ring-offset-0 ring-border duration-500 animate-in fade-in"
+                                    className="ring-1 ring-border ring-offset-0 duration-500 animate-in fade-in"
                                 >
                                     <ProductCard product={product} />
                                 </div>
                             ))
                         ) : (
-                            <div className="col-span-full flex min-h-[400px] flex-col items-center justify-center gap-4 border-[0.5px] p-6 text-center">
+                            <div className="col-span-full flex min-h-[400px] flex-col items-center justify-center gap-4 border-[0.5px] p-6">
                                 <div className="rounded-full bg-muted p-3">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -96,7 +91,7 @@ function CatalogPage() {
                                         />
                                     </svg>
                                 </div>
-                                <div className="space-y-2">
+                                <div className="space-y-2 text-center">
                                     <h3 className="text-xl font-semibold">
                                         No products found
                                     </h3>
@@ -106,6 +101,38 @@ function CatalogPage() {
                                             : "No products found. Please try a different search or check back later."}
                                     </p>
                                 </div>
+                                {error && (
+                                    <Alert
+                                        variant="destructive"
+                                        className="mt-4 max-w-sm rounded-xl bg-red-500/10 [&>svg]:top-3"
+                                    >
+                                        <AlertCircle className="h-4 w-4" />
+                                        <AlertTitle>
+                                            Error loading products
+                                        </AlertTitle>
+                                        <AlertDescription className="mt-2">
+                                            <div className="space-y-2">
+                                                <p>{error.message || error}</p>
+                                                {error.response?.data
+                                                    ?.message && (
+                                                    <p className="text-sm text-red-300">
+                                                        Server message:{" "}
+                                                        {
+                                                            error.response.data
+                                                                .message
+                                                        }
+                                                    </p>
+                                                )}
+                                                {error.response?.status && (
+                                                    <p className="text-sm text-red-300">
+                                                        Status code:{" "}
+                                                        {error.response.status}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </AlertDescription>
+                                    </Alert>
+                                )}
                             </div>
                         )}
                     </div>
