@@ -16,7 +16,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Loader2, CheckCircle2, TriangleAlert } from "lucide-react";
 import { Separator } from "../ui/separator";
 import { FcGoogle } from "react-icons/fc";
-import { FaApple } from "react-icons/fa";
 
 /* 
     AuthForm: Combined login/register form with tab navigation
@@ -217,10 +216,6 @@ function AuthForm() {
                 : "http://localhost:8080/auth/google";
     };
 
-    const handleAppleLogin = () => {
-        window.location.href = "https://api.vinylvibe.live/auth/apple";
-    };
-
     return (
         <Card className="w-[400px] border-0 bg-transparent shadow-none">
             <CardHeader className="pb-5">
@@ -256,19 +251,6 @@ function AuthForm() {
                                 <FcGoogle className="mr-1" />
                                 Google
                             </Button>
-
-                            {process.env.NODE_ENV === "production" && (
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    className="font-regular h-12 w-full rounded-xl bg-white text-[.9rem] shadow-none hover:bg-white/30 [&_svg]:size-6"
-                                    onClick={handleAppleLogin}
-                                    disabled={formState.isLoading}
-                                >
-                                    <FaApple className="mr-2 h-5 w-5" />
-                                    Apple
-                                </Button>
-                            )}
                         </div>
                         <div className="relative mt-6">
                             <div className="absolute inset-0 flex items-center">

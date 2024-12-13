@@ -5,8 +5,8 @@ import { handleApiError } from "../lib/api-errors";
 export const CATEGORIES = {
     ALL: "all",
     VINYL: "vinyl",
-    TURNTABLES: "turntables",
-    ACCESSORIES: "accessories",
+    TURNTABLES: "turntable",
+    ACCESSORIES: "accessory",
     MERCH: "merch",
 };
 
@@ -37,93 +37,47 @@ export const useProductStore = create((set, get) => ({
             activeCategory: category,
             page: 1, // Reset to first page when changing category
         });
+        get().fetchProducts(); // Fetch new results immediately
     },
 
     setSortBy: (sortOption) => {
         set({
             sortBy: sortOption,
-            page: 1, // Reset to first page when changing sort order
+            page: 1, // Reset to first page when changing sort
         });
-    },
-
-    saveScrollPosition: (position) => {
-        set({ scrollPosition: position });
+        get().fetchProducts(); // Fetch new results immediately
     },
 
     setPage: (page) => {
         set({ page });
+        get().fetchProducts(); // Fetch new results immediately
     },
 
-    // Reset store to default state
-    resetFilters: () => {
-        set({
-            activeCategory: CATEGORIES.ALL,
-            sortBy: 'NEWEST',
-            page: 1,
-            scrollPosition: 0,
-        });
-    },
+    // Remove getFilteredProducts as filtering is now done server-side
 
-    // Get filtered and sorted products
-    getFilteredProducts: () => {
-        const { products = [], activeCategory, sortBy, page, pageSize } = get();
-
-        // First filter by category
-        const filtered =
-            activeCategory === CATEGORIES.ALL
-                ? products
-                : products.filter(
-                      (product) => product.category === activeCategory,
-                  );
-
-        // Then sort
-        const sorted = [...(filtered || [])].sort((a, b) => {
-            const sortOption = SORT_OPTIONS[sortBy];
-            if (!sortOption) return 0;
-
-            const { sort, order } = sortOption;
-            const multiplier = order === 'desc' ? -1 : 1;
-
-            switch (sort) {
-                case 'price':
-                    return multiplier * (a.price - b.price);
-                case 'createdAt':
-                    return multiplier * (new Date(a.createdAt) - new Date(b.createdAt));
-                case 'name':
-                    return multiplier * a.name.localeCompare(b.name);
-                default:
-                    return 0;
-            }
-        });
-
-        // Then paginate
-        const start = (page - 1) * pageSize;
-        const end = start + pageSize;
-        return {
-            items: sorted.slice(start, end),
-            totalItems: sorted.length,
-            totalPages: Math.ceil(sorted.length / pageSize),
-        };
-    },
-
-    // Fetch products from API
-    fetchProducts: async (params) => {
+    fetchProducts: async (params = {}) => {
         set({ isLoading: true, error: null });
         try {
-            const { sortBy, activeCategory } = get();
+            const { sortBy, activeCategory, page, pageSize } = get();
             const sortOption = SORT_OPTIONS[sortBy];
             
-            const data = await productsApi.getProducts({
-                type: activeCategory === CATEGORIES.ALL ? undefined : activeCategory,
+            const { products, pagination } = await productsApi.getProducts({
+                page,
+                limit: pageSize,
+                type: activeCategory === CATEGORIES.ALL ? undefined : activeCategory.toLowerCase(),
                 sort: sortOption?.sort,
                 order: sortOption?.order,
                 ...params
             });
 
+            console.log('API Response:', { products, pagination });
+
             set({
-                products: data.products || [],
-                totalPages: Math.ceil((data.products || []).length / get().pageSize),
-                totalProducts: (data.products || []).length,
+                products: products || [],
+                totalPages: pagination.totalPages || 1,
+                totalProducts: pagination.totalProducts || 0,
+                page: pagination.currentPage || 1,
+                pageSize: pagination.productsPerPage || 12,
                 hasLoaded: true,
                 isLoading: false,
             });

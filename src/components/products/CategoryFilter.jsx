@@ -5,16 +5,15 @@ function CategoryFilter() {
     const { activeCategory, setCategory } = useProductStore();
 
     return (
-        <div className="flex flex-wrap gap-2" data-testid="category-filter">
+        <div className="flex flex-wrap gap-2">
             {Object.entries(CATEGORIES).map(([key, value]) => (
                 <Button
-                    key={value}
+                    key={key}
                     variant={activeCategory === value ? "default" : "secondary"}
                     onClick={() => setCategory(value)}
-                    data-testid={`category-${value}`}
+                    className="text-sm"
                 >
-                    {key.charAt(0) +
-                        key.slice(1).toLowerCase().replace("_", " ")}
+                    {key === 'ALL' ? 'All Products' : key.charAt(0) + key.slice(1).toLowerCase()}
                 </Button>
             ))}
         </div>

@@ -4,7 +4,7 @@ import ProductCard from "../../components/products/ProductCard";
 import CategoryFilter from "../../components/products/CategoryFilter";
 import SortSelect from "../../components/products/SortSelect";
 import ProductCardSkeleton from "../../components/products/ProductCardSkeleton";
-import { useProductStore } from "../../store/products";
+import { useProductStore, CATEGORIES } from "../../store/products";
 import { Alert } from "../../components/ui/alert";
 import { useLocation } from "react-router-dom";
 import Pagination from "../../components/ui/pagination";
@@ -20,62 +20,19 @@ function CatalogPage() {
         isLoading,
         error,
         fetchProducts,
-        refreshProducts,
-        getFilteredProducts,
-        scrollPosition,
-        saveScrollPosition,
         products,
         hasLoaded,
         page,
         setPage,
+        totalPages,
+        totalProducts,
+        activeCategory
     } = useProductStore();
     const location = useLocation();
 
     useEffect(() => {
-        if (location.key === "default") {
-            refreshProducts();
-        } else {
-            fetchProducts();
-        }
-    }, [fetchProducts, refreshProducts, location]);
-
-    useEffect(() => {
-        if (scrollPosition > 0) {
-            window.scrollTo(0, scrollPosition);
-        }
-    }, [scrollPosition]);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            saveScrollPosition(window.scrollY);
-        };
-
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, [saveScrollPosition]);
-
-    const {
-        items: filteredProducts = [],
-        totalItems = 0,
-        totalPages = 0,
-    } = getFilteredProducts() || {};
-
-    console.log({
-        isLoading,
-        hasLoaded,
-        products: products?.length || 0,
-        filteredProducts: filteredProducts.length,
-        totalItems,
-        totalPages,
-        page,
-    });
-
-    // Number of skeleton cards to show during loading
-    const SKELETON_COUNT = 8;
-
-    // Only show skeleton if we're loading AND we don't have any products cached
-    const showSkeleton =
-        isLoading && !hasLoaded && (!products || products.length === 0);
+        fetchProducts();
+    }, [fetchProducts]);
 
     return (
         <>
@@ -94,9 +51,11 @@ function CatalogPage() {
                 </div>
 
                 {/* Product count */}
-                {/* <p className="mt-4 text-sm text-gray-500">
-					Showing {filteredProducts.length} of {totalItems} products
-				</p> */}
+                {!isLoading && (
+                    <p className="mt-4 text-sm text-gray-500">
+                        Showing {products.length} of {totalProducts} products
+                    </p>
+                )}
 
                 {error && (
                     <Alert variant="destructive" className="mt-6">
@@ -106,24 +65,22 @@ function CatalogPage() {
 
                 <div className="mt-[-1px] transition-all duration-500">
                     <div className="grid grid-cols-1 border-[0.5px] sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-                        {showSkeleton
-                            ? Array(SKELETON_COUNT)
-                                  .fill(null)
-                                  .map((_, index) => (
-                                      <ProductCardSkeleton key={`skeleton-${index}`} />
-                                  ))
-                            : filteredProducts.map((product) => (
-                                  <div
-                                      key={product._id}
-                                      className="duration-500 animate-in fade-in"
-                                  >
-                                      <ProductCard product={product} />
-                                  </div>
-                              ))}
+                        {isLoading ? (
+                            <ProductCardSkeleton count={12} />
+                        ) : (
+                            products.map((product) => (
+                                <div
+                                    key={product._id}
+                                    className="duration-500 animate-in fade-in"
+                                >
+                                    <ProductCard product={product} />
+                                </div>
+                            ))
+                        )}
                     </div>
 
-                    {/* Pagination */}
-                    {totalPages > 1 && (
+                    {/* Only show pagination when we have data and more than one page */}
+                    {!isLoading && totalPages > 1 && (
                         <Pagination
                             currentPage={page}
                             totalPages={totalPages}

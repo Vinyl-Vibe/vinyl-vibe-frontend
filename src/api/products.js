@@ -6,20 +6,25 @@ export const productsApi = {
     // Returns: { items: Product[], totalItems: number, totalPages: number, currentPage: number }
     getProducts: async (params) => {
         console.log('API call params:', params);
-        // Support all query parameters: type, search, price-min, price-max, in-stock, sort, order
         const { data } = await api.get("/products", { 
             params: {
-                type: params.category,
+                page: params.page,
+                limit: params.limit,
+                type: params.type,
+                sort: params.sort,
+                order: params.order,
                 search: params.search,
                 'price-min': params.priceMin,
                 'price-max': params.priceMax,
-                'in-stock': params.inStock,
-                sort: params.sort,
-                order: params.order
+                'in-stock': params.inStock
             }
         });
-        console.log('Raw API response:', data);
-        return data;
+        
+        // Extract pagination data from response
+        return {
+            products: data.products,
+            pagination: data.pagination
+        };
     },
 
     // Fetches a single product by its ID
