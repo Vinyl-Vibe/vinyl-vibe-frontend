@@ -1,30 +1,22 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import MainNav from "../../components/layout/MainNav";
 import { useProductStore } from "../../store/products";
-import { Alert } from "../../components/ui/alert";
+import { useCartStore } from "../../store/cart";
+import MainNav from "../../components/layout/MainNav";
 import { Button } from "../../components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { Alert } from "../../components/ui/alert";
+import { ArrowLeft, Loader2, Minus, Plus } from "lucide-react";
 import ProductDetailsSkeleton from "../../components/products/ProductDetailsSkeleton";
 
 function ProductPage() {
     const { id } = useParams();
-    console.log('Product ID from URL:', id);
     const navigate = useNavigate();
-    const {
-        getProduct,
-        currentProduct,
-        isLoading,
-        error,
-        fetchProduct,
-        scrollPosition,
-    } = useProductStore();
+    const { currentProduct, isLoading, error, fetchProduct } =
+        useProductStore();
+    const { addItem, isLoading: isAddingToCart } = useCartStore();
+    const [quantity, setQuantity] = useState(1);
 
     useEffect(() => {
-        if (!id) {
-            console.error('No product ID provided');
-            return;
-        }
         fetchProduct(id);
     }, [id, fetchProduct]);
 
@@ -32,23 +24,27 @@ function ProductPage() {
         navigate(-1);
     };
 
+    const handleAddToCart = async () => {
+        try {
+            await addItem(id, quantity);
+            // Could add a toast notification here
+        } catch (err) {
+            console.error("Failed to add to cart:", err);
+            // Could show error toast here
+        }
+    };
+
+    const incrementQuantity = () => setQuantity((prev) => prev + 1);
+    const decrementQuantity = () =>
+        setQuantity((prev) => Math.max(1, prev - 1));
+
     if (isLoading) {
         return (
             <div>
                 <MainNav />
                 <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="py-24">
-                        <Button
-                            variant="ghost"
-                            className="mb-8 flex items-center gap-2 opacity-50"
-                            disabled
-                        >
-                            <ArrowLeft className="h-4 w-4" />
-                            Back to Catalog
-                        </Button>
-                        <div className="duration-300 animate-in fade-in">
-                            <ProductDetailsSkeleton />
-                        </div>
+                        <ProductDetailsSkeleton />
                     </div>
                 </main>
             </div>
@@ -81,13 +77,12 @@ function ProductPage() {
         );
     }
 
-    const { name, artist, price, product_images, genre, year, condition } =
-        currentProduct;
+    const { name, price, type, brand, albumInfo, thumbnail } = currentProduct;
 
     return (
         <>
             <MainNav />
-            <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <main className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="py-24 duration-500 animate-in fade-in">
                     <Button
                         variant="ghost"
@@ -100,9 +95,9 @@ function ProductPage() {
 
                     <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-2">
                         {/* Product Image */}
-                        <div className="aspect-square overflow-hidden rounded-lg bg-gray-100">
+                        <div className="w-fill h-fill aspect-square overflow-hidden rounded-lg border">
                             <img
-                                src={(product_images && product_images[0]) || "/missing_image.png"}
+                                src={thumbnail || "/missing_image.png"}
                                 alt={name}
                                 className="h-full w-full object-cover object-center"
                             />
@@ -110,59 +105,92 @@ function ProductPage() {
 
                         {/* Product Info */}
                         <div className="flex flex-col">
-                            <h1 className="text-3xl font-bold tracking-tight">
+                            <h1 className="text-2xl font-bold tracking-tight">
                                 {name}
                             </h1>
-                            {artist && (
-                                <p className="mt-2 text-lg text-gray-500">
-                                    {artist}
+                            {albumInfo?.artist && (
+                                <p className="mt-1 text-lg text-muted-foreground">
+                                    {albumInfo.artist}
                                 </p>
                             )}
-                            <p className="mt-4 text-2xl font-medium">
-                                ${price}
-                            </p>
+                            <p className="mt-4 text-xl font-medium">${price}</p>
+
+                            {/* Add to Cart Section */}
+                            <div className="mt-8 flex items-center gap-4">
+                                <div className="flex items-center gap-2">
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        onClick={decrementQuantity}
+                                        disabled={
+                                            quantity <= 1 || isAddingToCart
+                                        }
+                                    >
+                                        <Minus className="h-4 w-4" />
+                                    </Button>
+                                    <span className="w-12 text-center">
+                                        {quantity}
+                                    </span>
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        onClick={incrementQuantity}
+                                        disabled={isAddingToCart}
+                                    >
+                                        <Plus className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                                <Button
+                                    className="flex-1"
+                                    onClick={handleAddToCart}
+                                    disabled={isAddingToCart}
+                                >
+                                    {isAddingToCart ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            Adding...
+                                        </>
+                                    ) : (
+                                        "Add to Cart"
+                                    )}
+                                </Button>
+                            </div>
 
                             {/* Product Details */}
                             <div className="mt-8 border-t border-gray-200 pt-8">
-                                <h2 className="text-lg font-medium">Details</h2>
-                                <dl className="mt-4 space-y-4">
-                                    {genre && (
+                                <h2 className="mb-4 text-sm font-medium">
+                                    Details
+                                </h2>
+                                <div className="space-y-4">
+                                    <div>
+                                        <h3 className="text-sm text-muted-foreground">
+                                            Type
+                                        </h3>
+                                        <p className="mt-1 text-sm font-medium">
+                                            {type}
+                                        </p>
+                                    </div>
+                                    {brand && (
                                         <div>
-                                            <dt className="text-sm font-medium text-gray-500">
+                                            <h3 className="text-sm text-muted-foreground">
+                                                Brand
+                                            </h3>
+                                            <p className="mt-1 text-sm font-medium">
+                                                {brand}
+                                            </p>
+                                        </div>
+                                    )}
+                                    {albumInfo?.genre && (
+                                        <div>
+                                            <h3 className="text-sm text-muted-foreground">
                                                 Genre
-                                            </dt>
-                                            <dd className="mt-1">{genre}</dd>
+                                            </h3>
+                                            <p className="mt-1 text-sm font-medium">
+                                                {albumInfo.genre}
+                                            </p>
                                         </div>
                                     )}
-                                    {year && (
-                                        <div>
-                                            <dt className="text-sm font-medium text-gray-500">
-                                                Year
-                                            </dt>
-                                            <dd className="mt-1">{year}</dd>
-                                        </div>
-                                    )}
-                                    {condition && (
-                                        <div>
-                                            <dt className="text-sm font-medium text-gray-500">
-                                                Condition
-                                            </dt>
-                                            <dd className="mt-1">
-                                                {condition}
-                                            </dd>
-                                        </div>
-                                    )}
-                                </dl>
-                            </div>
-
-                            {/* Add to Cart Button */}
-                            <div className="mt-8">
-                                <button
-                                    type="button"
-                                    className="w-full rounded-md bg-primary px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary/90"
-                                >
-                                    Add to Cart
-                                </button>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { authApi } from "../api/auth";
 import { tokenStorage } from "../lib/token";
+import { useCartStore } from './cart'
 
 /* 
     Auth Store using Zustand
@@ -29,22 +30,18 @@ export const useAuthStore = create((set, get) => ({
         set({ isLoading: true, error: null });
         try {
             const data = await authApi.login(credentials);
-
-            // Store token for future API calls
-            if (!data.token) {
-                throw new Error("No token received from server");
-            }
-            if (!tokenStorage.set(data.token)) {
-                throw new Error("Invalid token format");
-            }
-
-            // Update store with user data and auth status
+            tokenStorage.set(data.token);
+            
+            // Set auth state first
             set({
                 user: data.user,
                 isAuthenticated: true,
                 isAdmin: data.user.role === "admin",
                 isLoading: false,
             });
+
+            // Then sync cart
+            await useCartStore.getState().syncCartOnLogin();
         } catch (error) {
             set({
                 error: error.response?.data?.message || "Login failed",
@@ -62,6 +59,8 @@ export const useAuthStore = create((set, get) => ({
         } finally {
             // Always clear auth state, even if API call fails
             tokenStorage.remove();
+            // Clear cart on logout
+            useCartStore.getState().clearCart()
             set({
                 user: null,
                 isAuthenticated: false,

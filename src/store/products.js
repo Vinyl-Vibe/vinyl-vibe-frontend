@@ -61,10 +61,14 @@ export const useProductStore = create((set, get) => ({
             const { sortBy, activeCategory, page, pageSize } = get();
             const sortOption = SORT_OPTIONS[sortBy];
             
+            const type = activeCategory && activeCategory !== CATEGORIES.ALL 
+                ? activeCategory.toLowerCase() 
+                : undefined;
+            
             const { products, pagination } = await productsApi.getProducts({
                 page,
                 limit: pageSize,
-                type: activeCategory === CATEGORIES.ALL ? undefined : activeCategory.toLowerCase(),
+                type,
                 sort: sortOption?.sort,
                 order: sortOption?.order,
                 ...params
@@ -124,7 +128,17 @@ export const useProductStore = create((set, get) => ({
 
     // Add method to force refresh products
     refreshProducts: async () => {
-        // Use the same mock data for now
-        return get().fetchProducts();
+        const { fetchProducts } = get()
+        set({ page: 1 }) // Reset to first page
+        await fetchProducts()
+    },
+
+    resetFilters: () => {
+        set({
+            searchQuery: '',
+            activeCategory: CATEGORIES.ALL,
+            sortBy: 'NEWEST',
+            page: 1
+        })
     },
 }));
