@@ -49,18 +49,18 @@ function MainNav({ children }) {
 								<Button
 									size="icon"
 									variant={
-										isCatalogPage ? "default" : "secondary"
+										isCatalogPage ? "secondary" : ""
 									}
 								>
 									<LibraryIcon />
 								</Button>
 							</Link>
-							<Button size="icon" variant="secondary">
+							<Button size="icon" variant="">
 								<ShoppingCart />
 							</Button>
 							{isAuthenticated ? (
 								<>
-									<Button variant="secondary">
+									<Button variant="">
 										<User />
 										{profile?.email
 											? `${profile.email}`
@@ -72,7 +72,7 @@ function MainNav({ children }) {
 									to="/auth"
 									className="text-sm font-medium"
 								>
-									<Button size="icon" variant="secondary">
+									<Button size="icon" variant="">
 										<User />
 									</Button>
 								</Link>

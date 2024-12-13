@@ -242,14 +242,16 @@ function AuthForm() {
                     <div className="mt-6">
                         <div className="mt-8 flex flex-row gap-4">
                             <Button
+                                variant="default"
                                 type="button"
-                                variant="outline"
-                                className="font-regular h-12 w-full rounded-xl bg-white text-[.9rem] shadow-none hover:bg-white/30 [&_svg]:size-6"
+                                className="font-regular h-12 w-full rounded-xl bg-white text-[.9rem] shadow-none [&_svg]:size-6"
                                 onClick={handleGoogleLogin}
                                 disabled={formState.isLoading}
                             >
-                                <FcGoogle className="mr-1" />
-                                Google
+                                <FcGoogle className="mr-0" />
+                                <span className="pt-[1px]">
+                                    Sign in with Google
+                                </span>
                             </Button>
                         </div>
                         <div className="relative mt-6">
@@ -329,6 +331,7 @@ function AuthForm() {
                                     />
                                 </div>
                                 <Button
+                                    variant="secondary"
                                     type="submit"
                                     disabled={formState.isLoading}
                                     className="text-md relative mt-5 h-12"
@@ -390,6 +393,7 @@ function AuthForm() {
                                     />
                                 </div>
                                 <Button
+                                    variant="secondary"
                                     type="submit"
                                     disabled={formState.isLoading}
                                     className="text-md relative mt-5 h-12"
@@ -451,6 +455,7 @@ function AuthForm() {
                                             />
                                         </div>
                                         <Button
+                                            variant="secondary"
                                             type="submit"
                                             disabled={formState.isLoading}
                                             className="text-md relative mt-5 h-12"
@@ -515,6 +520,7 @@ function AuthForm() {
                                             />
                                         </div>
                                         <Button
+                                            variant="secondary"
                                             type="submit"
                                             disabled={formState.isLoading}
                                             className="text-md relative mt-5 h-12"

@@ -9,9 +9,9 @@ function CategoryFilter() {
             {Object.entries(CATEGORIES).map(([key, value]) => (
                 <Button
                     key={key}
-                    variant={activeCategory === value ? "default" : "secondary"}
+                    variant={activeCategory === value ? "secondary" : ""}
                     onClick={() => setCategory(value)}
-                    className="text-sm"
+                    className={`text-sm ${activeCategory === value ? "hover:bg-accent" : ""}`}
                 >
                     {key === 'ALL' ? 'All Products' : key.charAt(0) + key.slice(1).toLowerCase()}
                 </Button>
