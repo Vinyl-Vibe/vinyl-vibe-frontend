@@ -23,7 +23,7 @@ function ProductCard({ product }) {
 
     return (
         <div
-            className="group relative flex h-full w-full flex-col justify-between p-6 py-5 transition-colors duration-300 hover:bg-white"
+            className="group relative flex h-full w-full flex-col justify-between p-6 py-5 transition-colors duration-300 hover:bg-white dark:hover:bg-secondary/25"
             data-testid="product-card"
         >
             <div className="mb-2 flex justify-between">

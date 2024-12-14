@@ -7,7 +7,7 @@ import {
     SheetClose,
 } from "../ui/sheet";
 import { Button } from "../ui/button";
-import { Loader2, ShoppingCart, ShoppingBag } from "lucide-react";
+import { Loader2, ShoppingCart, ShoppingBag, X } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
 import { useCartStore } from "../../store/cart";
@@ -54,7 +54,7 @@ function CartSheet() {
                     {itemCount > 0 && (
                         <Badge
                             variant="destructive"
-                            className="absolute -bottom-[4px] -right-[8px] flex h-6 w-6 items-center justify-center rounded-full border-[.5px] border-border bg-accent p-0 pt-[.25px] text-xs font-medium text-foreground hover:bg-accent"
+                            className="absolute -bottom-[4px] -right-[8px] flex h-7 w-7 items-center justify-center rounded-full border-[.5px] border-border bg-accent p-0 pt-[.5px] text-[0.8rem] font-medium text-black hover:bg-accent"
                         >
                             {itemCount}
                         </Badge>
@@ -62,10 +62,15 @@ function CartSheet() {
                 </Button>
             </SheetTrigger>
             <SheetContent className="flex max-h-svh w-[30rem] max-w-full flex-col gap-0 space-y-0 p-6 px-0 pt-0">
-                <SheetHeader className="flex h-full max-h-20 justify-center px-6">
+                <SheetHeader className="flex h-full max-h-20 flex-row items-center justify-between px-6">
                     <SheetTitle className="text-4xl font-medium tracking-[-0.12rem]">
                         Cart
                     </SheetTitle>
+                    <SheetClose>
+                        <div className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border bg-secondary text-foreground transition-colors transition-opacity duration-200 hover:border-foreground/10 hover:bg-secondary/50">
+                            <X className="h-4 w-4" />
+                        </div>
+                    </SheetClose>
                 </SheetHeader>
                 <Separator className="mb-4" />
                 <div

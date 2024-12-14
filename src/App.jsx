@@ -3,6 +3,7 @@ import AuthProvider from "./components/auth/AuthProvider";
 import AuthRoute from "./components/auth/AuthRoute";
 import AdminRoute from "./components/auth/AdminRoute";
 import UserProvider from "./components/user/UserProvider";
+import { ThemeProvider } from "./components/theme/theme-provider";
 
 // Public routes
 import HomePage from "./routes/public/HomePage";
@@ -32,7 +33,7 @@ function App() {
     return (
         <AuthProvider>
             <UserProvider>
-                <div className="flex h-screen w-dvw flex-col bg-background px-10">
+                <div className="flex h-screen w-dvw flex-col bg-background px-0 sm:px-10">
                     <Routes>
                         {/* Public routes - wrapped in MainNav */}
                         <Route path="/" element={<HomePage />} />
