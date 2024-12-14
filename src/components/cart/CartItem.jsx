@@ -32,32 +32,33 @@ function CartItem({ item }) {
                 <div className="mt-2 flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2">
                         <Button
-                            variant="outline"
+                            variant=""
                             size="icon"
-                            className="h-8 w-8"
                             onClick={() =>
                                 updateQuantity(product._id, quantity - 1)
                             }
                             disabled={quantity <= 1}
                         >
-                            <Minus className="h-3 w-3" />
+                            <Minus className="h-4 w-4" />
                         </Button>
-                        <NumberFlow value={quantity} className="w-8 text-center text-base" />
+                        <NumberFlow
+                            value={quantity}
+                            className="w-8 text-center text-base"
+                        />
                         <Button
-                            variant="outline"
+                            variant=""
                             size="icon"
-                            className="h-8 w-8"
                             onClick={() =>
                                 updateQuantity(product._id, quantity + 1)
                             }
                         >
-                            <Plus className="h-3 w-3" />
+                            <Plus className="h-4 w-4" />
                         </Button>
                     </div>
                     <Button
-                        variant="ghost"
+                        variant=""
                         size="icon"
-                        className="h-8 w-8 text-destructive"
+                        className="text-destructive hover:bg-destructive/10 hover:border-destructive/20"
                         onClick={() => removeItem(product._id)}
                     >
                         <Trash2 className="h-4 w-4" />
