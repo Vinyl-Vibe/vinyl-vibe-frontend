@@ -53,9 +53,9 @@ const SheetContent = React.forwardRef(
                 {...props}
             >
                 <SheetPrimitive.Close className="absolute right-6 top-5 transition-opacity hover:opacity-100">
-                    <Button variant="" size="icon">
+                    {/* <Button variant="" size="icon">
                         <X className="h-4 w-4" />
-                    </Button>
+                    </Button> */}
                 </SheetPrimitive.Close>
                 {children}
             </SheetPrimitive.Content>
@@ -67,7 +67,7 @@ SheetContent.displayName = SheetPrimitive.Content.displayName;
 const SheetHeader = ({ className, ...props }) => (
     <div
         className={cn(
-            "flex flex-col space-y-2 text-center sm:text-left",
+            "flex flex-col text-center sm:text-left",
             className,
         )}
         {...props}

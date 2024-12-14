@@ -31,13 +31,25 @@ export const useProductStore = create((set, get) => ({
     pageSize: 12,
     totalPages: 1,
     totalProducts: 0,
+    searchQuery: null,
 
     setCategory: (category) => {
         set({
             activeCategory: category,
-            page: 1, // Reset to first page when changing category
+            page: 1,
         });
-        get().fetchProducts(); // Fetch new results immediately
+
+        const { searchQuery } = get();
+        
+        const params = {};
+        if (searchQuery) {
+            params.search = searchQuery;
+        }
+        if (category !== CATEGORIES.ALL) {
+            params.type = category;
+        }
+
+        get().fetchProducts(params);
     },
 
     setSortBy: (sortOption) => {
@@ -58,25 +70,28 @@ export const useProductStore = create((set, get) => ({
     fetchProducts: async (params = {}) => {
         set({ isLoading: true, error: null });
         try {
-            const { sortBy, activeCategory, page, pageSize } = get();
+            const { sortBy, page, pageSize } = get();
             const sortOption = SORT_OPTIONS[sortBy];
             
-            const type = activeCategory && activeCategory !== CATEGORIES.ALL 
-                ? activeCategory.toLowerCase() 
-                : undefined;
-            
-            const { products, pagination } = await productsApi.getProducts({
+            if (params.search) {
+                set({ searchQuery: params.search });
+            }
+
+            const queryParams = {
                 page,
                 limit: pageSize,
-                type,
-                sort: sortOption?.sort,
-                order: sortOption?.order,
-                ...params
-            });
+                ...params,
+            };
 
-            console.log('API Response:', { products, pagination });
+            if (sortOption) {
+                queryParams.sort = sortOption.sort;
+                queryParams.order = sortOption.order;
+            }
 
-            // Handle pagination data with fallbacks
+            console.log('API call params:', queryParams);
+
+            const { products, pagination } = await productsApi.getProducts(queryParams);
+
             set({
                 products: products || [],
                 totalPages: pagination?.totalPages || Math.ceil((pagination?.totalProducts || 0) / pageSize) || 1,
@@ -96,7 +111,7 @@ export const useProductStore = create((set, get) => ({
                     data: err.response?.data
                 }, 
                 isLoading: false,
-                products: [], // Reset products on error
+                products: [],
                 totalPages: 1,
                 totalProducts: 0,
                 page: 1
@@ -140,10 +155,10 @@ export const useProductStore = create((set, get) => ({
 
     resetFilters: () => {
         set({
-            searchQuery: '',
+            searchQuery: null,
             activeCategory: CATEGORIES.ALL,
             sortBy: 'NEWEST',
             page: 1
-        })
+        });
     },
 }));

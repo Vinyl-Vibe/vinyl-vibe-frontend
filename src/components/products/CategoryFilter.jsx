@@ -1,8 +1,16 @@
 import { Button } from "../ui/button";
 import { CATEGORIES, useProductStore } from "../../store/products";
 
-function CategoryFilter() {
+function CategoryFilter({ onCategoryChange }) {
     const { activeCategory, setCategory } = useProductStore();
+
+    const handleCategoryClick = (category) => {
+        if (onCategoryChange) {
+            onCategoryChange(category);
+        } else {
+            setCategory(category);
+        }
+    };
 
     return (
         <div className="flex flex-wrap gap-2">
@@ -10,7 +18,7 @@ function CategoryFilter() {
                 <Button
                     key={key}
                     variant={activeCategory === value ? "secondary" : ""}
-                    onClick={() => setCategory(value)}
+                    onClick={() => handleCategoryClick(value)}
                     className={`text-sm ${activeCategory === value ? "hover:bg-accent" : ""}`}
                 >
                     {key === 'ALL' ? 'All Products' : key.charAt(0) + key.slice(1).toLowerCase()}

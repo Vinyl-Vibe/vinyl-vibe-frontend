@@ -22,7 +22,7 @@ function AuthNav({ children }) {
     const isCatalogPage = location.pathname === "/catalog";
 
     return (
-        <nav className="fixed left-0 right-0 top-0 z-50 flex justify-center px-10">
+        <nav className="fixed left-0 right-0 top-0 z-50 flex justify-center px-0 sm:px-10">
             <div className="z-51 h-20 w-full max-w-7xl border bg-background/70 px-6 backdrop-blur-[8px]">
                 <div className="flex h-full justify-center">
                     <div className="flex">
