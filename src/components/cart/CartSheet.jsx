@@ -4,19 +4,23 @@ import {
     SheetHeader,
     SheetTitle,
     SheetTrigger,
+    SheetClose,
 } from "../ui/sheet";
 import { Button } from "../ui/button";
-import { Loader2, ShoppingCart } from "lucide-react";
+import { Loader2, ShoppingCart, ShoppingBag } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
 import { useCartStore } from "../../store/cart";
 import CartItem from "./CartItem";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { Badge } from "../ui/badge";
+
+import NumberFlow from "@number-flow/react";
 
 function CartSheet() {
     const { items = [], isLoading } = useCartStore();
     const navigate = useNavigate();
+    const location = useLocation();
 
     // Calculate totals with safety checks
     const subtotal = Array.isArray(items)
@@ -35,6 +39,13 @@ function CartSheet() {
         navigate("/checkout");
     };
 
+    const handleShopNowClick = () => {
+        // If not already on catalog page, navigate
+        if (location.pathname !== "/catalog") {
+            navigate("/catalog");
+        }
+    };
+
     return (
         <Sheet>
             <SheetTrigger asChild>
@@ -50,33 +61,59 @@ function CartSheet() {
                     )}
                 </Button>
             </SheetTrigger>
-            <SheetContent className="flex max-h-svh max-w-full w-[30rem] flex-col p-6 px-0 pt-0 space-y-0 gap-0">
-                <SheetHeader className="flex justify-center px-6 max-h-20 h-full">
+            <SheetContent className="flex max-h-svh w-[30rem] max-w-full flex-col gap-0 space-y-0 p-6 px-0 pt-0">
+                <SheetHeader className="flex h-full max-h-20 justify-center px-6">
                     <SheetTitle className="text-4xl font-medium tracking-[-0.12rem]">
                         Cart
                     </SheetTitle>
                 </SheetHeader>
                 <Separator className="mb-4" />
-                <ScrollArea className="h-full px-6">
-                    {!Array.isArray(items) || items.length === 0 ? (
-                        <div className="flex h-full items-center justify-center">
-                            <p className="text-muted-foreground">
-                                Your cart is empty
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="divide-y">
-                            {items.map((item) =>
-                                item?.product?._id ? (
-                                    <CartItem
-                                        key={item.product._id}
-                                        item={item}
-                                    />
-                                ) : null,
-                            )}
-                        </div>
-                    )}
-                </ScrollArea>
+                <div
+                    className={`flex h-full w-full flex-col items-center ${
+                        !Array.isArray(items) || items.length === 0
+                            ? "justify-center"
+                            : ""
+                    }`}
+                >
+                    <ScrollArea className="w-full px-0">
+                        {!Array.isArray(items) || items.length === 0 ? (
+                            <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
+                                <div className="rounded-full bg-muted p-6">
+                                    <ShoppingBag className="h-8 w-8 text-muted-foreground" />
+                                </div>
+                                <div className="space-y-1">
+                                    <h3 className="text-xl font-medium">
+                                        Your cart is empty
+                                    </h3>
+                                    <p className="text-md text-muted-foreground">
+                                        Add items to your cart to get started
+                                    </p>
+                                </div>
+                                <SheetClose asChild>
+                                    <Button
+                                        variant="secondary"
+                                        className="mt-4"
+                                        onClick={handleShopNowClick}
+                                    >
+                                        Shop now
+                                    </Button>
+                                </SheetClose>
+                            </div>
+                        ) : (
+                            <div className="w-full divide-y">
+                                {items.map((item) =>
+                                    item?.product?._id ? (
+                                        <CartItem
+                                            key={item.product._id}
+                                            item={item}
+                                        />
+                                    ) : null,
+                                )}
+                            </div>
+                        )}
+                    </ScrollArea>
+                </div>
+
                 {itemCount > 0 && (
                     <div className="flex flex-col gap-6 pt-6">
                         <Separator />
@@ -90,7 +127,16 @@ function CartSheet() {
                                     Total
                                 </span>
                                 <span className="font-medium">
-                                    ${subtotal.toFixed(2)}
+                                    <NumberFlow
+                                        value={subtotal}
+                                        suffix="AUD"
+                                        format={{
+                                            style: "currency",
+                                            currency: "AUD",
+                                            trailingZeroDisplay:
+                                                "stripIfInteger",
+                                        }}
+                                    />
                                 </span>
                             </div>
                         </div>

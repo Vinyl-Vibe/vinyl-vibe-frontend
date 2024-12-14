@@ -1,13 +1,14 @@
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { useCartStore } from "../../store/cart";
+import NumberFlow from "@number-flow/react";
 
 function CartItem({ item }) {
     const { updateQuantity, removeItem } = useCartStore();
     const { product, quantity } = item;
 
     return (
-        <div className="flex py-6">
+        <div className="flex p-6">
             {/* Product image */}
             <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border">
                 <img
@@ -41,7 +42,7 @@ function CartItem({ item }) {
                         >
                             <Minus className="h-3 w-3" />
                         </Button>
-                        <span className="w-8 text-center">{quantity}</span>
+                        <NumberFlow value={quantity} className="w-8 text-center text-base" />
                         <Button
                             variant="outline"
                             size="icon"

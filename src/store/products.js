@@ -76,12 +76,13 @@ export const useProductStore = create((set, get) => ({
 
             console.log('API Response:', { products, pagination });
 
+            // Handle pagination data with fallbacks
             set({
                 products: products || [],
-                totalPages: pagination.totalPages || 1,
-                totalProducts: pagination.totalProducts || 0,
-                page: pagination.currentPage || 1,
-                pageSize: pagination.productsPerPage || 12,
+                totalPages: pagination?.totalPages || Math.ceil((pagination?.totalProducts || 0) / pageSize) || 1,
+                totalProducts: pagination?.totalProducts || 0,
+                page: pagination?.currentPage || 1,
+                pageSize: pagination?.productsPerPage || 12,
                 hasLoaded: true,
                 isLoading: false,
             });
@@ -94,7 +95,11 @@ export const useProductStore = create((set, get) => ({
                     status: err.response?.status,
                     data: err.response?.data
                 }, 
-                isLoading: false 
+                isLoading: false,
+                products: [], // Reset products on error
+                totalPages: 1,
+                totalProducts: 0,
+                page: 1
             });
         }
     },

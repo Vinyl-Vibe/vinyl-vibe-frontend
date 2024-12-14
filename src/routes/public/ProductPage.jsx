@@ -7,6 +7,7 @@ import { Button } from "../../components/ui/button";
 import { Alert } from "../../components/ui/alert";
 import { ArrowLeft, Loader2, Minus, Plus } from "lucide-react";
 import ProductDetailsSkeleton from "../../components/products/ProductDetailsSkeleton";
+import NumberFlow from "@number-flow/react";
 
 function ProductPage() {
     const { id } = useParams();
@@ -119,7 +120,7 @@ function ProductPage() {
                             <div className="mt-8 flex items-center gap-4">
                                 <div className="flex items-center gap-2">
                                     <Button
-                                        variant="outline"
+                                        variant=""
                                         size="icon"
                                         onClick={decrementQuantity}
                                         disabled={
@@ -128,11 +129,9 @@ function ProductPage() {
                                     >
                                         <Minus className="h-4 w-4" />
                                     </Button>
-                                    <span className="w-12 text-center">
-                                        {quantity}
-                                    </span>
+                                    <NumberFlow value={quantity} className="w-10 text-center" />
                                     <Button
-                                        variant="outline"
+                                        variant=""
                                         size="icon"
                                         onClick={incrementQuantity}
                                         disabled={isAddingToCart}
@@ -142,6 +141,7 @@ function ProductPage() {
                                 </div>
                                 <Button
                                     className="flex-1"
+                                    variant="secondary"
                                     onClick={handleAddToCart}
                                     disabled={isAddingToCart}
                                 >
