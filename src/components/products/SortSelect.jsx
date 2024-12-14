@@ -7,8 +7,16 @@ import {
 } from "../ui/select";
 import { SORT_OPTIONS, useProductStore } from "../../store/products";
 
-function SortSelect() {
+function SortSelect({ onSortChange }) {
     const { sortBy, setSortBy } = useProductStore();
+
+    const handleSortChange = (option) => {
+        if (onSortChange) {
+            onSortChange(option);
+        } else {
+            setSortBy(option);
+        }
+    };
 
     // Create a human-readable label map for sort options
     const sortLabels = {
@@ -22,7 +30,7 @@ function SortSelect() {
     return (
         <Select
             value={sortBy}
-            onValueChange={setSortBy}
+            onValueChange={handleSortChange}
             data-testid="sort-select"
         >
             <SelectTrigger className="w-[180px]">

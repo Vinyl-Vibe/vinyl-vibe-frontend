@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import MainNav from "../../components/layout/MainNav";
 import ProductCard from "../../components/products/ProductCard";
 import CategoryFilter from "../../components/products/CategoryFilter";
@@ -7,42 +8,67 @@ import ProductCardSkeleton from "../../components/products/ProductCardSkeleton";
 import { useProductStore, CATEGORIES } from "../../store/products";
 import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
 import { AlertCircle } from "lucide-react";
-import { useLocation } from "react-router-dom";
 import Pagination from "../../components/ui/pagination";
 import { useMinimumLoadingTime } from '../../hooks/useMinimumLoadingTime';
 
-/* 
-    CatalogPage: Product listing page
-    - Displays grid of ProductCards
-    - Handles loading and error states
-    - Will add filtering/sorting later
-*/
-function CatalogPage() {
+function SearchResultsPage() {
+    const [searchParams] = useSearchParams();
+    const searchQuery = searchParams.get('q');
+    const [initialLoad, setInitialLoad] = useState(true);
+    
     const {
         isLoading,
         error,
         fetchProducts,
         products,
-        hasLoaded,
         page,
         setPage,
         totalPages,
         totalProducts,
         activeCategory,
-        resetFilters,
+        setCategory,
+        setSortBy,
     } = useProductStore();
-    const location = useLocation();
 
-    const showLoader = useMinimumLoadingTime(isLoading);
+    const showLoader = useMinimumLoadingTime(isLoading && initialLoad);
 
+    // Fetch products when search query, category, or sort changes
     useEffect(() => {
-        fetchProducts();
-    }, [fetchProducts]);
+        if (searchQuery) {
+            // This will now store the search query in the store
+            fetchProducts({ 
+                search: searchQuery,
+                type: activeCategory !== CATEGORIES.ALL ? activeCategory : undefined
+            });
+        }
+    }, [searchQuery, activeCategory, fetchProducts]);
 
-    // Reset filters when unmounting catalog page
+    // Set initialLoad to false after first load
     useEffect(() => {
-        return () => resetFilters();
-    }, [resetFilters]);
+        if (!isLoading && initialLoad) {
+            setInitialLoad(false);
+        }
+    }, [isLoading]);
+
+    // Remove handleCategoryChange override - let the store handle it
+    const handleCategoryChange = (category) => {
+        setCategory(category);
+    };
+
+    // Override sort change to maintain search
+    const handleSortChange = (sortOption) => {
+        setSortBy(sortOption);
+        
+        const params = {
+            search: searchQuery,
+        };
+
+        if (activeCategory !== CATEGORIES.ALL) {
+            params.type = activeCategory;
+        }
+
+        fetchProducts(params);
+    };
 
     return (
         <>
@@ -50,14 +76,14 @@ function CatalogPage() {
             <main className="mx-auto w-full max-w-7xl pb-6 pt-[calc(5rem-1px)]">
                 <div className="border px-6 pb-6 pt-40">
                     <h1 className="text-5xl font-medium tracking-tight">
-                        Products
+                        Results for <span className="font-light">"{searchQuery}"</span>
                     </h1>
                 </div>
 
                 {/* Filters and Sort */}
                 <div className="mt-[-1px] flex flex-col justify-between gap-4 border p-6 sm:flex-row">
-                    <CategoryFilter />
-                    <SortSelect />
+                    <CategoryFilter onCategoryChange={handleCategoryChange} />
+                    <SortSelect onSortChange={handleSortChange} />
                 </div>
 
                 <div className="mt-[-1px] transition-all duration-500">
@@ -160,4 +186,4 @@ function CatalogPage() {
     );
 }
 
-export default CatalogPage;
+export default SearchResultsPage;

@@ -9,6 +9,7 @@ import HomePage from "./routes/public/HomePage";
 import AuthPage from "./routes/public/AuthPage";
 import CatalogPage from "./routes/public/CatalogPage";
 import ProductPage from "./routes/public/ProductPage";
+import SearchResultsPage from "./routes/public/SearchResultsPage";
 
 // Protected routes
 import CheckoutPage from "./routes/protected/CheckoutPage";
@@ -69,6 +70,8 @@ function App() {
                             path="/auth/callback"
                             element={<AuthCallback />}
                         />
+
+                        <Route path="/search" element={<SearchResultsPage />} />
                     </Routes>
                 </div>
             </UserProvider>
