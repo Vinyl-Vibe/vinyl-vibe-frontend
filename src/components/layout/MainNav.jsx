@@ -225,7 +225,7 @@ function MainNav() {
                 </div>
             </div>
             <div className="flex w-full justify-center overflow-hidden">
-                <form onSubmit={handleSearch} className="w-full">
+                <form onSubmit={handleSearch} className="w-full max-w-7xl">
                     <div
                         ref={searchWrapperRef}
                         className={`relative flex h-16 w-full max-w-7xl items-center border border-t-0 bg-white/90 backdrop-blur-[8px] transition-transform duration-300 dark:bg-black ${
