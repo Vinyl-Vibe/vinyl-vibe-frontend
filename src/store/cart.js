@@ -14,6 +14,7 @@ export const useCartStore = create((set, get) => ({
     isLoading: false,
     error: null,
     total: 0,
+    updateTimeouts: {}, // Object to store timeouts for each product
 
     // Helper to fetch product details for cart items
     enrichCartItems: async (cartItems) => {
@@ -243,5 +244,62 @@ export const useCartStore = create((set, get) => ({
     clearCart: () => {
         localStorage.removeItem('cart')
         set({ items: [], total: 0 })
-    }
+    },
+
+    // Add a debounced update function
+    debouncedUpdateQuantity: async (productId, quantity) => {
+        if (!tokenStorage.isValid()) {
+            // For guest cart, update immediately
+            get().updateQuantity(productId, quantity);
+            return;
+        }
+
+        // Clear existing timeout for this specific product
+        const timeouts = get().updateTimeouts;
+        if (timeouts[productId]) {
+            clearTimeout(timeouts[productId]);
+        }
+
+        // Set optimistic update immediately
+        const currentItems = get().items;
+        const newItems = currentItems.map(item => 
+            item.productId === productId 
+                ? { ...item, quantity }
+                : item
+        );
+        set({ items: newItems });
+
+        // Set new timeout for this specific product
+        const timeout = setTimeout(async () => {
+            try {
+                const response = await cartApi.updateQuantity(productId, quantity);
+                const cartItems = get().formatServerCart(response);
+                set({ 
+                    items: cartItems,
+                    updateTimeouts: {
+                        ...get().updateTimeouts,
+                        [productId]: undefined // Clear the timeout reference
+                    }
+                });
+            } catch (err) {
+                console.error('Failed to update quantity:', err);
+                set({ 
+                    error: err.message,
+                    items: currentItems,
+                    updateTimeouts: {
+                        ...get().updateTimeouts,
+                        [productId]: undefined
+                    }
+                });
+            }
+        }, 1000);
+
+        // Store the timeout reference for this product
+        set({ 
+            updateTimeouts: {
+                ...timeouts,
+                [productId]: timeout
+            }
+        });
+    },
 })) 

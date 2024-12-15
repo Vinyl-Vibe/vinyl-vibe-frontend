@@ -9,8 +9,23 @@ export const usersApi = {
 
     // Update user's profile
     updateProfile: async (profileData) => {
-        const { data } = await api.put(`/users/${profileData.userId}`, {
-            profile: profileData
+        const { data } = await api.patch("/users/profile", {
+            firstName: profileData.firstName,
+            lastName: profileData.lastName,
+        });
+        return data;
+    },
+
+    // Update user's address (through profile endpoint)
+    updateAddress: async (addressData) => {
+        const { data } = await api.patch("/users/profile", {
+            address: {
+                street: addressData.street,
+                city: addressData.city,
+                state: addressData.state,
+                postalCode: addressData.postalCode,
+                country: addressData.country,
+            }
         });
         return data;
     },
