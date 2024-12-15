@@ -61,7 +61,7 @@ function CartSheet() {
                     )}
                 </Button>
             </SheetTrigger>
-            <SheetContent className="flex max-h-svh w-[30rem] max-w-full flex-col gap-0 space-y-0 p-6 px-0 pt-0">
+            <SheetContent className="flex max-h-dvh w-[30rem] max-w-full flex-col gap-0 space-y-0 p-6 px-0 pt-0">
                 <SheetHeader className="flex h-full max-h-20 flex-row items-center justify-between px-6">
                     <SheetTitle className="text-4xl font-medium tracking-[-0.12rem]">
                         Cart
