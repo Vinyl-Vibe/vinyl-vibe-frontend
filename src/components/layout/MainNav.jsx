@@ -31,7 +31,7 @@ import {
 import { useTheme } from "@/components/theme/theme-provider";
 
 function MainNav() {
-    const { isAuthenticated, isAdmin } = useAuthStore();
+    const { isAuthenticated, isAdmin, logout } = useAuthStore();
     const { profile } = useUserStore();
     const { resetFilters, refreshProducts } = useProductStore() || {};
     const location = useLocation();
@@ -194,7 +194,15 @@ function MainNav() {
                                         <DropdownMenuGroup className="p-1">
                                             <DropdownMenuItem
                                                 className="text-red-600 focus:bg-red-600/5 focus:text-red-600"
-                                                onClick={() => logout()}
+                                                onClick={async () => {
+                                                    try {
+                                                        await logout();
+                                                        navigate('/'); // Redirect to home after logout
+                                                    } catch (error) {
+                                                        console.error('Logout failed:', error);
+                                                        // Could add toast notification here for error
+                                                    }
+                                                }}
                                             >
                                                 <LogOut className="mr-2 h-4 w-4" />
                                                 <span>Log out</span>

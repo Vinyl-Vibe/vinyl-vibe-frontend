@@ -14,15 +14,16 @@ export const useUserStore = create((set) => ({
             set({
                 profile: userData,
                 isLoading: false,
-                error: null
+                error: null,
             });
         } catch (error) {
             console.error("UserStore loadProfile error:", error);
             // Don't throw, just update state
             set({
                 profile: null,
-                error: error.response?.data?.message || "Failed to load profile",
-                isLoading: false
+                error:
+                    error.response?.data?.message || "Failed to load profile",
+                isLoading: false,
             });
         }
     },
@@ -38,7 +39,26 @@ export const useUserStore = create((set) => ({
             });
         } catch (error) {
             set({
-                error: error.response?.data?.message || "Failed to update profile",
+                error:
+                    error.response?.data?.message || "Failed to update profile",
+                isLoading: false,
+            });
+            throw error;
+        }
+    },
+
+    updateAddress: async (addressData) => {
+        set({ isLoading: true, error: null });
+        try {
+            const data = await usersApi.updateAddress(addressData);
+            set({
+                profile: data,
+                isLoading: false,
+            });
+        } catch (error) {
+            set({
+                error:
+                    error.response?.data?.message || "Failed to update address",
                 isLoading: false,
             });
             throw error;
