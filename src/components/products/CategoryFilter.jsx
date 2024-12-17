@@ -1,14 +1,35 @@
 import { Button } from "../ui/button";
 import { CATEGORIES, useProductStore } from "../../store/products";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function CategoryFilter({ onCategoryChange }) {
     const { activeCategory, setCategory } = useProductStore();
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const handleCategoryClick = (category) => {
+        // Map category types to URL slugs
+        const categoryToSlug = {
+            'all': '',
+            'vinyl': 'vinyls',
+            'turntable': 'turntables',
+            'accessory': 'accessories',
+            'merch': 'merch'
+        };
+
+        // Update store
         if (onCategoryChange) {
             onCategoryChange(category);
         } else {
             setCategory(category);
+        }
+
+        // Update URL
+        const slug = categoryToSlug[category];
+        if (slug) {
+            navigate(`/products/${slug}`);
+        } else {
+            navigate('/products');
         }
     };
 

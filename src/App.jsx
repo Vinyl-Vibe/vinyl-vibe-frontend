@@ -39,9 +39,12 @@ function App() {
                         <Route path="/" element={<HomePage />} />
                         <Route path="/auth" element={<AuthPage />} />
                         <Route path="/reset-password" element={<AuthPage />} />
-                        <Route path="/catalog" element={<CatalogPage />} />
-                        <Route path="/products/:id" element={<ProductPage />} />
-
+                        
+                        {/* Product routes */}
+                        <Route path="/products" element={<CatalogPage />} />
+                        <Route path="/products/:category" element={<CatalogPage />} />
+                        <Route path="/products/item/:id" element={<ProductPage />} />
+                        
                         {/* Protected routes */}
                         <Route
                             path="/checkout"

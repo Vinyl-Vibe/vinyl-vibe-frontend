@@ -1,39 +1,15 @@
 import { memo, useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../store/auth";
-import { useUserStore } from "../../store/user";
 import { useProductStore } from "../../store/products";
 import VinylVibeLogo from "@/assets/icons/vinyl_vibe-logo";
 import { Button } from "../ui/button";
-import { LibraryIcon, SearchIcon, ShoppingCart, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { Input } from "../ui/input";
 import CartSheet from "../cart/CartSheet";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { AccountDialog } from "./AccountDialog";
-import {
-    User,
-    Settings,
-    LogOut,
-    MapPin,
-    Package,
-    Sun,
-    Moon,
-    Laptop,
-} from "lucide-react";
-import { useTheme } from "@/components/theme/theme-provider";
 import MenuSheet from "./MenuSheet";
 
 function MainNav() {
-    const { isAuthenticated, isAdmin, logout } = useAuthStore();
-    const { profile } = useUserStore();
     const { resetFilters, refreshProducts } = useProductStore() || {};
     const location = useLocation();
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -41,7 +17,6 @@ function MainNav() {
     const searchWrapperRef = useRef(null);
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
-    const { setTheme } = useTheme();
 
     // Memoize the navigation items to prevent unnecessary re-renders
     const isActive = (path) => location.pathname === path;
@@ -53,6 +28,7 @@ function MainNav() {
         if (typeof refreshProducts === "function") {
             refreshProducts();
         }
+        navigate("/products");
     };
 
     const toggleSearch = () => {

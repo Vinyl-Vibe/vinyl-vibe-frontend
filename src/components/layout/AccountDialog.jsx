@@ -65,7 +65,7 @@ export function AccountDialog({ type = "profile", id }) {
                             {content.title}
                         </DialogTitle>
                         <DialogClose className="absolute -top-1 right-6">
-                            <div className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border bg-secondary text-foreground transition-colors transition-opacity duration-200 hover:border-foreground/10 hover:bg-secondary/50">
+                            <div className="transition-colors-opacity flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border bg-secondary text-foreground duration-200 hover:border-foreground/10 hover:bg-secondary/50">
                                 <X className="h-4 w-4" />
                             </div>
                         </DialogClose>
@@ -99,7 +99,7 @@ export function AccountDialog({ type = "profile", id }) {
                         {content.title}
                     </DialogTitle>
                     <DialogClose className="absolute -top-1 right-6">
-                        <div className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border bg-secondary text-foreground transition-colors transition-opacity duration-200 hover:border-foreground/10 hover:bg-secondary/50">
+                        <div className="transition-colors-opacity flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border bg-secondary text-foreground duration-200 hover:border-foreground/10 hover:bg-secondary/50">
                             <X className="h-4 w-4" />
                         </div>
                     </DialogClose>

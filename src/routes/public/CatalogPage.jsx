@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 import MainNav from "../../components/layout/MainNav";
 import ProductCard from "../../components/products/ProductCard";
 import CategoryFilter from "../../components/products/CategoryFilter";
@@ -18,6 +19,7 @@ import { useMinimumLoadingTime } from '../../hooks/useMinimumLoadingTime';
     - Will add filtering/sorting later
 */
 function CatalogPage() {
+    const { category } = useParams();
     const {
         isLoading,
         error,
@@ -29,11 +31,33 @@ function CatalogPage() {
         totalPages,
         totalProducts,
         activeCategory,
+        setCategory,
         resetFilters,
     } = useProductStore();
     const location = useLocation();
 
     const showLoader = useMinimumLoadingTime(isLoading);
+
+    // Set category from URL parameter
+    useEffect(() => {
+        if (category) {
+            // Map URL parameter to category type
+            const categoryMap = {
+                'vinyls': 'vinyl',
+                'turntables': 'turntable',
+                'accessories': 'accessory',
+                'merch': 'merch'
+            };
+            
+            const mappedCategory = categoryMap[category];
+            if (mappedCategory) {
+                setCategory(mappedCategory);
+            }
+        } else {
+            // If no category in URL, show all products
+            setCategory('all');
+        }
+    }, [category, setCategory]);
 
     useEffect(() => {
         fetchProducts();

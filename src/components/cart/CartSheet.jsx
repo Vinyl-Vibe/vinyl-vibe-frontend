@@ -40,9 +40,9 @@ function CartSheet() {
     };
 
     const handleShopNowClick = () => {
-        // If not already on catalog page, navigate
-        if (location.pathname !== "/catalog") {
-            navigate("/catalog");
+        // If not already on products page, navigate
+        if (location.pathname !== "/products") {
+            navigate("/products");
         }
     };
 
