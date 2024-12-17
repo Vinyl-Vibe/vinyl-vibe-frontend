@@ -29,6 +29,7 @@ import {
     Laptop,
 } from "lucide-react";
 import { useTheme } from "@/components/theme/theme-provider";
+import MenuSheet from "./MenuSheet";
 
 function MainNav() {
     const { isAuthenticated, isAdmin, logout } = useAuthStore();
@@ -119,115 +120,8 @@ function MainNav() {
                             >
                                 <Search className="h-4 w-4" />
                             </Button>
-                            <Link
-                                to="/catalog"
-                                className="text-sm font-medium"
-                                onClick={handleCatalogClick}
-                            >
-                                <Button
-                                    size="icon"
-                                    variant={
-                                        isActive("/catalog")
-                                            ? "secondary"
-                                            : "default"
-                                    }
-                                >
-                                    <LibraryIcon className="h-4 w-4" />
-                                </Button>
-                            </Link>
                             <CartSheet />
-                            {isAuthenticated ? (
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button
-                                            variant="default"
-                                            className="flex items-center gap-1.5 focus:ring-0"
-                                        >
-                                            <User className="h-4 w-4" />
-                                            <span className="hidden md:inline-block">
-                                                {profile?.profile?.firstName ||
-                                                    "My Account"}
-                                            </span>
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent
-                                        className="w-52 rounded-3xl shadow-none"
-                                        align="end"
-                                    >
-                                        <DropdownMenuLabel className="p-4 pb-2 pt-3.5 text-[.9rem] font-medium">
-                                            My Account
-                                        </DropdownMenuLabel>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuGroup className="space-y-1 p-1">
-                                            <DropdownMenuItem
-                                                onClick={() =>
-                                                    document
-                                                        .getElementById(
-                                                            "edit-profile-trigger",
-                                                        )
-                                                        ?.click()
-                                                }
-                                            >
-                                                <Settings className="mr-2 h-4 w-4" />
-                                                <span>Edit Profile</span>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
-                                                onClick={() =>
-                                                    document
-                                                        .getElementById(
-                                                            "edit-address-trigger",
-                                                        )
-                                                        ?.click()
-                                                }
-                                            >
-                                                <MapPin className="mr-2 h-4 w-4" />
-                                                <span>Edit Address</span>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem asChild>
-                                                <Link to="/orders">
-                                                    <Package className="mr-2 h-4 w-4" />
-                                                    <span>Past Orders</span>
-                                                </Link>
-                                            </DropdownMenuItem>
-                                        </DropdownMenuGroup>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuGroup className="p-1">
-                                            <DropdownMenuItem
-                                                className="text-red-600 focus:bg-red-600/5 focus:text-red-600"
-                                                onClick={async () => {
-                                                    try {
-                                                        await logout();
-                                                        navigate('/'); // Redirect to home after logout
-                                                    } catch (error) {
-                                                        console.error('Logout failed:', error);
-                                                        // Could add toast notification here for error
-                                                    }
-                                                }}
-                                            >
-                                                <LogOut className="mr-2 h-4 w-4" />
-                                                <span>Log out</span>
-                                            </DropdownMenuItem>
-                                        </DropdownMenuGroup>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            ) : (
-                                <Link
-                                    to="/auth"
-                                    className="text-sm font-medium"
-                                >
-                                    <Button
-                                        variant={
-                                            isActive("/")
-                                                ? "secondary"
-                                                : "default"
-                                        }
-                                        className="flex items-center gap-1.5"
-                                    >
-                                        <User className="h-4 w-4" />
-                                        Sign in
-                                    </Button>
-                                </Link>
-                            )}
+                            <MenuSheet />
                         </div>
                     </div>
                 </div>

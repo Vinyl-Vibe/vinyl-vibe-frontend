@@ -61,11 +61,11 @@ export function AccountDialog({ type = "profile", id }) {
                 </DialogTrigger>
                 <DialogContent className="space-y-4 px-0 sm:max-w-[425px]">
                     <DialogHeader className="items-top flex h-14 flex-row justify-between space-y-6 border-b border-border px-6">
-                        <DialogTitle className="text-3xl font-medium tracking-[-0.12rem]">
+                        <DialogTitle className="text-3xl font-medium tracking-[-0.1rem]">
                             {content.title}
                         </DialogTitle>
                         <DialogClose className="absolute -top-1 right-6">
-                            <div className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border bg-secondary text-foreground transition-colors transition-opacity duration-200 hover:border-foreground/10 hover:bg-secondary/50">
+                            <div className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border bg-secondary text-foreground transition-colors transition-opacity duration-200 hover:border-foreground/10 hover:bg-secondary/50">
                                 <X className="h-4 w-4" />
                             </div>
                         </DialogClose>

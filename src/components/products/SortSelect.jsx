@@ -33,10 +33,10 @@ function SortSelect({ onSortChange }) {
             onValueChange={handleSortChange}
             data-testid="sort-select"
         >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] h-12">
                 <SelectValue placeholder="Sort by..." />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-2xl">
                 {Object.keys(SORT_OPTIONS).map((key) => (
                     <SelectItem
                         key={key}

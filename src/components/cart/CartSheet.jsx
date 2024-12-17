@@ -63,11 +63,11 @@ function CartSheet() {
             </SheetTrigger>
             <SheetContent className="flex max-h-dvh w-[30rem] max-w-full flex-col gap-0 space-y-0 p-6 px-0 pt-0">
                 <SheetHeader className="flex h-full max-h-20 flex-row items-center justify-between px-6">
-                    <SheetTitle className="text-4xl font-medium tracking-[-0.12rem]">
+                    <SheetTitle className="text-4xl font-medium tracking-[-0.1rem]">
                         Cart
                     </SheetTitle>
                     <SheetClose>
-                        <div className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border bg-secondary text-foreground transition-colors transition-opacity duration-200 hover:border-foreground/10 hover:bg-secondary/50">
+                        <div className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border bg-secondary text-foreground transition-colors transition-opacity duration-200 hover:border-foreground/10 hover:bg-secondary/50">
                             <X className="h-4 w-4" />
                         </div>
                     </SheetClose>
