@@ -103,7 +103,7 @@ function MenuSheet() {
                                 </div>
                                 <div className="flex flex-col gap-0.5">
                                     <div className="text-sm font-medium">
-                                        {profile?.name || "Your profile"}
+                                        {profile?.firstName + " " + profile?.lastName || "Your profile"}
                                     </div>
                                     <div className="text-sm opacity-50">
                                         {profile?.email || "user@example.com"}
