@@ -47,7 +47,7 @@ function ProductCard({ product }) {
 
             <div className="mt-4 flex h-4 items-end justify-between gap-6">
                 <h3 className="[text-box-trim: trim-both] [text-box-edge: cap alphabetic] text-base font-semibold tracking-[-0.02rem]">
-                    <Link to={`/products/${_id}`}>
+                    <Link to={`/products/item/${_id}`}>
                         <span aria-hidden="true" className="absolute inset-0" />
                         {name}
                     </Link>

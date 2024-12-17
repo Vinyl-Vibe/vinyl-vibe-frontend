@@ -40,10 +40,10 @@ function App() {
                         <Route path="/auth" element={<AuthPage />} />
                         <Route path="/reset-password" element={<AuthPage />} />
                         
-                        {/* Product routes */}
-                        <Route path="/products" element={<CatalogPage />} />
-                        <Route path="/products/:category" element={<CatalogPage />} />
+                        {/* Product routes - order matters! */}
                         <Route path="/products/item/:id" element={<ProductPage />} />
+                        <Route path="/products/:category" element={<CatalogPage />} />
+                        <Route path="/products" element={<CatalogPage />} />
                         
                         {/* Protected routes */}
                         <Route
