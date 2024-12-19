@@ -1,11 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
-import { useAuthStore } from "../../store/auth";
-import { useUserStore } from "../../store/user";
-import { useProductStore } from "../../store/products";
+import { useAuthStore } from "../../../store/auth";
+import { useUserStore } from "../../../store/user";
+import { useProductStore } from "../../../store/products";
 import VinylVibeLogo from "@/assets/icons/vinyl_vibe-logo";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import { LibraryIcon, SearchIcon, ShoppingCart, User } from "lucide-react";
-import { Input } from "../ui/input";
+import { Input } from "../../ui/input";
 
 function AuthNav({ children }) {
     const { isAuthenticated, isAdmin } = useAuthStore();

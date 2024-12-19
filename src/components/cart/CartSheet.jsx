@@ -16,11 +16,16 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { Badge } from "../ui/badge";
 
 import NumberFlow from "@number-flow/react";
+import { useState, useEffect } from "react";
+import { useAuthStore } from "../../store/auth";
+import { ordersApi } from "../../api/orders";
 
 function CartSheet() {
-    const { items = [], isLoading } = useCartStore();
+    const { items = [], isLoading, error, setError } = useCartStore();
     const navigate = useNavigate();
     const location = useLocation();
+    const [isCheckingOut, setIsCheckingOut] = useState(false);
+    const { isAuthenticated } = useAuthStore();
 
     // Calculate totals with safety checks
     const subtotal = Array.isArray(items)
@@ -35,8 +40,38 @@ function CartSheet() {
         ? items.reduce((total, item) => total + (item?.quantity || 0), 0)
         : 0;
 
-    const handleCheckout = () => {
-        navigate("/checkout");
+    const handleCheckout = async () => {
+        // Check if user is authenticated
+        if (!isAuthenticated) {
+            navigate("/auth", { state: { from: location } });
+            return;
+        }
+
+        setIsCheckingOut(true);
+        setError(null);
+
+        try {
+            // Format cart items for the order
+            const products = items.map((item) => ({
+                productId: item.product._id,
+                quantity: item.quantity,
+            }));
+
+            // Create order and get checkout URL
+            const response = await ordersApi.createOrder(products);
+
+            if (response.success && response.checkoutUrl) {
+                // Redirect to Stripe
+                window.location.href = response.checkoutUrl;
+            } else {
+                throw new Error("Invalid response from server");
+            }
+        } catch (err) {
+            console.error("Checkout error:", err);
+            setError("Failed to start checkout. Please try again.");
+        } finally {
+            setIsCheckingOut(false);
+        }
     };
 
     const handleShopNowClick = () => {
@@ -46,10 +81,29 @@ function CartSheet() {
         }
     };
 
+    // Check URL for Stripe cancel parameter
+    useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        const stripeError = searchParams.get("stripe");
+
+        if (stripeError === "cancel") {
+            setError("Checkout was cancelled. Please try again.");
+            // Clean up URL
+            navigate(location.pathname, { replace: true });
+            // Open cart sheet
+            document.querySelector("[data-cart-trigger]")?.click();
+        }
+    }, [location, setError, navigate]);
+
     return (
         <Sheet>
             <SheetTrigger asChild>
-                <Button variant="" className="relative" size="icon">
+                <Button
+                    variant=""
+                    className="relative"
+                    size="icon"
+                    data-cart-trigger
+                >
                     <ShoppingCart className="h-4 w-4" />
                     {itemCount > 0 && (
                         <Badge
@@ -67,7 +121,7 @@ function CartSheet() {
                         Cart
                     </SheetTitle>
                     <SheetClose>
-                        <div className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border bg-secondary text-foreground transition-colors transition-opacity duration-200 hover:border-foreground/10 hover:bg-secondary/50">
+                        <div className="transition-colors-opacity flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border bg-secondary text-foreground duration-200 hover:border-foreground/10 hover:bg-secondary/50">
                             <X className="h-4 w-4" />
                         </div>
                     </SheetClose>
@@ -150,9 +204,9 @@ function CartSheet() {
                                 variant="secondary"
                                 className="text-md h-12 w-full"
                                 onClick={handleCheckout}
-                                disabled={isLoading}
+                                disabled={isCheckingOut}
                             >
-                                {isLoading ? (
+                                {isCheckingOut ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                         Processing...
@@ -161,6 +215,11 @@ function CartSheet() {
                                     "Checkout"
                                 )}
                             </Button>
+                            {error && (
+                                <p className="mt-2 text-sm text-destructive">
+                                    {error}
+                                </p>
+                            )}
                         </div>
                     </div>
                 )}

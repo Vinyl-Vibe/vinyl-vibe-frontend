@@ -23,10 +23,10 @@ import {
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useUserStore } from "../../store/user";
+import { useUserStore } from "../../../store/user";
 import { X } from "lucide-react";
 import { Loader2 } from "lucide-react";
-import { useMinimumLoadingTime } from "../../hooks/useMinimumLoadingTime";
+import { useMinimumLoadingTime } from "../../../hooks/useMinimumLoadingTime";
 
 export function AccountDialog({ type = "profile", id }) {
     const [open, setOpen] = useState(false);

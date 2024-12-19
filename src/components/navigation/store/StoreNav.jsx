@@ -1,11 +1,11 @@
 import { memo, useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useProductStore } from "../../store/products";
+import { useProductStore } from "../../../store/products";
 import VinylVibeLogo from "@/assets/icons/vinyl_vibe-logo";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import { Search } from "lucide-react";
-import { Input } from "../ui/input";
-import CartSheet from "../cart/CartSheet";
+import { Input } from "../../ui/input";
+import CartSheet from "../../cart/CartSheet";
 import { AccountDialog } from "./AccountDialog";
 import MenuSheet from "./MenuSheet";
 
@@ -126,7 +126,6 @@ function MainNav() {
             {/* Hidden dialogs that can be triggered from dropdown */}
             <div className="hidden">
                 <AccountDialog type="profile" id="edit-profile-trigger" />
-                <AccountDialog type="address" id="edit-address-trigger" />
             </div>
         </nav>
     );

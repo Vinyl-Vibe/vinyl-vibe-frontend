@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useProductStore } from "../../store/products";
 import { useCartStore } from "../../store/cart";
-import MainNav from "../../components/layout/MainNav";
+import MainNav from "../../components/navigation/store/StoreNav";
 import { Button } from "../../components/ui/button";
 import { Alert } from "../../components/ui/alert";
 import { ArrowLeft, Loader2, Minus, Plus } from "lucide-react";
@@ -129,7 +129,10 @@ function ProductPage() {
                                     >
                                         <Minus className="h-4 w-4" />
                                     </Button>
-                                    <NumberFlow value={quantity} className="w-10 text-center" />
+                                    <NumberFlow
+                                        value={quantity}
+                                        className="w-10 text-center"
+                                    />
                                     <Button
                                         variant=""
                                         size="icon"

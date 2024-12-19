@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import MainNav from "../../components/layout/MainNav";
+import MainNav from "../../components/navigation/store/StoreNav";
 import ProductCard from "../../components/products/ProductCard";
 import CategoryFilter from "../../components/products/CategoryFilter";
 import SortSelect from "../../components/products/SortSelect";
@@ -9,13 +9,13 @@ import { useProductStore, CATEGORIES } from "../../store/products";
 import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import Pagination from "../../components/ui/pagination";
-import { useMinimumLoadingTime } from '../../hooks/useMinimumLoadingTime';
+import { useMinimumLoadingTime } from "../../hooks/useMinimumLoadingTime";
 
 function SearchResultsPage() {
     const [searchParams] = useSearchParams();
-    const searchQuery = searchParams.get('q');
+    const searchQuery = searchParams.get("q");
     const [initialLoad, setInitialLoad] = useState(true);
-    
+
     const {
         isLoading,
         error,
@@ -36,9 +36,12 @@ function SearchResultsPage() {
     useEffect(() => {
         if (searchQuery) {
             // This will now store the search query in the store
-            fetchProducts({ 
+            fetchProducts({
                 search: searchQuery,
-                type: activeCategory !== CATEGORIES.ALL ? activeCategory : undefined
+                type:
+                    activeCategory !== CATEGORIES.ALL
+                        ? activeCategory
+                        : undefined,
             });
         }
     }, [searchQuery, activeCategory, fetchProducts]);
@@ -58,7 +61,7 @@ function SearchResultsPage() {
     // Override sort change to maintain search
     const handleSortChange = (sortOption) => {
         setSortBy(sortOption);
-        
+
         const params = {
             search: searchQuery,
         };
@@ -76,7 +79,8 @@ function SearchResultsPage() {
             <main className="mx-auto w-full max-w-7xl pb-6 pt-[calc(5rem-1px)]">
                 <div className="border px-6 pb-6 pt-40">
                     <h1 className="text-5xl font-medium tracking-tight">
-                        Results for <span className="font-light">"{searchQuery}"</span>
+                        Results for{" "}
+                        <span className="font-light">"{searchQuery}"</span>
                     </h1>
                 </div>
 

@@ -1,6 +1,6 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useAuthStore } from "../../store/auth";
-import PropTypes from "prop-types";
+import DashboardNav from '@/components/navigation/dashboard/DashboardNav'
 
 /* 
     AdminRoute: Protects routes that require admin privileges
@@ -8,24 +8,21 @@ import PropTypes from "prop-types";
     - Shows 403 error if authenticated but not admin
     - Renders protected content if admin
 */
-function AdminRoute({ children }) {
+function AdminRoute() {
     const { isAuthenticated, isAdmin } = useAuthStore();
 
-    // Redirect to login if not authenticated
-    if (!isAuthenticated) {
+    // Redirect if not authenticated or not an admin
+    if (!isAuthenticated || !isAdmin) {
         return <Navigate to="/auth" replace />;
     }
 
-    // Show forbidden error if authenticated but not admin
-    if (!isAdmin) {
-        return <Navigate to="/403" replace />;
-    }
-
-    return children;
+    // Render child routes
+    return (
+        <div className="flex min-h-screen w-full flex-col">
+            <DashboardNav />
+            <Outlet />
+        </div>
+    );
 }
-
-AdminRoute.propTypes = {
-    children: PropTypes.node.isRequired,
-};
 
 export default AdminRoute;
