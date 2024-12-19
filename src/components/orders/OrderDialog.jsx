@@ -6,13 +6,17 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
+    DialogClose,
 } from "@/components/ui/dialog";
 import {
     Drawer,
     DrawerContent,
     DrawerHeader,
     DrawerTitle,
+    DrawerClose,
+    DrawerFooter,
 } from "@/components/ui/drawer";
+import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { format } from "date-fns";
 import NumberFlow from "@number-flow/react";
@@ -42,7 +46,9 @@ export function OrderDialog({ order, open, onOpenChange }) {
 
                 {/* Products List */}
                 <div className="space-y-4">
-                    <div className="text-sm text-muted-foreground">Products</div>
+                    <div className="text-sm text-muted-foreground">
+                        Products
+                    </div>
                     {order.products.map((item) => (
                         <div
                             key={item._id}
@@ -50,7 +56,10 @@ export function OrderDialog({ order, open, onOpenChange }) {
                         >
                             <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border">
                                 <img
-                                    src={item.productId.thumbnail || "/missing_image.png"}
+                                    src={
+                                        item.productId.thumbnail ||
+                                        "/missing_image.png"
+                                    }
                                     alt={item.productId.name}
                                     className={`h-full w-full object-cover ${!item.productId.thumbnail ? "opacity-50" : ""}`}
                                 />
@@ -116,21 +125,18 @@ export function OrderDialog({ order, open, onOpenChange }) {
     if (isDesktop) {
         return (
             <Dialog open={open} onOpenChange={onOpenChange}>
-                <DialogContent className="max-h-[90vh] space-y-4 p-0 sm:max-w-[600px]">
-                    <DialogHeader className="items-top flex h-14 flex-row justify-between space-y-6 border-b px-6">
+                <DialogContent className="max-h-[90vh] space-y-4 px-0 sm:max-w-[500px]">
+                    <DialogHeader className="items-top flex h-14 flex-row justify-between space-y-6 border-b border-border px-6">
                         <DialogTitle className="text-3xl font-medium tracking-[-0.1rem]">
                             Order Details
                         </DialogTitle>
-                        <button
-                            onClick={() => onOpenChange(false)}
-                            className="absolute -top-1 right-6"
-                        >
-                            <div className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border bg-secondary text-foreground transition-colors duration-200 hover:border-foreground/10 hover:bg-secondary/50">
+                        <DialogClose className="absolute -top-2 right-6">
+                            <div className="transition-colors-opacity flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border bg-secondary text-foreground duration-200 hover:border-foreground/10 hover:bg-secondary/50">
                                 <X className="h-4 w-4" />
                             </div>
-                        </button>
+                        </DialogClose>
                     </DialogHeader>
-                    <OrderDetails className="px-6 pb-6" />
+                    <OrderDetails className="px-6" />
                 </DialogContent>
             </Dialog>
         );
@@ -138,22 +144,29 @@ export function OrderDialog({ order, open, onOpenChange }) {
 
     return (
         <Drawer open={open} onOpenChange={onOpenChange}>
-            <DrawerContent>
-                <DrawerHeader className="items-top flex h-14 flex-row justify-between space-y-6 border-b px-6">
-                    <DrawerTitle className="text-3xl font-medium tracking-[-0.1rem]">
+            <DrawerContent className="px-0">
+                <DialogHeader className="items-top flex h-14 flex-row justify-between space-y-6 border-b border-border px-6">
+                    <DialogTitle className="text-3xl font-medium tracking-[-0.12rem]">
                         Order Details
-                    </DrawerTitle>
-                    <button
-                        onClick={() => onOpenChange(false)}
-                        className="absolute -top-1 right-6"
-                    >
-                        <div className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border bg-secondary text-foreground transition-colors duration-200 hover:border-foreground/10 hover:bg-secondary/50">
+                    </DialogTitle>
+                    <DialogClose className="absolute -top-1 right-6">
+                        <div className="transition-colors-opacity flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border bg-secondary text-foreground duration-200 hover:border-foreground/10 hover:bg-secondary/50">
                             <X className="h-4 w-4" />
                         </div>
-                    </button>
-                </DrawerHeader>
-                <OrderDetails className="p-6" />
+                    </DialogClose>
+                </DialogHeader>
+                <OrderDetails className="px-6 pt-7" />
+                <DrawerFooter className="px-6 pb-6 pt-0">
+                    <DrawerClose asChild>
+                        <Button
+                            variant=""
+                            className="text-md mt-3 h-12 font-normal"
+                        >
+                            Close
+                        </Button>
+                    </DrawerClose>
+                </DrawerFooter>
             </DrawerContent>
         </Drawer>
     );
-} 
+}
