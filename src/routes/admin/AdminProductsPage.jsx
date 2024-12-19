@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
-import { useStoreManagement } from "../../store/store-management"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+import { useEffect, useState } from "react";
+import { useStoreManagement } from "../../store/store-management";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
     Table,
     TableBody,
@@ -9,41 +9,41 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card"
-import { format } from "date-fns"
-import { Search, ArrowUpDown, Plus } from "lucide-react"
-import EditProductSheet from '@/components/products/EditProductSheet'
+} from "@/components/ui/card";
+import { format } from "date-fns";
+import { Search, ArrowUpDown, Plus } from "lucide-react";
+import AdminProductSheet from "@/components/products/AdminProductSheet";
 
 export default function AdminProductsPage() {
-    const { 
-        products, 
-        isLoading, 
-        error, 
-        fetchProducts, 
+    const {
+        products,
+        isLoading,
+        error,
+        fetchProducts,
         loadMoreProducts,
-        hasMoreProducts 
-    } = useStoreManagement()
-    const [searchQuery, setSearchQuery] = useState("")
-    const [selectedProduct, setSelectedProduct] = useState(null)
-    const [isCreating, setIsCreating] = useState(false)
+        hasMoreProducts,
+    } = useStoreManagement();
+    const [searchQuery, setSearchQuery] = useState("");
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [isCreating, setIsCreating] = useState(false);
 
-    console.log('Products from store:', products)
+    console.log("Products from store:", products);
 
     useEffect(() => {
-        fetchProducts()
-    }, [fetchProducts])
+        fetchProducts();
+    }, [fetchProducts]);
 
-    if (error) return <div>Error: {error}</div>
+    if (error) return <div>Error: {error}</div>;
 
-    const productsList = Array.isArray(products) ? products : []
-    console.log('ProductsList:', productsList)
+    const productsList = Array.isArray(products) ? products : [];
+    console.log("ProductsList:", productsList);
 
     return (
         <div className="py-8">
@@ -87,7 +87,7 @@ export default function AdminProductsPage() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {productsList.map(product => (
+                                {productsList.map((product) => (
                                     <TableRow key={product._id}>
                                         <TableCell className="font-medium">
                                             {product.name}
@@ -134,23 +134,25 @@ export default function AdminProductsPage() {
                                 disabled={isLoading}
                                 variant="secondary"
                             >
-                                {isLoading ? "Loading..." : "Load more products"}
+                                {isLoading
+                                    ? "Loading..."
+                                    : "Load more products"}
                             </Button>
                         </div>
                     )}
                 </CardContent>
             </Card>
-            <EditProductSheet 
+            <AdminProductSheet
                 product={selectedProduct}
                 open={!!selectedProduct || isCreating}
                 onOpenChange={(open) => {
                     if (!open) {
-                        setSelectedProduct(null)
-                        setIsCreating(false)
+                        setSelectedProduct(null);
+                        setIsCreating(false);
                     }
                 }}
                 isCreating={isCreating}
             />
         </div>
-    )
-} 
+    );
+}

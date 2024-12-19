@@ -5,6 +5,7 @@ import {
     SheetTitle,
     SheetDescription,
     SheetFooter,
+    SheetClose,
 } from "@/components/ui/sheet.jsx";
 import { format } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -16,7 +17,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2, X } from "lucide-react";
 import { useStoreManagement } from "@/store/store-management";
 import { useState, useEffect } from "react";
 
@@ -62,7 +63,7 @@ export default function AdminOrderSheet({ order, open, onOpenChange }) {
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="flex flex-col sm:max-w-[540px]">
+            <SheetContent className="flex w-full flex-col sm:max-w-[540px]">
                 {order && ( // Only render content if order exists
                     <>
                         <SheetHeader className="space-y-1">
@@ -70,6 +71,11 @@ export default function AdminOrderSheet({ order, open, onOpenChange }) {
                             <SheetDescription>
                                 Order ID: {order._id}
                             </SheetDescription>
+                            <SheetClose className="absolute right-6 top-6">
+                                <div className="transition-colors-opacity flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border bg-secondary text-foreground duration-200 hover:border-foreground/10 hover:bg-secondary/50">
+                                    <X className="h-4 w-4" />
+                                </div>
+                            </SheetClose>
                         </SheetHeader>
                         <Separator className="my-4" />
                         <div className="flex-1 overflow-hidden">
