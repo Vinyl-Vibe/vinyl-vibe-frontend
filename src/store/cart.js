@@ -16,6 +16,15 @@ export const useCartStore = create((set, get) => ({
     total: 0,
     updateTimeouts: {}, // Object to store timeouts for each product
 
+    // Add error handling
+    setError: (error) => {
+        set({ error })
+        // Clear error after 5 seconds
+        setTimeout(() => {
+            set({ error: null })
+        }, 5000)
+    },
+
     // Helper to fetch product details for cart items
     enrichCartItems: async (cartItems) => {
         if (!Array.isArray(cartItems)) {
@@ -242,8 +251,13 @@ export const useCartStore = create((set, get) => ({
 
     // Clear cart (used on logout)
     clearCart: () => {
+        set({ 
+            items: [], 
+            total: 0,
+            error: null 
+        })
+        // Also clear localStorage
         localStorage.removeItem('cart')
-        set({ items: [], total: 0 })
     },
 
     // Add a debounced update function
