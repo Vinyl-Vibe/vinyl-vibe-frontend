@@ -25,6 +25,36 @@ export const useAuthStore = create((set, get) => ({
     isAuthenticated: false, // Whether user is logged in
     isAdmin: false, // Whether user has admin privileges
 
+    // Validate token on refresh/mount
+    validateToken: async () => {
+        try {
+            const token = tokenStorage.get()
+            if (!token) {
+                set({ isAuthenticated: false, isAdmin: false })
+                return
+            }
+
+            // Get current user to validate token
+            const response = await authApi.getCurrentUser()
+            
+            if (response.user) {
+                set({ 
+                    isAuthenticated: true,
+                    isAdmin: response.user.role === 'admin',
+                    user: response.user
+                })
+            } else {
+                // Token is invalid
+                tokenStorage.remove()
+                set({ isAuthenticated: false, isAdmin: false })
+            }
+        } catch (error) {
+            console.error('Token validation failed:', error)
+            tokenStorage.remove()
+            set({ isAuthenticated: false, isAdmin: false })
+        }
+    },
+
     // Log in user with credentials
     login: async (credentials) => {
         set({ isLoading: true, error: null });

@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import AuthProvider from "./components/auth/AuthProvider";
 import AuthRoute from "./components/auth/AuthRoute";
 import AdminRoute from "./components/auth/AdminRoute";
@@ -26,6 +26,7 @@ import AuthCallback from "./components/auth/AuthCallback";
 import { setupAxiosInterceptors } from "./lib/axios";
 import { tokenStorage } from "./lib/token";
 import OrderSuccessPage from "./routes/protected/OrderSuccessPage";
+import DashboardNav from "./components/navigation/dashboard/DashboardNav";
 
 // Initialize axios interceptors with tokenStorage
 setupAxiosInterceptors(tokenStorage);
@@ -53,7 +54,12 @@ function App() {
                         <Route path="/products" element={<CatalogPage />} />
 
                         {/* Admin routes */}
-                        <Route path="/admin" element={<AdminRoute />}>
+                        <Route path="/admin" element={
+                            <AuthRoute requireAdmin>
+                                <DashboardNav />
+                                <Outlet />
+                            </AuthRoute>
+                        }>
                             <Route index element={<DashboardPage />} />
                             <Route path="orders" element={<AdminOrdersPage />} />
                             <Route path="products" element={<AdminProductsPage />} />

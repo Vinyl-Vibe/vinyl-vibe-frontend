@@ -102,7 +102,11 @@ function MainNav() {
                     </div>
                 </div>
             </div>
-            <div className="flex w-full justify-center overflow-hidden">
+            <div
+                className={`flex w-full justify-center overflow-hidden transition-[max-height] duration-300 ${
+                    isSearchOpen ? "max-h-[200px]" : "max-h-0"
+                }`}
+            >
                 <form onSubmit={handleSearch} className="w-full max-w-7xl">
                     <div
                         ref={searchWrapperRef}

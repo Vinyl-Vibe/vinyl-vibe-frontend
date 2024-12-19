@@ -86,12 +86,12 @@ function ProductPage() {
             <main className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="py-24 duration-500 animate-in fade-in">
                     <Button
-                        variant="ghost"
+                        variant=""
                         className="mb-8 flex items-center gap-2"
                         onClick={handleBack}
                     >
                         <ArrowLeft className="h-4 w-4" />
-                        Back to Catalog
+                        Back
                     </Button>
 
                     <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-2">
