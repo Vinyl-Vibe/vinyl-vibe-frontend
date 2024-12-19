@@ -1,4 +1,4 @@
-import AuthNav from "@/components/layout/AuthNav";
+import AuthNav from "@/components/navigation/auth/AuthNav";
 import AuthForm from "@/components/auth/AuthForm";
 
 function AuthPage() {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ordersApi } from "../../api/orders";
-import MainNav from "../../components/layout/MainNav";
+import MainNav from "../../components/navigation/store/StoreNav";
 import { Button } from "../../components/ui/button";
 import { Loader2, Package } from "lucide-react";
 import {
@@ -96,7 +96,7 @@ function OrdersPage() {
                             </TableHeader>
                             <TableBody>
                                 {orders.map((order) => (
-                                    <TableRow 
+                                    <TableRow
                                         key={order._id}
                                         className="cursor-pointer hover:bg-muted/50"
                                         onClick={() => setSelectedOrder(order)}

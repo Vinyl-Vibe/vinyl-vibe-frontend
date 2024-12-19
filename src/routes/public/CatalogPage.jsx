@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import MainNav from "../../components/layout/MainNav";
+import MainNav from "../../components/navigation/store/StoreNav";
 import ProductCard from "../../components/products/ProductCard";
 import CategoryFilter from "../../components/products/CategoryFilter";
 import SortSelect from "../../components/products/SortSelect";
@@ -10,7 +10,7 @@ import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import Pagination from "../../components/ui/pagination";
-import { useMinimumLoadingTime } from '../../hooks/useMinimumLoadingTime';
+import { useMinimumLoadingTime } from "../../hooks/useMinimumLoadingTime";
 
 /* 
     CatalogPage: Product listing page
@@ -43,19 +43,19 @@ function CatalogPage() {
         if (category) {
             // Map URL parameter to category type
             const categoryMap = {
-                'vinyls': 'vinyl',
-                'turntables': 'turntable',
-                'accessories': 'accessory',
-                'merch': 'merch'
+                vinyls: "vinyl",
+                turntables: "turntable",
+                accessories: "accessory",
+                merch: "merch",
             };
-            
+
             const mappedCategory = categoryMap[category];
             if (mappedCategory) {
                 setCategory(mappedCategory);
             }
         } else {
             // If no category in URL, show all products
-            setCategory('all');
+            setCategory("all");
         }
     }, [category, setCategory]);
 

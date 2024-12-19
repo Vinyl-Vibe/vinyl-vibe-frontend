@@ -1,4 +1,4 @@
-import MainNav from "@/components/layout/MainNav";
+import MainNav from "@/components/navigation/store/StoreNav";
 function HomePage() {
     return (
         <>

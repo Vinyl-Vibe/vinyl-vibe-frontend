@@ -5,8 +5,8 @@ import {
     SheetTitle,
     SheetTrigger,
     SheetClose,
-} from "../ui/sheet";
-import { Button } from "../ui/button";
+} from "../../ui/sheet";
+import { Button } from "../../ui/button";
 import {
     Loader2,
     ShoppingCart,
@@ -24,13 +24,14 @@ import {
     MapPin,
     Settings,
 } from "lucide-react";
-import { ScrollArea } from "../ui/scroll-area";
-import { Separator } from "../ui/separator";
-import { useCartStore } from "../../store/cart";
+import { ScrollArea } from "../../ui/scroll-area";
+import { Separator } from "../../ui/separator";
+import { useCartStore } from "../../../store/cart";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import { Badge } from "../ui/badge";
-import { useAuthStore } from "../../store/auth";
-import { useUserStore } from "../../store/user";
+import { Badge } from "../../ui/badge";
+import { useAuthStore } from "../../../store/auth";
+import { useUserStore } from "../../../store/user";
+import { format } from "date-fns";
 
 import NumberFlow from "@number-flow/react";
 
@@ -38,7 +39,7 @@ function MenuSheet() {
     const { items = [], isLoading } = useCartStore();
     const navigate = useNavigate();
     const location = useLocation();
-    const { isAuthenticated, isAdmin, logout } = useAuthStore();
+    const { isAuthenticated, isAdmin, logout, user } = useAuthStore();
     const { profile } = useUserStore();
 
     // Calculate totals with safety checks
@@ -66,24 +67,28 @@ function MenuSheet() {
     };
 
     const handleEditProfile = () => {
-        document.getElementById('edit-profile-trigger')?.click();
+        document.getElementById("edit-profile-trigger")?.click();
     };
 
     const handleEditAddress = () => {
-        document.getElementById('edit-address-trigger')?.click();
+        document.getElementById("edit-address-trigger")?.click();
     };
 
     const handlePastOrders = () => {
-        navigate('/orders');
+        navigate("/orders");
     };
 
     const handleLogout = async () => {
         try {
             await logout();
-            navigate('/');
+            navigate("/");
         } catch (error) {
-            console.error('Logout failed:', error);
+            console.error("Logout failed:", error);
         }
+    };
+
+    const handleAdminDashboard = () => {
+        navigate("/admin");
     };
 
     return (
@@ -102,12 +107,29 @@ function MenuSheet() {
                                     <User className="h-5 w-5" />
                                 </div>
                                 <div className="flex flex-col gap-0.5">
-                                    <div className="text-sm font-medium">
-                                        {profile?.firstName + " " + profile?.lastName || "Your profile"}
-                                    </div>
-                                    <div className="text-sm opacity-50">
-                                        {profile?.email || "user@example.com"}
-                                    </div>
+                                    {profile?.profile?.firstName ? (
+                                        <>
+                                            <div className="text-sm font-medium">
+                                                {profile.profile.lastName
+                                                    ? `${profile.profile.firstName} ${profile.profile.lastName}`
+                                                    : profile.profile.firstName}
+                                            </div>
+                                            <div className="text-sm opacity-50">
+                                                {profile.email}
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="text-sm font-medium">
+                                                {profile?.email}
+                                            </div>
+                                            <div className="text-sm opacity-50">
+                                                {user?.createdAt
+                                                    ? `Joined ${format(new Date(user.createdAt), "MMMM yyyy")}`
+                                                    : "New user"}
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         ) : (
@@ -128,11 +150,11 @@ function MenuSheet() {
                         </SheetClose>
                     </div>
                     {isAuthenticated && (
-                        <div className="flex w-full flex-row items-center justify-between border-t border-foreground px-6 py-4">
+                        <div className="flex w-full flex-wrap items-center gap-2 border-t border-foreground px-6 py-4">
                             <SheetClose asChild>
-                                <Button 
+                                <Button
                                     onClick={handleEditProfile}
-                                    size="sm" 
+                                    size=""
                                     className="rounded-full border-[#99DE1F] bg-[#B9F05A] [&_svg]:size-4"
                                 >
                                     <Settings />
@@ -141,20 +163,9 @@ function MenuSheet() {
                             </SheetClose>
 
                             <SheetClose asChild>
-                                <Button 
-                                    onClick={handleEditAddress}
-                                    size="sm" 
-                                    className="rounded-full border-[#99DE1F] bg-[#B9F05A] [&_svg]:size-4"
-                                >
-                                    <MapPin />
-                                    Edit address
-                                </Button>
-                            </SheetClose>
-
-                            <SheetClose asChild>
-                                <Button 
+                                <Button
                                     onClick={handlePastOrders}
-                                    size="sm" 
+                                    size=""
                                     className="rounded-full border-[#99DE1F] bg-[#B9F05A] [&_svg]:size-4"
                                 >
                                     <Box />
@@ -163,15 +174,28 @@ function MenuSheet() {
                             </SheetClose>
 
                             <SheetClose asChild>
-                                <Button 
+                                <Button
                                     onClick={handleLogout}
-                                    size="sm" 
-                                    className="rounded-full border-[#99DE1F] bg-[#B9F05A] [&_svg]:size-4"
+                                    size=""
+                                    className="rounded-full border-[#99DE1F] bg-[#B9F05A] hover:border-destructive hover:bg-destructive/10 hover:text-destructive [&_svg]:size-4"
                                 >
                                     <LogOut />
                                     Log out
                                 </Button>
                             </SheetClose>
+
+                            {isAdmin && (
+                                <SheetClose asChild>
+                                    <Button
+                                        onClick={handleAdminDashboard}
+                                        size=""
+                                        className="rounded-full border-[#99DE1F] bg-[#B9F05A] [&_svg]:size-4"
+                                    >
+                                        <Settings />
+                                        Admin Dashboard
+                                    </Button>
+                                </SheetClose>
+                            )}
                         </div>
                     )}
                 </SheetHeader>
