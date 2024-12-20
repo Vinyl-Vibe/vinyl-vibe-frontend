@@ -109,7 +109,7 @@ export default function AdminCustomerSheet({ customer, open, onOpenChange }) {
                         </SheetHeader>
                         <Separator className="my-4" />
 
-                        <ScrollArea className="flex-1 pr-4">
+                        <ScrollArea className="">
                             {/* Customer Info */}
                             <div className="space-y-6">
                                 <div>
