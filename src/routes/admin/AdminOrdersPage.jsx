@@ -378,7 +378,7 @@ export default function AdminOrdersPage() {
                                             <TableCell>
                                                 <Button
                                                     variant=""
-                                                    className="hover:bg-accent/10"
+                                                    className=""
                                                     size="sm"
                                                     onClick={() =>
                                                         handleOrderSelect(order)

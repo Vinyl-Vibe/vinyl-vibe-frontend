@@ -245,7 +245,8 @@ export const useStoreManagement = create((set, get) => ({
 
             // Calculate order count for each user with null check
             const orderCounts = ordersResponse.orders.reduce((acc, order) => {
-                if (!order.userId) return acc;
+                // Skip orders without userId
+                if (!order.userId || !order.userId._id) return acc;
 
                 const userId = order.userId._id;
                 acc[userId] = (acc[userId] || 0) + 1;
@@ -408,13 +409,36 @@ export const useStoreManagement = create((set, get) => ({
             const response =
                 await storeManagementApi.getCustomerOrders(customerId);
             // Filter orders to only include those belonging to this customer
+            // and handle possible null userId
             const customerOrders = (response.orders || []).filter(
-                (order) => order.userId._id === customerId,
+                (order) => order.userId && order.userId._id === customerId,
             );
             return customerOrders;
         } catch (err) {
             console.error("Failed to fetch customer orders:", err);
             return [];
+        }
+    },
+
+    // Add this to store-management.js
+    updateUserRole: async (userId, role) => {
+        try {
+            const response = await storeManagementApi.updateUserRole(
+                userId,
+                role,
+            );
+
+            // Update the user in the local state
+            const updatedCustomers = get().customers.map((customer) =>
+                customer._id === userId ? { ...customer, role } : customer,
+            );
+
+            set({ customers: updatedCustomers });
+
+            return { success: true };
+        } catch (err) {
+            console.error("Failed to update user role:", err);
+            return { success: false, error: err.message };
         }
     },
 }));

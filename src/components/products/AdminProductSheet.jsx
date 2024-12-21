@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { format } from "date-fns";
 import { useStoreManagement } from "@/store/store-management";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle2, AlertCircle, X } from "lucide-react";
+import { CheckCircle2, AlertCircle, X, Plus } from "lucide-react";
 import {
     AlertDialog,
     AlertDialogContent,
@@ -59,7 +59,7 @@ export default function AdminProductSheet({
             artist: "",
             genre: "",
             releaseDate: "",
-            trackList: [],
+            trackList: [""],
         },
     });
 
@@ -85,7 +85,7 @@ export default function AdminProductSheet({
                     artist: "",
                     genre: "",
                     releaseDate: "",
-                    trackList: [],
+                    trackList: [""],
                 },
             });
         } else if (currentProduct) {
@@ -101,7 +101,7 @@ export default function AdminProductSheet({
                     artist: currentProduct.albumInfo?.artist || "",
                     genre: currentProduct.albumInfo?.genre || "",
                     releaseDate: currentProduct.albumInfo?.releaseDate || "",
-                    trackList: currentProduct.albumInfo?.trackList || [],
+                    trackList: currentProduct.albumInfo?.trackList || [""],
                 },
             };
             setFormData(initialFormData);
@@ -111,7 +111,7 @@ export default function AdminProductSheet({
     // Check for unsaved changes whenever formData changes
     useEffect(() => {
         if (isCreating) {
-            // For new products, check if any field has been filled
+            // For new products, check if any field has been meaningfully filled
             const isChanged =
                 formData.name !== "" ||
                 Number(formData.price) !== 0 ||
@@ -122,33 +122,33 @@ export default function AdminProductSheet({
                 formData.albumInfo.artist !== "" ||
                 formData.albumInfo.genre !== "" ||
                 formData.albumInfo.releaseDate !== "" ||
-                formData.albumInfo.trackList.length > 0;
+                // Only consider track list if it has any non-empty tracks
+                (formData.albumInfo.trackList.length > 0 &&
+                    formData.albumInfo.trackList.some((track) => track !== ""));
 
             setHasUnsavedChanges(isChanged);
         } else if (currentProduct) {
-
             const isChanged =
                 String(formData.name || "") !==
-                    String(currentProduct.name || "") ||
+                String(currentProduct.name || "") ||
                 Number(formData.price || 0) !==
-                    Number(currentProduct.price || 0) ||
+                Number(currentProduct.price || 0) ||
                 String(formData.type || "") !==
-                    String(currentProduct.type || "") ||
+                String(currentProduct.type || "") ||
                 String(formData.description || "") !==
-                    String(currentProduct.description || "") ||
+                String(currentProduct.description || "") ||
                 Number(formData.stock || 0) !==
-                    Number(currentProduct.stock || 0) ||
+                Number(currentProduct.stock || 0) ||
                 String(formData.brand || "") !==
-                    String(currentProduct.brand || "") ||
+                String(currentProduct.brand || "") ||
                 String(formData.albumInfo?.artist || "") !==
-                    String(currentProduct.albumInfo?.artist || "") ||
+                String(currentProduct.albumInfo?.artist || "") ||
                 String(formData.albumInfo?.genre || "") !==
-                    String(currentProduct.albumInfo?.genre || "") ||
+                String(currentProduct.albumInfo?.genre || "") ||
                 String(formData.albumInfo?.releaseDate || "") !==
-                    String(currentProduct.albumInfo?.releaseDate || "") ||
+                String(currentProduct.albumInfo?.releaseDate || "") ||
                 JSON.stringify(formData.albumInfo?.trackList || []) !==
-                    JSON.stringify(currentProduct.albumInfo?.trackList || []);
-
+                JSON.stringify(currentProduct.albumInfo?.trackList || []);
 
             setHasUnsavedChanges(isChanged);
         }
@@ -181,7 +181,8 @@ export default function AdminProductSheet({
     };
 
     // Add new track
-    const addTrack = () => {
+    const addTrack = (e) => {
+        e?.preventDefault();
         handleAlbumInfoChange("trackList", [
             ...formData.albumInfo.trackList,
             "",
@@ -189,7 +190,8 @@ export default function AdminProductSheet({
     };
 
     // Remove track
-    const removeTrack = (index) => {
+    const removeTrack = (index, e) => {
+        e?.preventDefault();
         const newTrackList = formData.albumInfo.trackList.filter(
             (_, i) => i !== index,
         );
@@ -212,7 +214,7 @@ export default function AdminProductSheet({
                 setStatus("error");
                 setMessage(
                     result.error ||
-                        `Failed to ${isCreating ? "create" : "update"} product`,
+                    `Failed to ${isCreating ? "create" : "update"} product`,
                 );
             }
         } catch (error) {
@@ -224,16 +226,24 @@ export default function AdminProductSheet({
 
     // Handle sheet closing
     const handleSheetClose = (open) => {
-        if (!open && hasUnsavedChanges) {
-            setShowUnsavedWarning(true);
-            return;
+        // If we're trying to close the sheet
+        if (!open) {
+            // If there are unsaved changes, show warning
+            if (hasUnsavedChanges) {
+                setShowUnsavedWarning(true);
+                return;
+            }
         }
+
+        // Otherwise, proceed with closing
         if (!open) {
             setStatus(null);
             setMessage("");
             setHasUnsavedChanges(false);
             setCurrentProduct(null);
         }
+
+        // Always update the sheet state
         onOpenChange(open);
     };
 
@@ -256,323 +266,397 @@ export default function AdminProductSheet({
 
     return (
         <Sheet open={open} onOpenChange={handleSheetClose}>
-            <SheetContent className="flex w-full flex-col sm:max-w-[540px]">
+            <SheetContent className="flex w-full flex-col gap-0 space-y-0 p-0 sm:max-w-[540px]">
                 {currentProduct || isCreating ? (
                     <>
-                        <SheetHeader>
-                            <SheetTitle>
-                                {isCreating ? "Add Product" : "Edit Product"}
+                        {/* Fixed Header */}
+                        <SheetHeader className="flex h-20 shrink-0 flex-row items-center justify-between border-b px-6">
+                            <SheetTitle className="text-3xl font-medium tracking-[-0.1rem]">
+                                {isCreating ? "Add product" : "View product"}
                             </SheetTitle>
-                            <SheetDescription>
+                            <SheetDescription className="hidden">
                                 {isCreating
-                                    ? "Add a new product to your store."
-                                    : "Make changes to the product here."}{" "}
-                                Click save when you're done.
+                                    ? "Add a new product"
+                                    : "View product details"}
                             </SheetDescription>
-                            <SheetClose className="absolute right-6 top-6">
+                            <SheetClose>
                                 <div className="transition-colors-opacity flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border bg-secondary text-foreground duration-200 hover:border-foreground/10 hover:bg-secondary/50">
                                     <X className="h-4 w-4" />
                                 </div>
                             </SheetClose>
                         </SheetHeader>
-                        <ScrollArea className="">
-                            <div className="grid gap-4 py-4">
-                                {/* Basic Info */}
-                                <div className="grid gap-2">
-                                    <label htmlFor="name">Name</label>
-                                    <Input
-                                        id="name"
-                                        value={formData.name}
-                                        onChange={(e) =>
-                                            handleChange("name", e.target.value)
-                                        }
-                                    />
-                                </div>
 
-                                <div className="grid gap-2">
-                                    <label htmlFor="price">Price</label>
-                                    <Input
-                                        id="price"
-                                        type="number"
-                                        step="0.01"
-                                        value={formData.price}
-                                        onChange={(e) =>
-                                            handleChange(
-                                                "price",
-                                                parseFloat(e.target.value),
-                                            )
-                                        }
-                                    />
-                                </div>
+                        {/* Main Content Area */}
+                        <div className="flex min-h-0 flex-1 flex-col">
+                            <ScrollArea className="flex-1">
+                                <div className="flex flex-col">
+                                    {/* Basic Info Section */}
+                                    <div className="grid grid-cols-1 gap-6 p-6 py-4 md:grid-cols-2">
+                                        {/* Left Column */}
+                                        <div className="space-y-4">
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <h5 className="mb-2 text-sm font-medium text-foreground">
+                                                        Name
+                                                    </h5>
+                                                    <Input
+                                                        value={formData.name}
+                                                        className="rounded-xl"
+                                                        placeholder="Product name"
+                                                        onChange={(e) =>
+                                                            handleChange(
+                                                                "name",
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <h5 className="mb-2 text-sm font-medium text-foreground">
+                                                        Price
+                                                    </h5>
+                                                    <Input
+                                                        type="number"
+                                                        className="rounded-xl"
+                                                        step="0.01"
+                                                        value={formData.price}
+                                                        onChange={(e) =>
+                                                            handleChange(
+                                                                "price",
+                                                                parseFloat(
+                                                                    e.target
+                                                                        .value,
+                                                                ),
+                                                            )
+                                                        }
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
 
-                                <div className="grid gap-2">
-                                    <label htmlFor="type">Type</label>
-                                    <Select
-                                        value={formData.type}
-                                        onValueChange={(value) =>
-                                            handleChange("type", value)
-                                        }
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select type" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="vinyl">
-                                                Vinyl
-                                            </SelectItem>
-                                            <SelectItem value="turntable">
-                                                Turntable
-                                            </SelectItem>
-                                            <SelectItem value="accessory">
-                                                Accessory
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
+                                        {/* Right Column */}
+                                        <div className="space-y-4">
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <h5 className="mb-2 text-sm font-medium text-foreground">
+                                                        Type
+                                                    </h5>
+                                                    <Select
+                                                        value={formData.type}
+                                                        onValueChange={(
+                                                            value,
+                                                        ) =>
+                                                            handleChange(
+                                                                "type",
+                                                                value,
+                                                            )
+                                                        }
+                                                    >
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Select type" />
+                                                        </SelectTrigger>
+                                                        <SelectContent className="rounded-2xl p-[3px] px-0.5">
+                                                            <SelectItem value="vinyl">
+                                                                Vinyl
+                                                            </SelectItem>
+                                                            <SelectItem value="turntable">
+                                                                Turntable
+                                                            </SelectItem>
+                                                            <SelectItem value="accessory">
+                                                                Accessory
+                                                            </SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
 
-                                <div className="grid gap-2">
-                                    <label htmlFor="description">
-                                        Description
-                                    </label>
-                                    <Textarea
-                                        id="description"
-                                        value={formData.description}
-                                        onChange={(e) =>
-                                            handleChange(
-                                                "description",
-                                                e.target.value,
-                                            )
-                                        }
-                                        className="min-h-0"
-                                        style={{
-                                            height: "auto",
-                                            minHeight: "100px",
-                                        }}
-                                        onFocus={(e) => {
-                                            // Adjust height on focus
-                                            e.target.style.height = "auto";
-                                            e.target.style.height =
-                                                e.target.scrollHeight + "px";
-                                        }}
-                                        onInput={(e) => {
-                                            // Adjust height as user types
-                                            e.target.style.height = "auto";
-                                            e.target.style.height =
-                                                e.target.scrollHeight + "px";
-                                        }}
-                                    />
-                                </div>
+                                                <div>
+                                                    <h5 className="mb-2 text-sm font-medium text-foreground">
+                                                        Stock
+                                                    </h5>
+                                                    <Input
+                                                        type="number"
+                                                        value={formData.stock}
+                                                        className="rounded-xl"
+                                                        onChange={(e) =>
+                                                            handleChange(
+                                                                "stock",
+                                                                parseInt(
+                                                                    e.target
+                                                                        .value,
+                                                                ),
+                                                            )
+                                                        }
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
 
-                                <div className="grid gap-2">
-                                    <label htmlFor="stock">Stock</label>
-                                    <Input
-                                        id="stock"
-                                        type="number"
-                                        value={formData.stock}
-                                        onChange={(e) =>
-                                            handleChange(
-                                                "stock",
-                                                parseInt(e.target.value),
-                                            )
-                                        }
-                                    />
-                                </div>
+                                        {/* Brand field spans both columns */}
+                                        {formData.type &&
+                                            formData.type !== "vinyl" && (
+                                                <div className="md:col-span-2">
+                                                    <h5 className="mb-2 text-sm font-medium text-foreground">
+                                                        Brand
+                                                    </h5>
+                                                    <Input
+                                                        value={formData.brand}
+                                                        onChange={(e) =>
+                                                            handleChange(
+                                                                "brand",
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                    />
+                                                </div>
+                                            )}
+                                    </div>
 
-                                {/* Brand field for non-vinyl products */}
-                                {formData.type !== "vinyl" && (
-                                    <div className="grid gap-2">
-                                        <label htmlFor="brand">Brand</label>
-                                        <Input
-                                            id="brand"
-                                            value={formData.brand}
+                                    {/* Description Section */}
+                                    <div className="border-t px-6 py-4">
+                                        <h4 className="mb-3 text-sm font-medium">
+                                            Description
+                                        </h4>
+                                        <Textarea
+                                            value={formData.description}
+                                            className="bg-white min-h-[100px] resize-none"
+                                            placeholder="Product description"
                                             onChange={(e) =>
                                                 handleChange(
-                                                    "brand",
+                                                    "description",
                                                     e.target.value,
                                                 )
                                             }
                                         />
                                     </div>
-                                )}
 
-                                {/* Album Info for vinyl products */}
-                                {formData.type === "vinyl" && (
-                                    <>
-                                        <div className="grid gap-2">
-                                            <label htmlFor="artist">
-                                                Artist
-                                            </label>
-                                            <Input
-                                                id="artist"
-                                                value={
-                                                    formData.albumInfo.artist
-                                                }
-                                                onChange={(e) =>
-                                                    handleAlbumInfoChange(
-                                                        "artist",
-                                                        e.target.value,
-                                                    )
-                                                }
-                                            />
-                                        </div>
-
-                                        <div className="grid gap-2">
-                                            <label htmlFor="genre">Genre</label>
-                                            <Input
-                                                id="genre"
-                                                value={formData.albumInfo.genre}
-                                                onChange={(e) =>
-                                                    handleAlbumInfoChange(
-                                                        "genre",
-                                                        e.target.value,
-                                                    )
-                                                }
-                                            />
-                                        </div>
-
-                                        <div className="grid gap-2">
-                                            <label htmlFor="releaseDate">
-                                                Release Date
-                                            </label>
-                                            <Input
-                                                id="releaseDate"
-                                                type="date"
-                                                value={
-                                                    formData.albumInfo
-                                                        .releaseDate
-                                                        ? format(
-                                                              new Date(
-                                                                  formData.albumInfo.releaseDate,
-                                                              ),
-                                                              "yyyy-MM-dd",
-                                                          )
-                                                        : ""
-                                                }
-                                                onChange={(e) =>
-                                                    handleAlbumInfoChange(
-                                                        "releaseDate",
-                                                        e.target.value,
-                                                    )
-                                                }
-                                            />
-                                        </div>
-
-                                        <div className="grid gap-2">
-                                            <label>Track List</label>
-                                            {formData.albumInfo.trackList.map(
-                                                (track, index) => (
-                                                    <div
-                                                        key={index}
-                                                        className="flex gap-2"
-                                                    >
+                                    {/* Album Info Section (for vinyl only) */}
+                                    {formData.type === "vinyl" && (
+                                        <div className="border-t px-6 py-4">
+                                            <h4 className="mb-4 text-sm font-medium">
+                                                Album Details
+                                            </h4>
+                                            <div className="rounded-2xl border py-4">
+                                                <div className="grid gap-4 px-4 text-sm md:grid-cols-2">
+                                                    <div>
+                                                        <h5 className="mb-2 text-sm font-medium text-foreground">
+                                                            Artist
+                                                        </h5>
                                                         <Input
-                                                            value={track}
+                                                            value={
+                                                                formData
+                                                                    .albumInfo
+                                                                    .artist
+                                                            }
+                                                            className="rounded-xl"
+                                                            placeholder="Artist name"
                                                             onChange={(e) =>
-                                                                handleTrackListChange(
-                                                                    index,
+                                                                handleAlbumInfoChange(
+                                                                    "artist",
                                                                     e.target
                                                                         .value,
                                                                 )
                                                             }
-                                                            placeholder={`Track ${index + 1}`}
                                                         />
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            onClick={() =>
-                                                                removeTrack(
-                                                                    index,
+                                                    </div>
+                                                    <div>
+                                                        <h5 className="mb-2 text-sm font-medium text-foreground">
+                                                            Genre
+                                                        </h5>
+                                                        <Input
+                                                            value={
+                                                                formData
+                                                                    .albumInfo
+                                                                    .genre
+                                                            }
+                                                            className="rounded-xl"
+                                                            placeholder="Genre"
+                                                            onChange={(e) =>
+                                                                handleAlbumInfoChange(
+                                                                    "genre",
+                                                                    e.target
+                                                                        .value,
                                                                 )
                                                             }
-                                                        >
-                                                            Remove
-                                                        </Button>
+                                                        />
                                                     </div>
-                                                ),
-                                            )}
-                                            <Button
-                                                variant="outline"
-                                                onClick={addTrack}
-                                            >
-                                                Add Track
-                                            </Button>
+                                                </div>
+                                                <div className="mt-4 px-4">
+                                                    <h5 className="mb-2 text-sm font-medium text-foreground">
+                                                        Release Date
+                                                    </h5>
+                                                    <Input
+                                                        type="date"
+                                                        className="rounded-xl"
+                                                        value={
+                                                            formData.albumInfo
+                                                                .releaseDate
+                                                                ? format(
+                                                                    new Date(
+                                                                        formData.albumInfo.releaseDate,
+                                                                    ),
+                                                                    "yyyy-MM-dd",
+                                                                )
+                                                                : ""
+                                                        }
+                                                        onChange={(e) =>
+                                                            handleAlbumInfoChange(
+                                                                "releaseDate",
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
-                                    </>
-                                )}
-                            </div>
+                                    )}
 
-                            <SheetFooter>
-                                {status && (
-                                    <Alert
-                                        variant={
-                                            status === "success"
-                                                ? "default"
-                                                : "destructive"
-                                        }
-                                        className="mb-4"
-                                    >
-                                        {status === "success" ? (
-                                            <CheckCircle2 className="h-4 w-4" />
-                                        ) : (
-                                            <AlertCircle className="h-4 w-4" />
-                                        )}
-                                        <AlertDescription>
-                                            {message}
-                                        </AlertDescription>
-                                    </Alert>
-                                )}
-                                <div className="flex w-full justify-end gap-4">
-                                    <Button
-                                        variant="outline"
-                                        onClick={handleCancel}
-                                    >
-                                        Cancel
-                                    </Button>
-                                    <Button onClick={handleSubmit}>
-                                        {isCreating
-                                            ? "Create product"
-                                            : "Save changes"}
-                                    </Button>
+                                    {/* Track List Section (for vinyl only) */}
+                                    {formData.type === "vinyl" && (
+                                        <div className="border-t px-6 py-4">
+                                            <h4 className="mb-4 text-sm font-medium">
+                                                Track List
+                                            </h4>
+                                            <div className="space-y-4">
+                                                {formData.albumInfo.trackList.map(
+                                                    (track, index) => (
+                                                        <div
+                                                            key={index}
+                                                            className="flex items-center gap-2"
+                                                        >
+                                                            <Input
+                                                                value={track}
+                                                                onChange={(e) =>
+                                                                    handleTrackListChange(
+                                                                        index,
+                                                                        e.target
+                                                                            .value,
+                                                                    )
+                                                                }
+                                                                placeholder={`Track ${index + 1}`}
+                                                                className="flex-1 rounded-xl"
+                                                            />
+                                                            {index ===
+                                                                formData
+                                                                    .albumInfo
+                                                                    .trackList
+                                                                    .length -
+                                                                1 && (
+                                                                    <Button
+                                                                        type="button"
+                                                                        variant="confirm"
+                                                                        className="h-10 w-10 rounded-full"
+                                                                        onClick={
+                                                                            addTrack
+                                                                        }
+                                                                    >
+                                                                        <Plus className="h-4 w-4" />
+                                                                    </Button>
+                                                                )}
+                                                            {formData.albumInfo
+                                                                .trackList
+                                                                .length > 1 && (
+                                                                    <Button
+                                                                        type="button"
+                                                                        variant="destructive"
+                                                                        className="h-10 w-10 rounded-full"
+                                                                        onClick={(
+                                                                            e,
+                                                                        ) =>
+                                                                            removeTrack(
+                                                                                index,
+                                                                                e,
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        <X className="h-4 w-4" />
+                                                                    </Button>
+                                                                )}
+                                                        </div>
+                                                    ),
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
-                            </SheetFooter>
-                        </ScrollArea>
+                            </ScrollArea>
 
-                        {/* Unsaved Changes Warning */}
-                        {showUnsavedWarning && (
-                            <AlertDialog open={showUnsavedWarning}>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>
-                                            Unsaved Changes
-                                        </AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            You have unsaved changes. Are you
-                                            sure you want to discard them?
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel
-                                            onClick={() =>
-                                                setShowUnsavedWarning(false)
+                            {/* Fixed Footer */}
+                            <div className="shrink-0 border-t bg-secondary/50">
+                                <div className="space-y-4 p-6">
+                                    {status && (
+                                        <Alert
+                                            variant={
+                                                status === "success"
+                                                    ? "default"
+                                                    : "destructive"
                                             }
+                                            className="mb-4"
                                         >
-                                            Continue editing
-                                        </AlertDialogCancel>
-                                        <AlertDialogAction
-                                            onClick={handleDiscardChanges}
+                                            {status === "success" ? (
+                                                <CheckCircle2 className="h-4 w-4" />
+                                            ) : (
+                                                <AlertCircle className="h-4 w-4" />
+                                            )}
+                                            <AlertDescription>
+                                                {message}
+                                            </AlertDescription>
+                                        </Alert>
+                                    )}
+                                    <div className="flex justify-end gap-4">
+                                        <Button
+                                            variant=""
+                                            onClick={handleCancel}
                                         >
-                                            Discard changes
-                                        </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-                        )}
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            variant="secondary"
+                                            onClick={handleSubmit}
+                                        >
+                                            {isCreating
+                                                ? "Create product"
+                                                : "Save changes"}
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </>
                 ) : null}
-                <SheetTitle className="hidden">Add Product</SheetTitle>
+
+                {/* Unsaved Changes Warning Dialog */}
+                {showUnsavedWarning && (
+                    <AlertDialog open={showUnsavedWarning}>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                    Unsaved Changes
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    You have unsaved changes. Are you sure you
+                                    want to discard them?
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogAction
+                                    onClick={handleDiscardChanges}
+                                >
+                                    Discard changes
+                                </AlertDialogAction>
+                                <AlertDialogCancel
+                                    onClick={() => setShowUnsavedWarning(false)}
+                                >
+                                    Continue editing
+                                </AlertDialogCancel>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                )}
+
                 <SheetDescription className="hidden">
-                    Add a new product to your store
+                    Product details
                 </SheetDescription>
+                <SheetTitle className="hidden">Product details </SheetTitle>
             </SheetContent>
         </Sheet>
     );

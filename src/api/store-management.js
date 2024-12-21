@@ -69,4 +69,23 @@ export const storeManagementApi = {
         const { data } = await api.get("/users?page=1&limit=50");
         return data;
     },
+
+    // Update user role
+    updateUserRole: async (userId, role) => {
+        try {
+            const { data } = await api.patch(`/users/${userId}/role`, { role });
+            return {
+                success: true,
+                user: data.user,
+            };
+        } catch (error) {
+            console.error("Failed to update user role:", error);
+            return {
+                success: false,
+                error:
+                    error.response?.data?.message ||
+                    "Failed to update user role",
+            };
+        }
+    },
 };

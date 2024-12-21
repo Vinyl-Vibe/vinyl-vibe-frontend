@@ -54,6 +54,8 @@ body {
         --accent-foreground: 82 83% 65%;
         --destructive: 0 84.2% 60.2%;
         --destructive-foreground: 0 0% 97%;
+        --confirm: 142 76% 36%;
+        --confirm-foreground: 0 0% 100%;
         --border: 240 6% 90%;
         --input: 240 6% 90%;
         --ring: 240 0% 80%;

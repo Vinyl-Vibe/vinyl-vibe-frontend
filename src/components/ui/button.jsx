@@ -12,7 +12,10 @@ const buttonVariants = cva(
                 default:
                     "bg-secondary border text-foreground hover:bg-secondary/50 hover:border-foreground/10 transition-opacity transition-colors duration-200",
                 destructive:
-                    "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+                    "bg-secondary border text-foreground hover:bg-destructive/10 hover:border-destructive hover:text-destructive transition-opacity transition-colors duration-200",
+                confirm:
+                    "bg-secondary border text-foreground hover:bg-confirm/10 hover:border-confirm hover:text-confirm transition-opacity transition-colors duration-200",
+
                 outline:
                     "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
                 secondary:
