@@ -25,7 +25,7 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { format } from "date-fns";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import AdminOrderSheet from "@/components/orders/AdminOrderSheet";
 import { useSearchParams } from "react-router-dom";
 import { SortButton } from "@/components/ui/sort-button";
@@ -175,9 +175,11 @@ export default function AdminOrdersPage() {
 
     return (
         <div className="flex-1 space-y-4 p-4 pt-6">
-            <Card>
+            <Card className="rounded-2xl">
                 <CardHeader>
-                    <CardTitle className="text-2xl">Orders</CardTitle>
+                    <CardTitle className="text-3xl font-medium">
+                        Orders
+                    </CardTitle>
                     <CardDescription>
                         Manage and view all orders from your store
                     </CardDescription>
@@ -186,10 +188,10 @@ export default function AdminOrdersPage() {
                     {/* Filters */}
                     <div className="mb-6 flex items-center gap-4">
                         <div className="relative flex-1">
-                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Search className="absolute left-4 top-3 h-4 w-4 text-muted-foreground" />
                             <Input
                                 placeholder="Search orders..."
-                                className="pl-8"
+                                className="rounded-xl pl-9"
                                 value={filters.search}
                                 onChange={(e) =>
                                     setFilters((prev) => ({
@@ -198,6 +200,22 @@ export default function AdminOrdersPage() {
                                     }))
                                 }
                             />
+                            {filters.search && (
+                                <button
+                                    onClick={() =>
+                                        setFilters((prev) => ({
+                                            ...prev,
+                                            search: "",
+                                        }))
+                                    }
+                                    className="absolute right-3 top-3 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                >
+                                    <X className="h-4 w-4" />
+                                    <span className="sr-only">
+                                        Clear search
+                                    </span>
+                                </button>
+                            )}
                         </div>
                         <Select
                             value={filters.status}
@@ -241,7 +259,7 @@ export default function AdminOrdersPage() {
                     {isLoading && !orders.length ? (
                         <TableSkeleton rowCount={8} />
                     ) : filteredOrders.length > 0 ? (
-                        <div className="rounded-md border">
+                        <div className="rounded-xl border">
                             <Table>
                                 <TableHeader>
                                     <TableRow>

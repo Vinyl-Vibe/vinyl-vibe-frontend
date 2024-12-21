@@ -4,7 +4,7 @@ export function SortButton({ label, direction = "none", onClick }) {
     return (
         <button
             onClick={onClick}
-            className={`flex w-full items-center gap-1 px-0 py-2 text-sm transition-colors hover:bg-accent/5 ${direction !== "none" ? "bg-accent/10 font-medium" : ""} `}
+            className={`flex w-full items-center gap-1 px-0 py-2 text-sm transition-colors ${direction !== "none" ? "font-medium" : ""} `}
         >
             {label}
             <span className="ml-2">

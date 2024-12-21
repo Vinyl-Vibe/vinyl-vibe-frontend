@@ -1,4 +1,4 @@
-import { SearchX, PackageX } from "lucide-react";
+import { SearchX, PackageX, Users, ShoppingBag } from "lucide-react";
 
 export function EmptyState({ type = "search" }) {
     return (
@@ -9,6 +9,22 @@ export function EmptyState({ type = "search" }) {
                     <h3 className="font-medium">No results found</h3>
                     <p className="text-sm text-muted-foreground">
                         Try adjusting your search or filters
+                    </p>
+                </>
+            ) : type === "products" ? (
+                <>
+                    <ShoppingBag className="h-8 w-8 text-muted-foreground" />
+                    <h3 className="font-medium">No products found</h3>
+                    <p className="text-sm text-muted-foreground">
+                        Add some products to get started
+                    </p>
+                </>
+            ) : type === "customers" ? (
+                <>
+                    <Users className="h-8 w-8 text-muted-foreground" />
+                    <h3 className="font-medium">No customers found</h3>
+                    <p className="text-sm text-muted-foreground">
+                        Your customer list is empty
                     </p>
                 </>
             ) : (

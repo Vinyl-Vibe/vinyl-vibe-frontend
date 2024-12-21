@@ -1,6 +1,6 @@
 export function TableSkeleton({ rowCount = 5 }) {
     return (
-        <div className="rounded-md border">
+        <div className="rounded-xl border">
             <div className="divide-y">
                 {/* Header */}
                 <div className="grid grid-cols-6 gap-4 bg-muted/5 p-4">

@@ -25,7 +25,12 @@ export const storeManagementApi = {
     },
 
     // Get all products
-    getProducts: async ({ page = 1, limit = 50 } = {}) => {
+    getProducts: async ({ page = 1, limit = 50, isFiltering = false } = {}) => {
+        // Get all products if searching
+        if (isFiltering) {
+            const { data } = await api.get("/products");
+            return data;
+        }
         const { data } = await api.get(`/products?page=${page}&limit=${limit}`);
         return data;
     },
@@ -51,6 +56,17 @@ export const storeManagementApi = {
     // Get orders for a specific customer
     getCustomerOrders: async (customerId) => {
         const { data } = await api.get(`/orders?user-id=${customerId}`);
+        return data;
+    },
+
+    // Get all customers
+    getCustomers: async ({ isFiltering = false } = {}) => {
+        // Get all customers if searching
+        if (isFiltering) {
+            const { data } = await api.get("/users");
+            return data;
+        }
+        const { data } = await api.get("/users?page=1&limit=50");
         return data;
     },
 };
