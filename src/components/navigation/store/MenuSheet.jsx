@@ -5,6 +5,7 @@ import {
     SheetTitle,
     SheetTrigger,
     SheetClose,
+    SheetDescription,
 } from "../../ui/sheet";
 import { Button } from "../../ui/button";
 import {
@@ -99,6 +100,8 @@ function MenuSheet() {
                 </Button>
             </SheetTrigger>
             <SheetContent className="flex max-h-dvh w-[30rem] max-w-full flex-col justify-between gap-0 space-y-0 bg-accent p-0">
+                <SheetTitle className="hidden">Menu</SheetTitle>
+                <SheetDescription className="hidden">Main menu</SheetDescription>
                 <SheetHeader className="flex flex-col px-0">
                     <div className="flex h-20 w-full flex-row items-center justify-between px-6">
                         {isAuthenticated ? (

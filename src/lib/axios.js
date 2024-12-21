@@ -14,10 +14,6 @@ export const setupAxiosInterceptors = (tokenStorage) => {
     api.interceptors.request.use((config) => {
         if (tokenStorage.isValid()) {
             config.headers.Authorization = `Bearer ${tokenStorage.get()}`;
-            console.log("API Request:", {
-                fullUrl: `${config.baseURL}${config.url}`,
-                method: config.method,
-            });
         }
         return config;
     });

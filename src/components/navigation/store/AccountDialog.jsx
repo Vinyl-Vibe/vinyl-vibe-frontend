@@ -60,6 +60,10 @@ export function AccountDialog({ type = "profile", id }) {
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="space-y-4 px-0 sm:max-w-[425px]">
+                    <DialogDescription className="hidden">
+                        Update your profile information
+                    </DialogDescription>
+
                     <DialogHeader className="items-top flex h-14 flex-row justify-between space-y-6 border-b border-border px-6">
                         <DialogTitle className="text-3xl font-medium tracking-[-0.1rem]">
                             {content.title}
@@ -94,6 +98,7 @@ export function AccountDialog({ type = "profile", id }) {
                 </Button>
             </DrawerTrigger>
             <DrawerContent className="px-0">
+            <DrawerDescription className="hidden">Update your profile information</DrawerDescription>
                 <DialogHeader className="items-top flex h-14 flex-row justify-between space-y-6 border-b border-border px-6">
                     <DialogTitle className="text-3xl font-medium tracking-[-0.12rem]">
                         {content.title}
@@ -170,7 +175,6 @@ function ProfileForm({ className, onSuccess }) {
                 lastName: formValues.lastName,
             };
 
-            console.log("Submitting profile update:", data);
             await updateProfile(data);
             onSuccess?.();
         } catch (error) {

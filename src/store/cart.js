@@ -122,22 +122,16 @@ export const useCartStore = create((set, get) => ({
 
     // Add item to cart
     addItem: async (productId, quantity = 1) => {
-        console.log("Adding item to cart:", { productId, quantity });
-        console.log("Is authenticated:", tokenStorage.isValid());
 
         set({ isLoading: true, error: null });
         try {
             if (tokenStorage.isValid()) {
                 // Logged in - add to server
-                console.log("Adding to server cart...");
                 const response = await cartApi.addItem(productId, quantity);
-                console.log("Server response:", response);
 
                 const cartItems = get().formatServerCart(response);
-                console.log("Cart items from response:", cartItems);
 
                 const enrichedItems = await get().enrichCartItems(cartItems);
-                console.log("Enriched items:", enrichedItems);
 
                 set({ items: enrichedItems, isLoading: false });
             } else {

@@ -10,7 +10,6 @@ import { Input } from "../../ui/input";
 function AuthNav({ children }) {
     const { isAuthenticated, isAdmin } = useAuthStore();
     const { profile } = useUserStore();
-    console.log("MainNav profile:", profile);
     const { resetFilters, refreshProducts } = useProductStore();
     const location = useLocation();
 

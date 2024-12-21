@@ -5,7 +5,6 @@ export const productsApi = {
     // params can include: page, limit, category, sort, search
     // Returns: { items: Product[], totalItems: number, totalPages: number, currentPage: number }
     getProducts: async (params) => {
-        console.log('API call params:', params);
         const { data } = await api.get("/products", { 
             params: {
                 page: params.page,

@@ -9,7 +9,6 @@ function UserProvider({ children }) {
     // Memoize the profile loading function
     const handleProfileUpdate = useCallback(async () => {
         if (isAuthenticated && user) {
-            console.log("UserProvider: Loading profile for authenticated user");
             try {
                 await loadProfile();
             } catch (error) {
@@ -17,7 +16,6 @@ function UserProvider({ children }) {
                 console.error("Failed to load user profile:", error);
             }
         } else {
-            console.log("UserProvider: Clearing profile for unauthenticated user");
             clearProfile();
         }
     }, [isAuthenticated, user, loadProfile, clearProfile]);

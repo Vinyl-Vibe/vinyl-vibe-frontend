@@ -88,8 +88,6 @@ export const useProductStore = create((set, get) => ({
                 queryParams.order = sortOption.order;
             }
 
-            console.log('API call params:', queryParams);
-
             const { products, pagination } = await productsApi.getProducts(queryParams);
 
             set({

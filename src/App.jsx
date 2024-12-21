@@ -1,7 +1,6 @@
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import AuthProvider from "./components/auth/AuthProvider";
 import AuthRoute from "./components/auth/AuthRoute";
-import AdminRoute from "./components/auth/AdminRoute";
 import UserProvider from "./components/user/UserProvider";
 
 // Public routes
@@ -54,16 +53,28 @@ function App() {
                         <Route path="/products" element={<CatalogPage />} />
 
                         {/* Admin routes */}
-                        <Route path="/admin" element={
-                            <AuthRoute requireAdmin>
-                                <DashboardNav />
-                                <Outlet />
-                            </AuthRoute>
-                        }>
+                        <Route
+                            path="/admin"
+                            element={
+                                <AuthRoute requireAdmin>
+                                    <DashboardNav />
+                                    <Outlet />
+                                </AuthRoute>
+                            }
+                        >
                             <Route index element={<DashboardPage />} />
-                            <Route path="orders" element={<AdminOrdersPage />} />
-                            <Route path="products" element={<AdminProductsPage />} />
-                            <Route path="customers" element={<AdminCustomersPage />} />
+                            <Route
+                                path="orders"
+                                element={<AdminOrdersPage />}
+                            />
+                            <Route
+                                path="products"
+                                element={<AdminProductsPage />}
+                            />
+                            <Route
+                                path="customers"
+                                element={<AdminCustomersPage />}
+                            />
                         </Route>
 
                         {/* Error pages */}

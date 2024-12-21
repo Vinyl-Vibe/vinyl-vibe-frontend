@@ -26,11 +26,9 @@ export const authApi = {
             password: userData.password,
             role: userData.role,
             onRequest: (config) => {
-                console.log("Registration payload:", config.data);
                 return config;
             },
         });
-        console.log("Registration response:", data);
         return data;
     },
 
@@ -44,10 +42,8 @@ export const authApi = {
     // Get current user data using stored token
     // Used to restore auth state on page refresh
     getCurrentUser: async () => {
-        console.log("getCurrentUser - Token:", tokenStorage.get());
         try {
             const { data } = await api.get("/auth/me");
-            console.log("getCurrentUser Response:", data);
             return data;
         } catch (error) {
             console.error("getCurrentUser Error:", error.response?.data);
@@ -110,5 +106,14 @@ export const authApi = {
             tokenStorage.set(data.token);
         }
         return data;
+    },
+
+    // Add a method to get the OAuth URL
+    getGoogleAuthUrl: () => {
+        const baseUrl =
+            process.env.NODE_ENV === "development"
+                ? "http://localhost:8080"
+                : "https://api.vinylvibe.live";
+        return `${baseUrl}/auth/google`;
     },
 };

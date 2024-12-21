@@ -2,7 +2,6 @@
 export const tokenStorage = {
     get: () => {
         const token = localStorage.getItem('token');
-        console.log('Token get:', token ? 'Token exists' : 'No token');
         return token;
     },
     set: (token) => {
@@ -11,11 +10,9 @@ export const tokenStorage = {
             return false;
         }
         localStorage.setItem('token', token);
-        console.log('Token set: Token stored');
         return true;
     },
     remove: () => {
-        console.log('Token remove: Removing token');
         localStorage.removeItem('token');
     },
     isValid: () => {
@@ -39,7 +36,6 @@ export const tokenStorage = {
             }
             
             const isValid = payload.exp * 1000 > Date.now();
-            console.log('Token validation:', isValid ? 'Valid' : 'Expired');
             return isValid;
         } catch (error) {
             console.log('Token validation: Error parsing token');

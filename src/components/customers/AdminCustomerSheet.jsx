@@ -311,6 +311,10 @@ export default function AdminCustomerSheet({ customer, open, onOpenChange }) {
                         </ScrollArea>
                     </>
                 ) : null}
+                <SheetTitle className="hidden">Customer Details</SheetTitle>
+                <SheetDescription className="hidden">
+                    View customer details and order history
+                </SheetDescription>
             </SheetContent>
         </Sheet>
     );

@@ -5,6 +5,7 @@ import {
     SheetTitle,
     SheetTrigger,
     SheetClose,
+    SheetDescription,
 } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { Loader2, ShoppingCart, ShoppingBag, X } from "lucide-react";
@@ -120,6 +121,9 @@ function CartSheet() {
                     <SheetTitle className="text-4xl font-medium tracking-[-0.1rem]">
                         Cart
                     </SheetTitle>
+                    <SheetDescription className="hidden">
+                        Your cart items
+                    </SheetDescription>
                     <SheetClose>
                         <div className="transition-colors-opacity flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border bg-secondary text-foreground duration-200 hover:border-foreground/10 hover:bg-secondary/50">
                             <X className="h-4 w-4" />

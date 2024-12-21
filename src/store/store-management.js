@@ -148,12 +148,6 @@ export const useStoreManagement = create((set, get) => ({
                 storeManagementApi.getCarts(),
             ]);
 
-            console.log('Dashboard API Responses:', {
-                orders: ordersResponse,
-                users,
-                carts: cartsResponse
-            })
-
             // Check if responses were successful and extract data
             if (ordersResponse.status !== "success") {
                 throw new Error("Failed to fetch orders");
@@ -274,9 +268,7 @@ export const useStoreManagement = create((set, get) => ({
             const response = await storeManagementApi.getProducts({ 
                 page: 1, 
                 limit: 50 
-            })
-            console.log('Products API Response:', response)
-            
+            })            
             if (!response.success || !Array.isArray(response.products)) {
                 throw new Error("Invalid products data")
             }

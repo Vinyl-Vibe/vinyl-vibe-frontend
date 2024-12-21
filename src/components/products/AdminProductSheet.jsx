@@ -32,6 +32,7 @@ import {
     AlertDialogCancel,
     AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+import { ScrollArea } from "../ui/scroll-area";
 
 export default function AdminProductSheet({
     product,
@@ -104,10 +105,6 @@ export default function AdminProductSheet({
                 },
             };
             setFormData(initialFormData);
-
-            // Debug log
-            console.log("Initial form data:", initialFormData);
-            console.log("Current product:", currentProduct);
         }
     }, [currentProduct, isCreating]);
 
@@ -129,9 +126,6 @@ export default function AdminProductSheet({
 
             setHasUnsavedChanges(isChanged);
         } else if (currentProduct) {
-            // Debug log
-            console.log("Comparing form data:", formData);
-            console.log("With current product:", currentProduct);
 
             const isChanged =
                 String(formData.name || "") !==
@@ -155,8 +149,6 @@ export default function AdminProductSheet({
                 JSON.stringify(formData.albumInfo?.trackList || []) !==
                     JSON.stringify(currentProduct.albumInfo?.trackList || []);
 
-            // Debug log
-            console.log("Is changed:", isChanged);
 
             setHasUnsavedChanges(isChanged);
         }
@@ -577,6 +569,10 @@ export default function AdminProductSheet({
                         )}
                     </>
                 ) : null}
+                <SheetTitle className="hidden">Add Product</SheetTitle>
+                <SheetDescription className="hidden">
+                    Add a new product to your store
+                </SheetDescription>
             </SheetContent>
         </Sheet>
     );

@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Loader2, CheckCircle2, TriangleAlert } from "lucide-react";
 import { Separator } from "../ui/separator";
 import { FcGoogle } from "react-icons/fc";
+import { authApi } from "../../api/auth";
 
 /* 
     AuthForm: Combined login/register form with tab navigation
@@ -210,10 +211,7 @@ function AuthForm() {
 
     // Add social login handlers
     const handleGoogleLogin = () => {
-        window.location.href =
-            process.env.NODE_ENV === "production"
-                ? "https://api.vinylvibe.live/auth/google"
-                : "http://localhost:8080/auth/google";
+        window.location.href = authApi.getGoogleAuthUrl();
     };
 
     return (

@@ -34,7 +34,6 @@ export default function AdminProductsPage() {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [isCreating, setIsCreating] = useState(false);
 
-    console.log("Products from store:", products);
 
     useEffect(() => {
         fetchProducts();
@@ -43,7 +42,6 @@ export default function AdminProductsPage() {
     if (error) return <div>Error: {error}</div>;
 
     const productsList = Array.isArray(products) ? products : [];
-    console.log("ProductsList:", productsList);
 
     return (
         <div className="py-8">

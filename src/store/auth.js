@@ -117,14 +117,12 @@ export const useAuthStore = create((set, get) => ({
 
         set({ isLoading: true, error: null });
         try {
-            console.log('loadUser: Fetching user data...');
             const { user } = await authApi.getCurrentUser();
             
             if (!user) {
                 throw new Error('Invalid user data');
             }
 
-            console.log('loadUser: User data received:', user);
 
             // Update all state in one set call
             set(state => ({
@@ -159,13 +157,11 @@ export const useAuthStore = create((set, get) => ({
     register: async userData => {
         set({ isLoading: true, error: null })
         try {
-            console.log('Register request:', userData)
             const data = await authApi.register({
                 email: userData.email,
                 password: userData.password,
                 role: "user"  // All new registrations are regular users
             })
-            console.log('Register response:', data)
 
             set({ 
                 isLoading: false,
