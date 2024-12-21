@@ -300,9 +300,32 @@ export default function AdminOrdersPage() {
                                                 </span>
                                             </TableCell>
                                             <TableCell>
-                                                <span className="block max-w-[100px] truncate md:max-w-[150px]">
-                                                    {order.userId.email}
-                                                </span>
+                                                {order.userId ? (
+                                                    <div className="flex flex-col">
+                                                        <span className="font-medium">
+                                                            {order.userId
+                                                                .profile
+                                                                ?.firstName ||
+                                                                "Guest"}{" "}
+                                                            {order.userId
+                                                                .profile
+                                                                ?.lastName ||
+                                                                ""}
+                                                        </span>
+                                                        <span className="text-sm text-muted-foreground">
+                                                            {order.userId.email}
+                                                        </span>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex flex-col">
+                                                        <span className="font-medium">
+                                                            Guest User
+                                                        </span>
+                                                        <span className="text-sm text-muted-foreground">
+                                                            No email provided
+                                                        </span>
+                                                    </div>
+                                                )}
                                             </TableCell>
                                             <TableCell>
                                                 {format(

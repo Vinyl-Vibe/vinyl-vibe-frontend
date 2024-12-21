@@ -95,6 +95,8 @@ export const useStoreManagement = create((set, get) => ({
 
         // Calculate top customers by total spend
         const customerSpending = completedOrders.reduce((acc, order) => {
+            if (!order.userId) return acc;
+
             const userId = order.userId._id;
             acc[userId] = (acc[userId] || 0) + order.total;
             return acc;
@@ -109,8 +111,8 @@ export const useStoreManagement = create((set, get) => ({
                         : "Guest User",
                     email:
                         user?.email ||
-                        orders.find((o) => o.userId._id === userId)?.userId
-                            .email ||
+                        orders.find((o) => o.userId?._id === userId)?.userId
+                            ?.email ||
                         "Unknown",
                     amount: formatMoney(totalSpent),
                 };
@@ -134,7 +136,9 @@ export const useStoreManagement = create((set, get) => ({
                 .slice(0, 10)
                 .map((order) => ({
                     id: order._id,
-                    name: "Guest User",
+                    name: order.userId?.profile?.firstName
+                        ? `${order.userId.profile.firstName} ${order.userId.profile.lastName || ""}`
+                        : "Guest User",
                     email: order.userId?.email || "Unknown",
                     amount: formatMoney(order.total),
                 })),
@@ -239,8 +243,10 @@ export const useStoreManagement = create((set, get) => ({
                 throw new Error("Invalid response format");
             }
 
-            // Calculate order count for each user
+            // Calculate order count for each user with null check
             const orderCounts = ordersResponse.orders.reduce((acc, order) => {
+                if (!order.userId) return acc;
+
                 const userId = order.userId._id;
                 acc[userId] = (acc[userId] || 0) + 1;
                 return acc;
