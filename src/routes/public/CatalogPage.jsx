@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import MainNav from "../../components/navigation/store/StoreNav";
 import ProductCard from "../../components/products/ProductCard";
 import CategoryFilter from "../../components/products/CategoryFilter";
@@ -19,13 +19,12 @@ import { useMinimumLoadingTime } from "../../hooks/useMinimumLoadingTime";
     - Will add filtering/sorting later
 */
 function CatalogPage() {
-    const { category } = useParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const {
         isLoading,
         error,
         fetchProducts,
         products,
-        hasLoaded,
         page,
         setPage,
         totalPages,
@@ -38,30 +37,35 @@ function CatalogPage() {
 
     const showLoader = useMinimumLoadingTime(isLoading);
 
-    // Set category from URL parameter
-    useEffect(() => {
-        if (category) {
-            // Map URL parameter to category type
-            const categoryMap = {
-                vinyls: "vinyl",
-                turntables: "turntable",
-                accessories: "accessory",
-                merch: "merch",
-            };
-
-            const mappedCategory = categoryMap[category];
-            if (mappedCategory) {
-                setCategory(mappedCategory);
-            }
+    // Handle page change
+    const handlePageChange = (newPage) => {
+        const newParams = new URLSearchParams(searchParams);
+        if (newPage > 1) {
+            newParams.set("page", newPage.toString());
         } else {
-            // If no category in URL, show all products
-            setCategory("all");
+            newParams.delete("page");
         }
-    }, [category, setCategory]);
+        setSearchParams(newParams);
+    };
 
+    // Fetch products when URL params change
     useEffect(() => {
-        fetchProducts();
-    }, [fetchProducts]);
+        const type = searchParams.get("type");
+        const sort = searchParams.get("sort");
+        const currentPage = searchParams.get("page");
+
+        console.log("Fetching products with params:", {
+            type,
+            sort,
+            page: currentPage,
+        });
+
+        fetchProducts({
+            type,
+            sort,
+            page: currentPage ? Number(currentPage) : 1,
+        });
+    }, [searchParams, fetchProducts]);
 
     // Reset filters when unmounting catalog page
     useEffect(() => {
@@ -173,9 +177,9 @@ function CatalogPage() {
                     {/* Only show pagination when we have data and more than one page */}
                     {!isLoading && totalPages > 1 && (
                         <Pagination
-                            currentPage={page}
+                            currentPage={Number(searchParams.get("page")) || 1}
                             totalPages={totalPages}
-                            onPageChange={setPage}
+                            onPageChange={handlePageChange}
                         />
                     )}
                 </div>

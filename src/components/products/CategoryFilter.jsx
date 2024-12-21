@@ -1,35 +1,53 @@
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "../ui/button";
-import { CATEGORIES, useProductStore } from "../../store/products";
-import { useNavigate, useLocation } from "react-router-dom";
+import { CATEGORIES } from "../../store/products";
 
-function CategoryFilter({ onCategoryChange }) {
-    const { activeCategory, setCategory } = useProductStore();
+function CategoryFilter() {
+    const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
     const location = useLocation();
+    const isSearchPage = location.pathname === "/search";
+
+    // Get active category from URL params
+    const activeCategory = searchParams.get("type") || CATEGORIES.ALL;
 
     const handleCategoryClick = (category) => {
-        // Map category types to URL slugs
-        const categoryToSlug = {
-            'all': '',
-            'vinyl': 'vinyls',
-            'turntable': 'turntables',
-            'accessory': 'accessories',
-            'merch': 'merch'
-        };
+        if (isSearchPage) {
+            // For search page, preserve search query and update type
+            const newParams = new URLSearchParams(searchParams);
 
-        // Update store
-        if (onCategoryChange) {
-            onCategoryChange(category);
-        } else {
-            setCategory(category);
-        }
+            if (category !== CATEGORIES.ALL) {
+                newParams.set("type", category);
+            } else {
+                newParams.delete("type");
+            }
 
-        // Update URL
-        const slug = categoryToSlug[category];
-        if (slug) {
-            navigate(`/products/${slug}`);
+            // Reset to page 1
+            newParams.delete("page");
+
+            // Update URL with all params preserved
+            setSearchParams(newParams);
         } else {
-            navigate('/products');
+            // For catalog page, preserve sort and update type
+            const newParams = new URLSearchParams();
+
+            // Keep sort if exists
+            const currentSort = searchParams.get("sort");
+            if (currentSort) {
+                newParams.set("sort", currentSort);
+            }
+
+            // Set category if not ALL
+            if (category !== CATEGORIES.ALL) {
+                newParams.set("type", category);
+            }
+
+            // Navigate to catalog with params
+            const queryString = newParams.toString();
+            navigate({
+                pathname: "/products",
+                search: queryString ? `?${queryString}` : "",
+            });
         }
     };
 
@@ -42,7 +60,16 @@ function CategoryFilter({ onCategoryChange }) {
                     onClick={() => handleCategoryClick(value)}
                     className={`text-sm ${activeCategory === value ? "hover:bg-accent" : ""}`}
                 >
-                    {key === 'ALL' ? 'All Products' : key.charAt(0) + key.slice(1).toLowerCase()}
+                    {key === "ALL"
+                        ? "All Products"
+                        : key
+                              .split("_")
+                              .map(
+                                  (word) =>
+                                      word.charAt(0).toUpperCase() +
+                                      word.slice(1).toLowerCase(),
+                              )
+                              .join(" ")}
                 </Button>
             ))}
         </div>

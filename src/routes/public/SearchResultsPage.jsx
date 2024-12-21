@@ -5,14 +5,18 @@ import ProductCard from "../../components/products/ProductCard";
 import CategoryFilter from "../../components/products/CategoryFilter";
 import SortSelect from "../../components/products/SortSelect";
 import ProductCardSkeleton from "../../components/products/ProductCardSkeleton";
-import { useProductStore, CATEGORIES } from "../../store/products";
+import {
+    useProductStore,
+    CATEGORIES,
+    SORT_OPTIONS,
+} from "../../store/products";
 import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import Pagination from "../../components/ui/pagination";
 import { useMinimumLoadingTime } from "../../hooks/useMinimumLoadingTime";
 
 function SearchResultsPage() {
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const searchQuery = searchParams.get("q");
     const [initialLoad, setInitialLoad] = useState(true);
 
@@ -24,27 +28,33 @@ function SearchResultsPage() {
         page,
         setPage,
         totalPages,
-        totalProducts,
+        resetFilters,
         activeCategory,
-        setCategory,
-        setSortBy,
+        setProducts,
     } = useProductStore();
 
     const showLoader = useMinimumLoadingTime(isLoading && initialLoad);
 
-    // Fetch products when search query, category, or sort changes
+    // Reset filters when unmounting
+    useEffect(() => {
+        return () => resetFilters();
+    }, [resetFilters]);
+
+    // Fetch products based on URL params
     useEffect(() => {
         if (searchQuery) {
-            // This will now store the search query in the store
+            const type = searchParams.get("type");
+            const sort = searchParams.get("sort");
+            const currentPage = searchParams.get("page");
+
             fetchProducts({
                 search: searchQuery,
-                type:
-                    activeCategory !== CATEGORIES.ALL
-                        ? activeCategory
-                        : undefined,
+                type,
+                sort,
+                page: currentPage ? Number(currentPage) : 1,
             });
         }
-    }, [searchQuery, activeCategory, fetchProducts]);
+    }, [searchParams]); // Only depend on searchParams
 
     // Set initialLoad to false after first load
     useEffect(() => {
@@ -53,24 +63,15 @@ function SearchResultsPage() {
         }
     }, [isLoading]);
 
-    // Remove handleCategoryChange override - let the store handle it
-    const handleCategoryChange = (category) => {
-        setCategory(category);
-    };
-
-    // Override sort change to maintain search
-    const handleSortChange = (sortOption) => {
-        setSortBy(sortOption);
-
-        const params = {
-            search: searchQuery,
-        };
-
-        if (activeCategory !== CATEGORIES.ALL) {
-            params.type = activeCategory;
+    // Add handler for page changes
+    const handlePageChange = (newPage) => {
+        const newParams = new URLSearchParams(searchParams);
+        if (newPage > 1) {
+            newParams.set("page", newPage.toString());
+        } else {
+            newParams.delete("page");
         }
-
-        fetchProducts(params);
+        setSearchParams(newParams);
     };
 
     return (
@@ -84,10 +85,9 @@ function SearchResultsPage() {
                     </h1>
                 </div>
 
-                {/* Filters and Sort */}
                 <div className="mt-[-1px] flex flex-col justify-between gap-4 border p-6 sm:flex-row">
-                    <CategoryFilter onCategoryChange={handleCategoryChange} />
-                    <SortSelect onSortChange={handleSortChange} />
+                    <CategoryFilter />
+                    <SortSelect />
                 </div>
 
                 <div className="mt-[-1px] transition-all duration-500">
@@ -176,12 +176,12 @@ function SearchResultsPage() {
                         )}
                     </div>
 
-                    {/* Only show pagination when we have data and more than one page */}
+                    {/* Update pagination component */}
                     {!isLoading && totalPages > 1 && (
                         <Pagination
-                            currentPage={page}
+                            currentPage={Number(searchParams.get("page")) || 1}
                             totalPages={totalPages}
-                            onPageChange={setPage}
+                            onPageChange={handlePageChange}
                         />
                     )}
                 </div>
