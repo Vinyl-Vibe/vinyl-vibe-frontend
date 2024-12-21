@@ -4,6 +4,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@media (min-width: 1000px) {
+    .show-wide {
+        display: table-cell;
+    }
+}
+
 :root {
     font-family: "Geist", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
@@ -113,6 +119,6 @@ body {
 
 number-flow-react::part(suffix) {
     margin-left: 0.0625em;
-	font-size: 0.85em;
-	color: var(--muted-foreground);
+    font-size: 0.85em;
+    color: var(--muted-foreground);
 }

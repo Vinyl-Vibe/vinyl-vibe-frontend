@@ -25,9 +25,12 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { format } from "date-fns";
-import { Search, ArrowUpDown } from "lucide-react";
+import { Search } from "lucide-react";
 import AdminOrderSheet from "@/components/orders/AdminOrderSheet";
 import { useSearchParams } from "react-router-dom";
+import { SortButton } from "@/components/ui/sort-button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { TableSkeleton } from "@/components/ui/table-skeleton";
 
 export default function AdminOrdersPage() {
     const {
@@ -47,10 +50,21 @@ export default function AdminOrdersPage() {
     });
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [searchParams, setSearchParams] = useSearchParams();
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+    const [sortDirection, setSortDirection] = useState({
+        date: "none",
+        total: "none",
+    });
 
     useEffect(() => {
         fetchOrders();
     }, [fetchOrders]);
+
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     // Apply filters and sorting
     useEffect(() => {
@@ -91,47 +105,79 @@ export default function AdminOrdersPage() {
 
     // Handle opening order from URL parameter
     useEffect(() => {
-        const orderId = searchParams.get('orderId')
+        const orderId = searchParams.get("orderId");
         if (orderId && orders.length > 0) {
-            const order = orders.find(o => o._id === orderId)
+            const order = orders.find((o) => o._id === orderId);
             if (order) {
-                setSelectedOrder(order)
+                setSelectedOrder(order);
             }
         }
-    }, [orders, searchParams])
+    }, [orders, searchParams]);
 
     // Update URL when order is selected
-    const handleOrderSelect = useCallback((order) => {
-        setSelectedOrder(order)
-        setSearchParams({ orderId: order._id })
-    }, [setSearchParams])
+    const handleOrderSelect = useCallback(
+        (order) => {
+            setSelectedOrder(order);
+            setSearchParams({ orderId: order._id });
+        },
+        [setSearchParams],
+    );
 
     // Clear URL when sheet closes
-    const handleSheetClose = useCallback((open) => {
-        if (!open) {
-            setSelectedOrder(null)
-            setSearchParams({})
-        }
-    }, [setSearchParams])
+    const handleSheetClose = useCallback(
+        (open) => {
+            if (!open) {
+                setSelectedOrder(null);
+                setSearchParams({});
+            }
+        },
+        [setSearchParams],
+    );
 
     const toggleSort = (field) => {
-        setFilters((prev) => ({
-            ...prev,
-            sortBy: field,
-            sortDirection:
-                prev.sortBy === field && prev.sortDirection === "desc"
+        setSortDirection((prev) => {
+            const newDirection =
+                prev[field] === "none"
                     ? "asc"
-                    : "desc",
-        }));
+                    : prev[field] === "asc"
+                      ? "desc"
+                      : "none";
+            // Reset other fields
+            return Object.keys(prev).reduce(
+                (acc, key) => ({
+                    ...acc,
+                    [key]: key === field ? newDirection : "none",
+                }),
+                {},
+            );
+        });
+
+        const newOrders = [...filteredOrders].sort((a, b) => {
+            if (field === "date") {
+                const dateA = new Date(a.createdAt);
+                const dateB = new Date(b.createdAt);
+                return sortDirection.date === "asc"
+                    ? dateB - dateA
+                    : dateA - dateB;
+            }
+            if (field === "total") {
+                return sortDirection.total === "asc"
+                    ? b.total - a.total
+                    : a.total - b.total;
+            }
+            return 0;
+        });
+
+        setFilteredOrders(newOrders);
     };
 
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <div className="py-8">
+        <div className="flex-1 space-y-4 p-4 pt-6">
             <Card>
                 <CardHeader>
-                    <CardTitle>Orders</CardTitle>
+                    <CardTitle className="text-2xl">Orders</CardTitle>
                     <CardDescription>
                         Manage and view all orders from your store
                     </CardDescription>
@@ -192,104 +238,142 @@ export default function AdminOrdersPage() {
                     </div>
 
                     {/* Orders Table */}
-                    <div className="rounded-md border">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Order ID</TableHead>
-                                    <TableHead>Customer</TableHead>
-                                    <TableHead>
-                                        <Button
-                                            variant="ghost"
-                                            onClick={() => toggleSort("date")}
-                                        >
-                                            Date
-                                            <ArrowUpDown className="ml-2 h-4 w-4" />
-                                        </Button>
-                                    </TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead>
-                                        <Button
-                                            variant="ghost"
-                                            onClick={() => toggleSort("total")}
-                                        >
-                                            Total
-                                            <ArrowUpDown className="ml-2 h-4 w-4" />
-                                        </Button>
-                                    </TableHead>
-                                    <TableHead>Actions</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {filteredOrders.map((order) => (
-                                    <TableRow key={order._id}>
-                                        <TableCell className="font-medium">
-                                            {order._id}
-                                        </TableCell>
-                                        <TableCell>
-                                            {order.userId.email}
-                                        </TableCell>
-                                        <TableCell>
-                                            {format(
-                                                new Date(order.createdAt),
-                                                "MMM d, yyyy",
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            <span
-                                                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                                                    order.status === "pending"
-                                                        ? "bg-yellow-100 text-yellow-800"
-                                                        : order.status === "preparing to ship"
-                                                        ? "bg-blue-100 text-blue-800"
-                                                        : order.status === "shipped"
-                                                        ? "bg-indigo-100 text-indigo-800"
-                                                        : order.status === "delivered" || order.status === "completed"
-                                                        ? "bg-green-100 text-green-800"
-                                                        : order.status === "returned"
-                                                        ? "bg-orange-100 text-orange-800"
-                                                        : order.status === "cancelled"
-                                                        ? "bg-red-100 text-red-800"
-                                                        : order.status === "payment received"
-                                                        ? "bg-emerald-100 text-emerald-800"
-                                                        : "bg-gray-100 text-gray-800"
-                                                }`}
-                                            >
-                                                {order.status}
-                                            </span>
-                                        </TableCell>
-                                        <TableCell>
-                                            ${order.total.toFixed(2)}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button
-                                                variant=""
-                                                size="sm"
-                                                onClick={() => {
-                                                    handleOrderSelect(order)
-                                                }}
-                                            >
-                                                View Details
-                                            </Button>
-                                        </TableCell>
+                    {isLoading && !orders.length ? (
+                        <TableSkeleton rowCount={8} />
+                    ) : filteredOrders.length > 0 ? (
+                        <div className="rounded-md border">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="show-wide hidden">
+                                            Order ID
+                                        </TableHead>
+                                        <TableHead>Customer</TableHead>
+                                        <TableHead>
+                                            <SortButton
+                                                label="Date"
+                                                direction={sortDirection.date}
+                                                onClick={() =>
+                                                    toggleSort("date")
+                                                }
+                                            />
+                                        </TableHead>
+                                        <TableHead className="hidden sm:table-cell">
+                                            Status
+                                        </TableHead>
+                                        <TableHead>
+                                            <SortButton
+                                                label="Total"
+                                                direction={sortDirection.total}
+                                                onClick={() =>
+                                                    toggleSort("total")
+                                                }
+                                            />
+                                        </TableHead>
+                                        <TableHead>Actions</TableHead>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
+                                </TableHeader>
+                                <TableBody>
+                                    {filteredOrders.map((order) => (
+                                        <TableRow key={order._id}>
+                                            <TableCell className="show-wide hidden font-medium">
+                                                <span className="block max-w-[80px] truncate">
+                                                    {order._id}
+                                                </span>
+                                            </TableCell>
+                                            <TableCell>
+                                                <span className="block max-w-[100px] truncate md:max-w-[150px]">
+                                                    {order.userId.email}
+                                                </span>
+                                            </TableCell>
+                                            <TableCell>
+                                                {format(
+                                                    new Date(order.createdAt),
+                                                    windowWidth < 640
+                                                        ? "MM/dd"
+                                                        : windowWidth < 768
+                                                          ? "MM/dd/yy"
+                                                          : "MMM d, yyyy",
+                                                )}
+                                            </TableCell>
+                                            <TableCell className="hidden sm:table-cell">
+                                                <span
+                                                    className={`inline-flex items-center whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${
+                                                        order.status ===
+                                                        "pending"
+                                                            ? "bg-yellow-100 text-yellow-800"
+                                                            : order.status ===
+                                                                "preparing to ship"
+                                                              ? "bg-blue-100 text-blue-800"
+                                                              : order.status ===
+                                                                  "shipped"
+                                                                ? "bg-indigo-100 text-indigo-800"
+                                                                : order.status ===
+                                                                        "delivered" ||
+                                                                    order.status ===
+                                                                        "completed"
+                                                                  ? "bg-green-100 text-green-800"
+                                                                  : order.status ===
+                                                                      "returned"
+                                                                    ? "bg-orange-100 text-orange-800"
+                                                                    : order.status ===
+                                                                        "cancelled"
+                                                                      ? "bg-red-100 text-red-800"
+                                                                      : order.status ===
+                                                                          "payment received"
+                                                                        ? "bg-emerald-100 text-emerald-800"
+                                                                        : "bg-gray-100 text-gray-800"
+                                                    }`}
+                                                >
+                                                    {order.status}
+                                                </span>
+                                            </TableCell>
+                                            <TableCell>
+                                                $
+                                                {windowWidth < 640
+                                                    ? order.total.toFixed(0)
+                                                    : order.total.toFixed(2)}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Button
+                                                    variant=""
+                                                    className="hover:bg-accent/10"
+                                                    size="sm"
+                                                    onClick={() =>
+                                                        handleOrderSelect(order)
+                                                    }
+                                                >
+                                                    View details
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
+                    ) : (
+                        <EmptyState
+                            type={filters.search ? "search" : "status"}
+                        />
+                    )}
 
                     {/* Load More Button */}
-                    {hasMoreOrders && (
-                        <div className="mt-4 flex justify-center">
-                            <Button
-                                onClick={loadMoreOrders}
-                                disabled={isLoading}
-                                variant="outline"
-                            >
-                                {isLoading ? "Loading..." : "Load More Orders"}
-                            </Button>
-                        </div>
-                    )}
+                    {hasMoreOrders &&
+                        !filters.search &&
+                        !isLoading &&
+                        filters.status === "all" && (
+                            <div className="mt-4 flex justify-center">
+                                <Button
+                                    onClick={loadMoreOrders}
+                                    disabled={isLoading}
+                                    variant="secondary"
+                                >
+                                    {isLoading
+                                        ? "Loading..."
+                                        : "Load More Orders"}
+                                </Button>
+                            </div>
+                        )}
                 </CardContent>
             </Card>
             <AdminOrderSheet

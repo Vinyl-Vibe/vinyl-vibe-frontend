@@ -1,10 +1,18 @@
 import { Link, useLocation } from "react-router-dom";
-import { Package, Search } from "lucide-react";
+import { LogOut, Package, Search, ArrowLeft, Store, Undo2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useState, useEffect } from "react";
 
 export default function DashboardNav() {
     const location = useLocation();
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     // Helper to determine if a path is active
     const isActivePath = (path) => {
@@ -15,11 +23,16 @@ export default function DashboardNav() {
     };
 
     return (
-        <nav className="flex justify-between items-center space-x-4 lg:space-x-6">
-            <div className="flex h-20 items-center space-x-4">
-                <img src="/icon.png" alt="Logo" className="h-10 w-10 rounded-lg" />
+        <nav className="flex items-center justify-between px-4">
+            <div className="flex h-20 items-center space-x-1 sm:space-x-5">
+                <img
+                    src="/icon.png"
+                    alt="Logo"
+                    className="h-10 w-10 rounded-lg"
+                />
                 <Button
                     variant="link"
+                    size="sm"
                     className={`text-sm font-medium ${
                         isActivePath("/admin") ? "underline" : ""
                     }`}
@@ -29,6 +42,7 @@ export default function DashboardNav() {
                 </Button>
                 <Button
                     variant="link"
+                    size="sm"
                     className={`text-sm font-medium ${
                         isActivePath("/admin/orders") ? "underline" : ""
                     }`}
@@ -38,6 +52,7 @@ export default function DashboardNav() {
                 </Button>
                 <Button
                     variant="link"
+                    size="sm"
                     className={`text-sm font-medium ${
                         isActivePath("/admin/products") ? "underline" : ""
                     }`}
@@ -47,6 +62,7 @@ export default function DashboardNav() {
                 </Button>
                 <Button
                     variant="link"
+                    size="sm"
                     className={`text-sm font-medium ${
                         isActivePath("/admin/customers") ? "underline" : ""
                     }`}
@@ -58,10 +74,18 @@ export default function DashboardNav() {
             <div className="ml-auto flex items-center space-x-4">
                 <Button
                     variant="secondary"
-                    className="text-sm font-medium"
+                    className={`text-sm font-medium h-11 ${
+                        windowWidth < 800 ? "w-11 h-11" : ""
+                    }`}
                     asChild
                 >
-                    <Link to="/">Return to Store</Link>
+                    <Link to="/">
+                        {windowWidth < 800 ? (
+                            <Undo2 className="h-4 w-4" strokeWidth={1.8} />
+                        ) : (
+                            "Return to store"
+                        )}
+                    </Link>
                 </Button>
             </div>
         </nav>
