@@ -1,11 +1,19 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LogOut, Package, Search, ArrowLeft, Store, Undo2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { useState, useEffect } from "react";
 
 export default function DashboardNav() {
     const location = useLocation();
+    const navigate = useNavigate();
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
     useEffect(() => {
@@ -24,7 +32,7 @@ export default function DashboardNav() {
 
     return (
         <nav className="flex items-center justify-between px-4">
-            <div className="flex h-20 items-center space-x-1 sm:space-x-5">
+            <div className="hidden h-20 items-center space-x-1 min-[465px]:flex sm:space-x-5">
                 <img
                     src="/icon.png"
                     alt="Logo"
@@ -71,11 +79,51 @@ export default function DashboardNav() {
                     <Link to="/admin/customers">Customers</Link>
                 </Button>
             </div>
-            <div className="ml-auto flex items-center space-x-4">
+
+            <div className="grid h-20 w-full grid-cols-3 items-center min-[465px]:hidden">
+                <div>
+                    <img
+                        src="/icon.png"
+                        alt="Logo"
+                        className="h-10 w-10 rounded-lg"
+                    />
+                </div>
+                <div className="flex justify-center">
+                    <Select
+                        value={location.pathname}
+                        onValueChange={(value) => navigate(value)}
+                    >
+                        <SelectTrigger className="h-11 w-[125px] bg-white/60 border-border/80 focus-visible:border-border/80 focus:outline-none focus:border-border/80 focus:ring-none">
+                            <SelectValue placeholder="Select page" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-2xl">
+                            <SelectItem value="/admin">Dashboard</SelectItem>
+                            <SelectItem value="/admin/orders">
+                                Orders
+                            </SelectItem>
+                            <SelectItem value="/admin/products">
+                                Products
+                            </SelectItem>
+                            <SelectItem value="/admin/customers">
+                                Customers
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div className="flex justify-end">
+                    <Button variant="secondary" className="h-11 w-11" asChild>
+                        <Link to="/">
+                            <Undo2 className="h-4 w-4" strokeWidth={1.8} />
+                        </Link>
+                    </Button>
+                </div>
+            </div>
+
+            <div className="ml-auto hidden items-center space-x-4 min-[465px]:flex">
                 <Button
                     variant="secondary"
-                    className={`text-sm font-medium h-11 ${
-                        windowWidth < 800 ? "w-11 h-11" : ""
+                    className={`h-11 text-sm font-medium ${
+                        windowWidth < 800 ? "h-11 w-11" : ""
                     }`}
                     asChild
                 >
